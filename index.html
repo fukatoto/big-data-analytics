@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#101b1e">
+  <meta name="description" content="Explore the former Berlin Tegel Airport terminal campus and Urban Tech Republic in an interactive 3D map.">
+  <title>Berlin TXL — 3D Map</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23101b1e'/%3E%3Cpath d='M16 17h32v8H36v25h-8V25H16z' fill='%23f3a35c'/%3E%3C/svg%3E">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="Map information and places">
+      <div class="sidebar-top">
+        <div class="brand-lockup">
+          <span class="brand-mark" aria-hidden="true">TXL<span class="brand-mark-dot">.</span></span>
+          <span class="brand-caption">BERLIN<br>URBAN TECH REPUBLIC</span>
+        </div>
+        <div class="edition-label"><span class="edition-line"></span> INTERACTIVE ATLAS <span class="edition-number" id="edition-number">01 / 03</span></div>
+        <h1>Explore<br><em>Berlin TXL</em></h1>
+        <p class="intro">The former Flughafen Berlin Tegel, seen from a new angle. Explore its landmark terminals in 3D.</p>
+        <div class="fact-row">
+          <div><strong>202 <small>ha</small></strong><span>Urban Tech Republic</span></div>
+          <span class="fact-divider" aria-hidden="true"></span>
+          <div><strong>3D</strong><span>Mapped buildings</span></div>
+        </div>
+      </div>
+
+      <div class="places-section">
+        <div class="section-heading"><span>PLACES TO EXPLORE</span><span>03</span></div>
+        <div class="place-list">
+          <button class="place-item is-active" type="button" data-place="terminal-a" aria-pressed="true"><span class="place-index">01</span><span class="place-text"><strong>Terminal A</strong><small>Future university campus</small></span><span class="place-arrow" aria-hidden="true">↗</span></button>
+          <button class="place-item" type="button" data-place="terminal-b" aria-pressed="false"><span class="place-index">02</span><span class="place-text"><strong>Terminal B</strong><small>Innovation &amp; startup space</small></span><span class="place-arrow" aria-hidden="true">↗</span></button>
+          <button class="place-item" type="button" data-place="terminal-d" aria-pressed="false"><span class="place-index">03</span><span class="place-text"><strong>Terminal D</strong><small>Technology centre</small></span><span class="place-arrow" aria-hidden="true">↗</span></button>
+        </div>
+        <div class="place-detail" id="place-detail" aria-live="polite">
+          <div class="detail-kicker">SELECTED PLACE <span id="detail-number">01 / 03</span></div>
+          <h2 id="detail-title">Terminal A</h2>
+          <p id="detail-description">The airport's distinctive hexagonal terminal is planned as a campus for Berliner Hochschule für Technik.</p>
+          <a id="detail-link" href="https://urbantechrepublic.de/en/real-estate-finder-map/" target="_blank" rel="noopener noreferrer">Project information <span aria-hidden="true">↗</span></a>
+        </div>
+      </div>
+
+      <div class="sidebar-bottom"><span class="sidebar-bottom-dot" aria-hidden="true"></span><span>Existing map data · future uses are planned</span></div>
+    </aside>
+
+    <main class="map-stage" aria-label="Interactive map of Berlin TXL">
+      <div id="map" aria-label="Map of the former Tegel Airport terminal area"></div>
+      <div class="map-tint" aria-hidden="true"></div>
+      <div class="map-topbar">
+        <div class="location-pill"><span class="pulse-dot" aria-hidden="true"></span> BERLIN, GERMANY <span class="pill-separator">/</span> <span id="map-coordinates">52.554° N · 13.289° E</span></div>
+        <div class="view-switch" role="group" aria-label="Map dimension">
+          <button id="view-2d" type="button" aria-pressed="false">2D</button>
+          <button id="view-3d" class="is-active" type="button" aria-pressed="true">3D</button>
+        </div>
+      </div>
+      <div class="map-caption" id="map-caption"><span class="caption-line" aria-hidden="true"></span><span>01 <span class="caption-slash">/</span> TERMINAL CAMPUS</span></div>
+      <div class="map-actions" role="group" aria-label="Map views">
+        <button id="campus-view" type="button" class="is-active" aria-pressed="true"><span class="action-icon" aria-hidden="true">⌖</span> Campus</button>
+        <button id="airport-view" type="button" aria-pressed="false"><span class="action-icon" aria-hidden="true">◇</span> Former airport</button>
+      </div>
+      <div class="map-help">Drag to explore <span>·</span> Ctrl + drag to rotate <span>·</span> Scroll to zoom</div>
+      <div class="map-error" id="map-error" role="alert" hidden><strong>The map could not load.</strong><br>Check your connection and reload this page.</div>
+    </main>
+  </div>
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
