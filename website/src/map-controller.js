@@ -1,6 +1,9 @@
 import * as maplibregl from 'maplibre-gl';
 import { airportBounds, airportViewPadding, places } from './config.js';
 
+const eventsCalendarUrl =
+  'https://www.campus-stadt-natur.de/angebote-aktionen/kalender/?id=524&no_cache=1&tx_events2_events%5Baction%5D=list&tx_events2_events%5Bcontroller%5D=JavaScriptSearch&tx_events2_events%5Bcategories%5D%5B%5D=&tx_events2_events%5Bgroups%5D%5B%5D=&tx_events2_events%5Blocations%5D%5B%5D=50&tx_events2_events%5Bstart%5D=&tx_events2_events%5Bend%5D=&tx_events2_events%5Bsearch%5D=';
+
 export function createMapController({ map, t, onSelectProjectArea }) {
   const state = {
     dimension: '3d',
@@ -10,6 +13,11 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     PlacesVisible: false,
     events: [],
     eventsStatus: 'loading',
+    eventFilters: {
+      status: 'all',
+      format: 'all',
+      targetGroup: 'all',
+    },
   };
   const markerElements = new Map();
   let tentPopup = null;
@@ -24,6 +32,109 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       : status.toLocaleLowerCase('de-DE') === 'ausgebucht'
         ? 'eventSoldOut'
         : null;
+  }
+
+  function uniqueEventValues(getValues) {
+    return [...new Set(state.events.flatMap(getValues).filter(Boolean))].sort(
+      (a, b) => a.localeCompare(b, 'de'),
+    );
+  }
+
+  function filteredEvents() {
+    const { status, format, targetGroup } = state.eventFilters;
+    return state.events.filter(
+      (event) =>
+        (status === 'all' || event.status === status) &&
+        (format === 'all' || event.format === format) &&
+        (targetGroup === 'all' || event.target_groups?.includes(targetGroup)),
+    );
+  }
+
+  function eventCountText() {
+    const visibleCount = filteredEvents().length;
+    return visibleCount === state.events.length
+      ? t('eventCount', { count: visibleCount })
+      : t('eventFilteredCount', {
+          count: visibleCount,
+          total: state.events.length,
+        });
+  }
+
+  function createFilterSelect({
+    key,
+    labelKey,
+    allKey,
+    values,
+    formatValue = (value) => value,
+  }) {
+    const select = document.createElement('select');
+    select.className = 'event-filter-select';
+    select.setAttribute('aria-label', t(labelKey));
+    const allOption = document.createElement('option');
+    allOption.value = 'all';
+    allOption.textContent = t(allKey);
+    select.append(allOption);
+    values.forEach((value) => {
+      const option = document.createElement('option');
+      option.value = value;
+      option.textContent = formatValue(value);
+      select.append(option);
+    });
+    select.value = state.eventFilters[key];
+    select.addEventListener('change', () => {
+      state.eventFilters[key] = select.value;
+      refreshEventViews();
+    });
+    return select;
+  }
+
+  function createEventFilters() {
+    const controls = document.createElement('div');
+    controls.className = 'event-filter-controls';
+    controls.append(
+      createFilterSelect({
+        key: 'status',
+        labelKey: 'filterByStatus',
+        allKey: 'allStatuses',
+        values: uniqueEventValues((event) => event.status),
+        formatValue: (value) => {
+          const statusKey = eventStatusKey(value);
+          return statusKey ? t(statusKey) : value;
+        },
+      }),
+      createFilterSelect({
+        key: 'format',
+        labelKey: 'filterByFormat',
+        allKey: 'allFormats',
+        values: uniqueEventValues((event) => event.format),
+      }),
+      createFilterSelect({
+        key: 'targetGroup',
+        labelKey: 'filterByTargetGroup',
+        allKey: 'allTargetGroups',
+        values: uniqueEventValues((event) => event.target_groups ?? []),
+      }),
+    );
+    const filtersActive = Object.values(state.eventFilters).some(
+      (value) => value !== 'all',
+    );
+    controls.classList.toggle('has-active-filters', filtersActive);
+    if (filtersActive) {
+      const reset = document.createElement('button');
+      reset.className = 'event-filter-reset';
+      reset.type = 'button';
+      reset.textContent = t('resetFilters');
+      reset.addEventListener('click', () => {
+        state.eventFilters = {
+          status: 'all',
+          format: 'all',
+          targetGroup: 'all',
+        };
+        refreshEventViews();
+      });
+      controls.append(reset);
+    }
+    return controls;
   }
 
   function createEventCard(event) {
@@ -82,14 +193,16 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   }
 
   function renderEvents() {
-    const title = document.getElementById('event-overview-title');
+    const title = document.getElementById('event-overview-link-label');
     const count = document.getElementById('event-count');
+    const filters = document.getElementById('event-filters');
     const list = document.getElementById('event-list');
     title.textContent = t('eventsAtTent');
     count.textContent =
       state.eventsStatus === 'ready'
-        ? t('eventCount', { count: state.events.length })
+        ? eventCountText()
         : '';
+    filters.replaceChildren();
     list.replaceChildren();
 
     if (state.eventsStatus !== 'ready') {
@@ -101,7 +214,21 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       list.append(message);
       return;
     }
-    state.events.forEach((event) => list.append(createEventCard(event)));
+    filters.append(createEventFilters());
+    const events = filteredEvents();
+    if (!events.length) {
+      const message = document.createElement('p');
+      message.className = 'event-message';
+      message.textContent = t('eventsNoResults');
+      list.append(message);
+      return;
+    }
+    events.forEach((event) => list.append(createEventCard(event)));
+  }
+
+  function refreshEventViews() {
+    renderEvents();
+    if (tentPopup) tentPopup.setDOMContent(createTentPopupContent());
   }
 
   function createTentPopupContent() {
@@ -120,12 +247,23 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     content.className = 'tent-popup';
     const heading = document.createElement('div');
     heading.className = 'tent-popup-heading';
-    const title = document.createElement('strong');
-    title.textContent = t('eventsAtTent');
+    const title = document.createElement('a');
+    title.className = 'events-heading-link';
+    title.href = eventsCalendarUrl;
+    title.target = '_blank';
+    title.rel = 'noopener noreferrer';
+    title.setAttribute('aria-label', t('eventsCalendarOpen'));
+    const titleLabel = document.createElement('span');
+    titleLabel.textContent = t('eventsAtTent');
+    const titleArrow = document.createElement('span');
+    titleArrow.className = 'events-heading-arrow';
+    titleArrow.setAttribute('aria-hidden', 'true');
+    titleArrow.textContent = '↗';
+    title.append(titleLabel, titleArrow);
     const count = document.createElement('span');
     count.textContent =
       state.eventsStatus === 'ready'
-        ? t('eventCount', { count: state.events.length })
+        ? eventCountText()
         : '';
     heading.append(title, count);
     content.append(heading);
@@ -140,9 +278,18 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       return content;
     }
 
+    content.append(createEventFilters());
     const list = document.createElement('div');
     list.className = 'tent-popup-list';
-    state.events.forEach((event) => {
+    const events = filteredEvents();
+    if (!events.length) {
+      const message = document.createElement('p');
+      message.className = 'tent-popup-message';
+      message.textContent = t('eventsNoResults');
+      content.append(message);
+      return content;
+    }
+    events.forEach((event) => {
       const start = new Date(event.start);
       const end = new Date(event.end);
       const statusKey = eventStatusKey(event.status);
