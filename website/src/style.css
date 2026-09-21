@@ -904,10 +904,12 @@ h1 em {
   color: #a16d50;
 }
 .map-marker {
-  position: relative;
+  position: absolute;
   display: flex;
-  flex-direction: column;
   align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
   padding: 0;
   border: 0;
   background: transparent;
@@ -933,7 +935,10 @@ h1 em {
   box-shadow: 0 0 0 3px #e89b58;
 }
 .marker-label {
-  margin-top: 7px;
+  position: absolute;
+  top: calc(100% + 7px);
+  left: 50%;
+  transform: translateX(-50%);
   padding: 6px 9px;
   border-radius: 3px;
   background: #1b3331;

@@ -43,7 +43,12 @@ export const places = {
     descriptionKey: 'tegelerStadtheideDescription',
     source: 'https://gdi.berlin.de/services/wfs/berlin_txl?service=WFS&request=GetCapabilities',
     projectAreaId: 'tegeler-stadtheide'
-  }
+  },
+  'heideBlick': {
+    name: 'Heideblick', number: '04 / 04', coordinates: [13.265540, 52.560249],
+    description: 'The "Heideblick" offers a unique change of perspective: Let your gaze wander across the vast expanse of the heath, with the striking Berlin skyline in the background.',
+    //source: 'https://urbantechrepublic.de/en/faq/'
+  }
 };
 
 export const campusCamera = {

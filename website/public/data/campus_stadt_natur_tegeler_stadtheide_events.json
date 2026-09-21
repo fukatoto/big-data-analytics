@@ -1,0 +1,82 @@
+[
+  {
+    "title": "Flora statt Flugzeug - nachhaltige Stadtentwicklung am TXL – Fahrrad-Tour",
+    "status": "ausgebucht",
+    "format": "Fahrradführung",
+    "start": "2026-09-22T17:00:00+02:00",
+    "end": "2026-09-22T19:30:00+02:00",
+    "target_groups": [
+      "Erwachsene",
+      "Jugendliche"
+    ],
+    "location": "Tegeler Stadtheide",
+    "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
+    "price": "Personen ab 18 Jahre: 5,00 €; Personen unter 18 Jahren: kostenfrei",
+    "provider": "Drea Berg, im Auftrag von Campus Stadt Natur",
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-09-22_1700/flora-statt-flugzeug-nachhaltige-stadtentwicklung-am-txl-fahrrad-tour-4/"
+  },
+  {
+    "title": "Die Highlights rund ums Rollfeld TXL – Elektrocar-Tour",
+    "status": "ausgebucht",
+    "format": "Führung",
+    "start": "2026-10-03T10:00:00+02:00",
+    "end": "2026-10-03T12:30:00+02:00",
+    "target_groups": [
+      "Erwachsene",
+      "Jugendliche"
+    ],
+    "location": "Tegeler Stadtheide",
+    "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
+    "price": "Personen ab 18 Jahre: 5,00 €; Personen unter 18 Jahren: kostenfrei",
+    "provider": "Angelika Bruck, im Auftrag von Campus Stadt Natur",
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-03_1000/die-highlights-rund-ums-rollfeld-txl-elektrocar-tour-3/"
+  },
+  {
+    "title": "Ordnung(en) im Insektenreich – Workshop für Schulklassen 2-6 oder 7-9",
+    "status": "ausgebucht",
+    "format": "Workshop",
+    "start": "2026-10-06T10:00:00+02:00",
+    "end": "2026-10-06T14:00:00+02:00",
+    "target_groups": [
+      "Grundschule",
+      "Sekundarstufe 1"
+    ],
+    "location": "Tegeler Stadtheide",
+    "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
+    "price": "Schulklassen: 15,00 €",
+    "provider": "Jannes Stickamp, im Auftrag vom Campus Stadt Natur",
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-06_1000/ordnungen-im-insektenreich-workshop-fuer-schulklassen-2-6-oder-7-9-3/"
+  },
+  {
+    "title": "Zugvögel auf der Tegeler Stadtheide",
+    "status": "verfügbar",
+    "format": "Mitmachaktion",
+    "start": "2026-10-10T08:00:00+02:00",
+    "end": "2026-10-10T12:00:00+02:00",
+    "target_groups": [
+      "Erwachsene",
+      "Jugendliche"
+    ],
+    "location": "Tegeler Stadtheide",
+    "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
+    "price": "kostenfrei; Anmeldung erforderlich",
+    "provider": "Frank Sieste (NABU AG Flughafensee), mit Campus Stadt Natur",
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-10_0800/zugvoegel-auf-der-tegeler-stadtheide/"
+  },
+  {
+    "title": "Vom Flughafen zum Naturraum Tegeler Stadtheide – Elektrocar-Tour",
+    "status": "verfügbar",
+    "format": "Führung",
+    "start": "2026-10-22T16:00:00+02:00",
+    "end": "2026-10-22T18:30:00+02:00",
+    "target_groups": [
+      "Erwachsene",
+      "Jugendliche"
+    ],
+    "location": "Tegeler Stadtheide",
+    "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
+    "price": "Personen ab 18 Jahre: 5,00 €; Personen unter 18 Jahren: kostenfrei",
+    "provider": "Detlev Dahlmann, im Auftrag von Campus Stadt Natur",
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-22_1600/vom-flughafen-zum-naturraum-tegeler-stadtheide-elektrocar-tour-4/"
+  }
+]

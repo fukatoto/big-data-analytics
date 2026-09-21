@@ -178,7 +178,13 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       marker.innerHTML = `<span class="marker-core" aria-hidden="true"></span><span class="marker-label">${placeName(place)}</span>`;
       marker.addEventListener('click', () => selectPlace(id));
       markerElements.set(id, marker);
-      new maplibregl.Marker({ element: marker, anchor: 'bottom' }).setLngLat(place.coordinates).addTo(map);
+      new maplibregl.Marker({
+        element: marker,
+        anchor: 'center',
+        pitchAlignment: 'viewport',
+        rotationAlignment: 'viewport',
+        subpixelPositioning: true
+      }).setLngLat(place.coordinates).addTo(map);
     }
   }
 
