@@ -3,11 +3,13 @@ import { groundHeightConfig } from './config.js';
 import { createGroundHeightFeatures, parseGroundHeightCsv } from './ground-height-analysis.js';
 
 export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
+  const updateDelay = 200;
   let features = [];
   let sampleCount = 0;
   let loadError = null;
   let gridVisible = false;
   let popup = null;
+  let updateTimer = null;
 
   function colorExpression(threshold) {
     return [
@@ -44,6 +46,16 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
     const obstacles = features.filter((feature) => feature.properties.heightDifference >= threshold).length;
     document.getElementById('obstacle-count').textContent = String(obstacles);
     document.getElementById('clear-count').textContent = String(features.length - obstacles);
+  }
+
+  function scheduleUpdate() {
+    const threshold = Number(document.getElementById('height-threshold').value);
+    document.getElementById('height-threshold-value').textContent = threshold.toFixed(1) + ' m';
+    window.clearTimeout(updateTimer);
+    updateTimer = window.setTimeout(() => {
+      updateTimer = null;
+      update();
+    }, updateDelay);
   }
 
   function setGridVisible(visible) {
@@ -169,5 +181,11 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
     });
   }
 
-  return { bindUi, load, refreshLanguage: refreshStatus, showError, update };
+  return {
+    bindUi,
+    load,
+    refreshLanguage: refreshStatus,
+    scheduleUpdate,
+    showError,
+  };
 }

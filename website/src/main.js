@@ -22,10 +22,20 @@ const map = new maplibregl.Map({
   attributionControl: false,
 });
 
-map.addControl(
-  new maplibregl.AttributionControl({ compact: window.innerWidth < 700 }),
-  'bottom-right',
-);
+const mobileViewport = window.matchMedia('(max-width: 700px)');
+const attributionControl = new maplibregl.AttributionControl({
+  compact: mobileViewport.matches,
+});
+map.addControl(attributionControl, 'bottom-right');
+
+function collapseMobileAttribution() {
+  if (!mobileViewport.matches) return;
+  document
+    .querySelector('.maplibregl-ctrl-attrib')
+    ?.classList.remove('maplibregl-compact-show');
+}
+
+collapseMobileAttribution();
 map.addControl(
   new maplibregl.NavigationControl({ showCompass: true, visualizePitch: true }),
   'bottom-right',
@@ -92,7 +102,7 @@ projectAreasOverlay.bindUi();
 groundHeightOverlay.bindUi();
 document
   .getElementById('height-threshold')
-  .addEventListener('input', groundHeightOverlay.update);
+  .addEventListener('input', groundHeightOverlay.scheduleUpdate);
 document
   .getElementById('language-select')
   .addEventListener('change', (event) => {
@@ -100,6 +110,7 @@ document
   });
 
 map.on('load', () => {
+  collapseMobileAttribution();
   mapController.constrainAirportView();
   mapController.addBuildingLayer();
   projectAreasOverlay.addLayers();

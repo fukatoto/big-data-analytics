@@ -1,9 +1,35 @@
+/* ==========================================================================
+   Design tokens
+   ========================================================================== */
+
 :root {
   color-scheme: dark;
+
+  /* Typography */
+  --font-body: 'DM Sans', Arial, sans-serif;
+  --font-display: 'Space Grotesk', sans-serif;
+
+  /* Core palette */
   --ink: #101b1e;
   --bergreen: #007d73;
   --cream: #f1f0e8;
+
+  /* Shared component values */
+  --sidebar-border: #364447;
+  --sidebar-border-subtle: #2d3d3d;
+  --event-surface: #172629;
+  --positive-text: #63c8a8;
+  --map-panel-border: rgba(255, 255, 255, 0.7);
+  --map-panel-surface: rgba(255, 255, 249, 0.94);
+  --map-popup-surface: rgba(255, 255, 249, 0.97);
+  --transition-fast: 0.18s ease;
+  --transition-quick: 0.16s ease;
 }
+
+/* ==========================================================================
+   Base and accessibility
+   ========================================================================== */
+
 * {
   box-sizing: border-box;
 }
@@ -14,7 +40,7 @@ body {
   height: 100%;
 }
 body {
-  font-family: 'DM Sans', Arial, sans-serif;
+  font-family: var(--font-body);
   background: var(--ink);
   color: var(--cream);
 }
@@ -41,6 +67,11 @@ a:focus-visible {
   white-space: nowrap;
   border: 0;
 }
+
+/* ==========================================================================
+   Application shell and sidebar header
+   ========================================================================== */
+
 .app-shell {
   display: grid;
   grid-template-columns: minmax(330px, 370px) 1fr;
@@ -69,7 +100,7 @@ a:focus-visible {
 }
 .brand-mark {
   display: block;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 38px;
   font-weight: 700;
   line-height: 1;
@@ -109,7 +140,7 @@ a:focus-visible {
 }
 h1,
 h2 {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
 }
 h1 {
   margin: 16px 0 12px;
@@ -135,8 +166,8 @@ h1 em {
   gap: 20px;
   padding: 26px 0 25px;
   margin-top: 22px;
-  border-top: 1px solid #364447;
-  border-bottom: 1px solid #364447;
+  border-top: 1px solid var(--sidebar-border);
+  border-bottom: 1px solid var(--sidebar-border);
 }
 .fact-row > div {
   display: flex;
@@ -144,7 +175,7 @@ h1 em {
   gap: 3px;
 }
 .fact-row strong {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 27px;
   font-weight: 600;
   line-height: 1;
@@ -160,8 +191,13 @@ h1 em {
 .fact-divider {
   width: 1px;
   height: 31px;
-  background: #364447;
+  background: var(--sidebar-border);
 }
+
+/* ==========================================================================
+   Place navigation
+   ========================================================================== */
+
 .places-section {
   display: flex;
   flex-direction: column;
@@ -212,8 +248,8 @@ h1 em {
   margin-top: 8px;
   padding: 7px 8px;
   border: 0;
-  border-top: 1px solid #364447;
-  border-bottom: 1px solid #2d3d3d;
+  border-top: 1px solid var(--sidebar-border);
+  border-bottom: 1px solid var(--sidebar-border-subtle);
   background: transparent;
   color: #a8b7af;
   cursor: pointer;
@@ -230,7 +266,7 @@ h1 em {
   flex: 0 0 auto;
   border-radius: 10px;
   background: #52615e;
-  transition: background 0.18s ease;
+  transition: background var(--transition-fast);
 }
 .terminal-places-toggle > i > b {
   position: absolute;
@@ -240,7 +276,7 @@ h1 em {
   height: 12px;
   border-radius: 50%;
   background: #f1f0e8;
-  transition: transform 0.18s ease;
+  transition: transform var(--transition-fast);
 }
 .terminal-places-toggle.is-active > i {
   background: var(--bergreen);
@@ -255,12 +291,12 @@ h1 em {
   width: 100%;
   padding: 11px 8px;
   border: 0;
-  border-bottom: 1px solid #2d3d3d;
+  border-bottom: 1px solid var(--sidebar-border-subtle);
   background: transparent;
   color: var(--cream);
   text-align: left;
   cursor: pointer;
-  transition: background 0.18s ease;
+  transition: background var(--transition-fast);
 }
 .place-item:hover,
 .place-item.is-active {
@@ -280,7 +316,7 @@ h1 em {
   align-self: flex-start;
   padding-top: 2px;
   color: var(--bergreen);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
 }
@@ -291,7 +327,7 @@ h1 em {
   gap: 3px;
 }
 .place-text strong {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 14px;
   font-weight: 600;
 }
@@ -306,6 +342,11 @@ h1 em {
 .place-item.is-active .place-arrow {
   color: var(--bergreen);
 }
+
+/* ==========================================================================
+   Place details and event cards
+   ========================================================================== */
+
 .place-detail {
   padding: 20px 2px 0;
 }
@@ -357,7 +398,7 @@ h1 em {
 }
 .event-overview-heading h3 {
   margin: 0;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   letter-spacing: 0.14em;
 }
@@ -368,7 +409,7 @@ h1 em {
   color: #42bca7;
   font-weight: 700;
   text-decoration: none;
-  transition: color 0.16s ease;
+  transition: color var(--transition-quick);
 }
 .events-heading-link:hover {
   color: #75d4c2;
@@ -378,7 +419,7 @@ h1 em {
 .events-heading-arrow {
   font-size: 1.15em;
   line-height: 1;
-  transition: transform 0.16s ease;
+  transition: transform var(--transition-quick);
 }
 .events-heading-link:hover .events-heading-arrow {
   transform: translate(1px, -1px);
@@ -407,7 +448,7 @@ h1 em {
   border-radius: 4px;
   background: #18292a;
   color: #c3cfca;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 8px;
   font-weight: 700;
 }
@@ -425,7 +466,7 @@ h1 em {
 .event-filter-reset {
   grid-column: 2 / 3;
   padding: 5px 8px;
-  color: #63c8a8;
+  color: var(--positive-text);
   cursor: pointer;
 }
 .event-filter-select:focus-visible,
@@ -441,16 +482,16 @@ h1 em {
   padding: 10px;
   border: 1px solid #314543;
   border-radius: 5px;
-  background: #172629;
+  background: var(--event-surface);
   color: var(--cream);
   font-family: inherit;
   text-align: left;
   text-decoration: none;
   cursor: pointer;
   transition:
-    border-color 0.18s ease,
-    background 0.18s ease,
-    transform 0.18s ease;
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    transform var(--transition-fast);
 }
 .place-detail .event-card:hover {
   border-color: var(--bergreen);
@@ -471,7 +512,7 @@ h1 em {
   border-radius: 3px;
   background: rgba(11, 29, 29, 0.9);
   color: #71d5bd;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   line-height: 1;
 }
 .event-date strong {
@@ -540,10 +581,10 @@ h1 em {
 }
 .event-status.is-available {
   background: #153e37;
-  color: #63c8a8;
+  color: var(--positive-text);
 }
 .event-title {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   line-height: 1.28;
 }
@@ -557,11 +598,14 @@ h1 em {
   padding: 12px;
   border: 1px solid #314543;
   border-radius: 5px;
-  background: #172629;
+  background: var(--event-surface);
 }
 .place-detail .event-message.is-error {
   color: #e9b9b9;
 }
+
+/* Event detail state */
+
 .event-detail[hidden] {
   display: none;
 }
@@ -596,13 +640,13 @@ h1 em {
   border: 0;
   background: transparent;
   color: #9aaca6;
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 9px;
   font-weight: 700;
   cursor: pointer;
 }
 .event-detail-back:hover {
-  color: #63c8a8;
+  color: var(--positive-text);
 }
 .event-detail-back > span:first-child {
   color: var(--bergreen);
@@ -614,7 +658,7 @@ h1 em {
   margin: 0 0 18px;
   overflow: hidden;
   border-radius: 6px;
-  background: #172629;
+  background: var(--event-surface);
 }
 .event-detail-cover img {
   display: block;
@@ -656,7 +700,7 @@ h1 em {
 .place-detail .event-detail-schedule {
   max-width: none;
   margin: 0 0 20px;
-  color: #63c8a8;
+  color: var(--positive-text);
   font-size: 10px;
   font-weight: 700;
 }
@@ -683,7 +727,12 @@ h1 em {
   font-size: 10px;
   line-height: 1.5;
 }
-.place-detail .event-detail-link {
+.event-detail-actions {
+  display: grid;
+  gap: 8px;
+}
+.place-detail .event-detail-link,
+.place-detail .event-detail-calendar {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -695,9 +744,30 @@ h1 em {
   font-size: 10px;
   text-decoration: none;
 }
+.place-detail .event-detail-calendar {
+  border: 1px solid #405854;
+  background: transparent;
+  color: var(--positive-text);
+  font-family: var(--font-body);
+  cursor: pointer;
+}
+.place-detail .event-detail-calendar > span:first-child {
+  color: var(--bergreen);
+  font-size: 15px;
+  line-height: 1;
+}
 .place-detail .event-detail-link:hover {
   background: #00968a;
   text-decoration: none;
+}
+.place-detail .event-detail-calendar:hover {
+  border-color: var(--bergreen);
+  background: rgba(0, 178, 163, 0.08);
+}
+.place-detail .event-detail-calendar:focus-visible,
+.place-detail .event-detail-link:focus-visible {
+  outline: 2px solid var(--positive-text);
+  outline-offset: 2px;
 }
 .sidebar-bottom {
   display: flex;
@@ -719,6 +789,11 @@ h1 em {
   border-radius: 50%;
   background: var(--bergreen);
 }
+
+/* ==========================================================================
+   Map canvas and top bar
+   ========================================================================== */
+
 .map-stage {
   position: relative;
   min-width: 0;
@@ -758,7 +833,7 @@ h1 em {
   display: flex;
   align-items: center;
   min-height: 38px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--map-panel-border);
   background: rgba(255, 255, 249, 0.92);
   color: #30403d;
   box-shadow: 0 7px 24px rgba(44, 60, 51, 0.09);
@@ -768,7 +843,7 @@ h1 em {
   gap: 9px;
   padding: 0 14px;
   border-radius: 4px;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.07em;
@@ -801,7 +876,7 @@ h1 em {
   border-radius: 3px;
   background: #fffdf8;
   color: #344740;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   cursor: pointer;
@@ -822,7 +897,7 @@ h1 em {
   border-radius: 3px;
   background: transparent;
   color: #5d6f69;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -840,7 +915,7 @@ h1 em {
   justify-content: flex-end;
   gap: 12px;
   color: #273b36;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   letter-spacing: 0.14em;
@@ -859,21 +934,32 @@ h1 em {
 .mobile-panel-toggle {
   display: none;
 }
-.project-area-control {
-  position: absolute;
-  top: 82px;
-  left: 30px;
+
+/* ==========================================================================
+   Map data panels
+   ========================================================================== */
+
+.project-area-control,
+.height-control {
   z-index: 2;
-  width: min(285px, calc(100% - 60px));
-  padding: 15px 16px 13px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
+  border: 1px solid var(--map-panel-border);
   border-radius: 6px;
-  background: rgba(255, 255, 249, 0.94);
+  background: var(--map-panel-surface);
   color: #293b37;
   box-shadow: 0 8px 30px rgba(33, 53, 45, 0.15);
   backdrop-filter: blur(12px);
 }
-.project-area-control-kicker {
+
+.project-area-control {
+  position: absolute;
+  top: 82px;
+  left: 30px;
+  width: min(285px, calc(100% - 60px));
+  padding: 15px 16px 13px;
+}
+
+.project-area-control-kicker,
+.height-control-kicker {
   color: var(--bergreen);
   font-size: 9px;
   font-weight: 700;
@@ -913,9 +999,7 @@ h1 em {
 }
 .project-area-control h2 {
   margin: 3px 0 10px;
-  color: #213632;
   font-size: 17px;
-  letter-spacing: -0.035em;
 }
 .project-area-options {
   display: grid;
@@ -935,9 +1019,9 @@ h1 em {
   text-align: left;
   cursor: pointer;
   transition:
-    border-color 0.18s ease,
-    background 0.18s ease,
-    color 0.18s ease;
+    border-color var(--transition-fast),
+    background var(--transition-fast),
+    color var(--transition-fast);
 }
 .project-area-toggle:hover {
   border-color: #b9c4bd;
@@ -951,7 +1035,7 @@ h1 em {
   background: transparent;
 }
 .project-area-toggle span {
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 10px;
   font-weight: 700;
   line-height: 1.25;
@@ -973,35 +1057,45 @@ h1 em {
 .project-area-toggle.is-active b {
   color: #2b4b44;
 }
-.project-fill-toggle {
+.project-fill-toggle,
+.height-grid-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
   width: 100%;
   min-height: 34px;
-  margin-top: 5px;
-  padding: 4px;
   border: 0;
   background: transparent;
   color: #52655f;
   cursor: pointer;
 }
-.project-fill-toggle > span {
+
+.project-fill-toggle {
+  margin-top: 5px;
+  padding: 4px;
+}
+
+.project-fill-toggle > span,
+.height-grid-toggle > span {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
-.project-fill-toggle > i {
+
+.project-fill-toggle > i,
+.height-grid-toggle > i {
   position: relative;
   width: 30px;
   height: 17px;
   flex: 0 0 auto;
   border-radius: 10px;
   background: #aab5b0;
-  transition: background 0.18s ease;
+  transition: background var(--transition-fast);
 }
-.project-fill-toggle > i > b {
+
+.project-fill-toggle > i > b,
+.height-grid-toggle > i > b {
   position: absolute;
   top: 3px;
   left: 3px;
@@ -1010,12 +1104,16 @@ h1 em {
   border-radius: 50%;
   background: white;
   box-shadow: 0 1px 3px rgba(25, 45, 39, 0.25);
-  transition: transform 0.18s ease;
+  transition: transform var(--transition-fast);
 }
-.project-fill-toggle.is-active > i {
+
+.project-fill-toggle.is-active > i,
+.height-grid-toggle.is-active > i {
   background: #2d5048;
 }
-.project-fill-toggle.is-active > i > b {
+
+.project-fill-toggle.is-active > i > b,
+.height-grid-toggle.is-active > i > b {
   transform: translateX(13px);
 }
 .project-area-bulk-actions {
@@ -1037,8 +1135,8 @@ h1 em {
   font-weight: 700;
   cursor: pointer;
   transition:
-    border-color 0.18s ease,
-    background 0.18s ease;
+    border-color var(--transition-fast),
+    background var(--transition-fast);
 }
 .project-area-bulk-actions button:hover {
   border-color: #9eada5;
@@ -1054,15 +1152,8 @@ h1 em {
   position: absolute;
   right: 70px;
   bottom: 47px;
-  z-index: 2;
   width: min(310px, calc(100% - 60px));
   padding: 17px 18px 15px;
-  border: 1px solid rgba(255, 255, 255, 0.7);
-  border-radius: 6px;
-  background: rgba(255, 255, 249, 0.94);
-  color: #293b37;
-  box-shadow: 0 8px 30px rgba(33, 53, 45, 0.15);
-  backdrop-filter: blur(12px);
 }
 .height-control-heading {
   display: flex;
@@ -1073,17 +1164,15 @@ h1 em {
 .height-control-heading-actions {
   align-items: center;
 }
-.height-control-kicker {
-  color: var(--bergreen);
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.16em;
+.project-area-control h2,
+.height-control h2 {
+  color: #213632;
+  letter-spacing: -0.035em;
 }
+
 .height-control h2 {
   margin: 3px 0 13px;
-  color: #213632;
   font-size: 18px;
-  letter-spacing: -0.035em;
 }
 .height-control output {
   min-width: 60px;
@@ -1091,59 +1180,18 @@ h1 em {
   border-radius: 4px;
   background: #213b38;
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 12px;
   font-weight: 700;
   text-align: center;
 }
 .height-grid-toggle {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  width: 100%;
-  min-height: 34px;
   margin: -4px 0 8px;
   padding: 4px 0;
-  border: 0;
-  background: transparent;
-  color: #52655f;
-  cursor: pointer;
 }
 .height-grid-toggle:disabled {
   cursor: wait;
   opacity: 0.45;
-}
-.height-grid-toggle > span {
-  font-size: 9px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-}
-.height-grid-toggle > i {
-  position: relative;
-  width: 30px;
-  height: 17px;
-  flex: 0 0 auto;
-  border-radius: 10px;
-  background: #aab5b0;
-  transition: background 0.18s ease;
-}
-.height-grid-toggle > i > b {
-  position: absolute;
-  top: 3px;
-  left: 3px;
-  width: 11px;
-  height: 11px;
-  border-radius: 50%;
-  background: white;
-  box-shadow: 0 1px 3px rgba(25, 45, 39, 0.25);
-  transition: transform 0.18s ease;
-}
-.height-grid-toggle.is-active > i {
-  background: #2d5048;
-}
-.height-grid-toggle.is-active > i > b {
-  transform: translateX(13px);
 }
 .height-control label {
   display: block;
@@ -1212,6 +1260,11 @@ h1 em {
     margin-bottom: 0;
   }
 }
+
+/* ==========================================================================
+   Map actions and markers
+   ========================================================================== */
+
 .map-actions {
   position: absolute;
   left: 30px;
@@ -1235,7 +1288,7 @@ h1 em {
   border-radius: 3px;
   background: transparent;
   color: #44574f;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
@@ -1326,7 +1379,7 @@ h1 em {
   border-radius: 3px;
   background: #1b3331;
   color: #fff;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   white-space: nowrap;
@@ -1334,6 +1387,11 @@ h1 em {
 .map-marker.is-selected .marker-label {
   background: var(--bergreen);
 }
+
+/* ==========================================================================
+   MapLibre controls and popups
+   ========================================================================== */
+
 .maplibregl-control-container .maplibregl-ctrl-bottom-right {
   right: 14px;
   bottom: 14px;
@@ -1346,10 +1404,10 @@ h1 em {
   padding: 4px 8px !important;
   border: 1px solid rgba(27, 51, 49, 0.16);
   border-radius: 4px;
-  background: rgba(255, 255, 249, 0.94) !important;
+  background: var(--map-panel-surface) !important;
   color: #263d38;
   box-shadow: 0 4px 16px rgba(27, 51, 49, 0.12);
-  font-family: 'DM Sans', sans-serif !important;
+  font-family: var(--font-body) !important;
   font-size: 10px !important;
   font-weight: 500;
   line-height: 1.4;
@@ -1369,16 +1427,16 @@ h1 em {
 .maplibregl-popup-content {
   padding: 13px 15px;
   border-radius: 5px;
-  background: rgba(255, 255, 249, 0.97);
+  background: var(--map-popup-surface);
   color: #344640;
   box-shadow: 0 8px 25px rgba(28, 48, 42, 0.18);
-  font-family: 'DM Sans', sans-serif;
+  font-family: var(--font-body);
   font-size: 12px;
   line-height: 1.55;
 }
 .maplibregl-popup-content strong {
   color: #172d29;
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 13px;
 }
 .tent-events-map-popup .maplibregl-popup-content {
@@ -1464,7 +1522,7 @@ h1 em {
   text-align: left;
   text-decoration: none;
   cursor: pointer;
-  transition: background 0.16s ease;
+  transition: background var(--transition-quick);
 }
 .tent-popup-event:last-child {
   border-bottom: 0;
@@ -1474,7 +1532,7 @@ h1 em {
 }
 .tent-popup-date {
   color: var(--bergreen);
-  font-family: 'Space Grotesk', sans-serif;
+  font-family: var(--font-display);
   font-size: 11px;
   font-weight: 700;
   text-transform: uppercase;
@@ -1520,16 +1578,16 @@ h1 em {
   color: #61736e;
 }
 .maplibregl-popup-anchor-bottom .maplibregl-popup-tip {
-  border-top-color: rgba(255, 255, 249, 0.97);
+  border-top-color: var(--map-popup-surface);
 }
 .maplibregl-popup-anchor-top .maplibregl-popup-tip {
-  border-bottom-color: rgba(255, 255, 249, 0.97);
+  border-bottom-color: var(--map-popup-surface);
 }
 .maplibregl-popup-anchor-left .maplibregl-popup-tip {
-  border-right-color: rgba(255, 255, 249, 0.97);
+  border-right-color: var(--map-popup-surface);
 }
 .maplibregl-popup-anchor-right .maplibregl-popup-tip {
-  border-left-color: rgba(255, 255, 249, 0.97);
+  border-left-color: var(--map-popup-surface);
 }
 .map-error {
   position: absolute;
@@ -1544,6 +1602,12 @@ h1 em {
   font-size: 12px;
   line-height: 1.5;
 }
+
+/* ==========================================================================
+   Responsive layout
+   ========================================================================== */
+
+/* Compact desktop heights */
 @media (max-height: 760px) and (min-width: 701px) {
   .sidebar {
     padding-top: 20px;
@@ -1575,6 +1639,8 @@ h1 em {
     display: none;
   }
 }
+
+/* Tablet widths */
 @media (max-width: 800px) {
   .app-shell {
     grid-template-columns: 300px 1fr;
@@ -1587,6 +1653,8 @@ h1 em {
     font-size: 9px;
   }
 }
+
+/* Mobile layout */
 @media (max-width: 700px) {
   .app-shell {
     display: block;
@@ -1638,7 +1706,7 @@ h1 em {
   .place-item {
     min-width: 144px;
     padding: 9px 8px;
-    border: 1px solid #2d3d3d;
+    border: 1px solid var(--sidebar-border-subtle);
     border-radius: 4px;
   }
   .place-index,
@@ -1793,8 +1861,7 @@ h1 em {
     top: 65px;
     left: 15px;
   }
-}
-@media (max-width: 700px) {
+
   .app-shell {
     --mobile-sheet-height: clamp(240px, 36dvh, 310px);
   }
@@ -1826,7 +1893,7 @@ h1 em {
     min-height: 46px;
     margin: 0;
     padding: 7px 9px;
-    border: 1px solid #364447;
+    border: 1px solid var(--sidebar-border);
     border-radius: 4px;
     scroll-snap-align: start;
   }
@@ -1954,7 +2021,7 @@ h1 em {
     border-radius: 6px;
     background: transparent;
     color: #2f4640;
-    font-family: 'Space Grotesk', sans-serif;
+    font-family: var(--font-display);
     font-size: 9px;
     font-weight: 700;
     cursor: pointer;
@@ -1987,7 +2054,7 @@ h1 em {
     margin-left: 2px;
     color: #80918a;
     font-size: 12px;
-    transition: transform 0.18s ease;
+    transition: transform var(--transition-fast);
   }
   .mobile-panel-body {
     display: none;
@@ -2102,6 +2169,8 @@ h1 em {
     line-height: 1.45;
   }
 }
+
+/* Narrow phones */
 @media (max-width: 380px) {
   .location-pill {
     width: 35px;
