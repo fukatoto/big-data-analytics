@@ -13,6 +13,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     PlacesVisible: false,
     events: [],
     eventsStatus: 'loading',
+    selectedEventUrl: null,
     eventFilters: {
       status: 'all',
       format: 'all',
@@ -152,13 +153,21 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       minute: '2-digit',
     });
     const statusKey = eventStatusKey(event.status);
-    const card = document.createElement('a');
+    const card = document.createElement('button');
     card.className = 'event-card';
-    card.href = event.source_url;
-    card.target = '_blank';
-    card.rel = 'noopener noreferrer';
+    card.type = 'button';
     card.setAttribute('aria-label', t('eventOpen', { event: event.title }));
+    card.addEventListener('click', () => showEventDetail(event));
 
+    const visual = document.createElement('span');
+    visual.className = 'event-card-visual';
+    const image = document.createElement('img');
+    image.src = event.cover_image_url;
+    image.alt = '';
+    image.loading = 'lazy';
+    image.addEventListener('error', () =>
+      visual.classList.add('has-image-error'),
+    );
     const date = document.createElement('span');
     date.className = 'event-date';
     const day = document.createElement('strong');
@@ -169,6 +178,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       dateParts.find((part) => part.type === 'month')?.value ?? ''
     ).replace('.', '');
     date.append(day, month);
+    visual.append(image, date);
 
     const content = document.createElement('span');
     content.className = 'event-card-content';
@@ -188,7 +198,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     meta.className = 'event-meta';
     meta.textContent = `${timeFormatter.format(start)}–${timeFormatter.format(end)} · ${event.price}`;
     content.append(topLine, title, meta);
-    card.append(date, content);
+    card.append(visual, content);
     return card;
   }
 
@@ -224,6 +234,132 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       return;
     }
     events.forEach((event) => list.append(createEventCard(event)));
+  }
+
+  function renderEventDetail() {
+    const container = document.getElementById('event-detail');
+    const event = state.events.find(
+      ({ source_url: sourceUrl }) => sourceUrl === state.selectedEventUrl,
+    );
+    container.replaceChildren();
+    container.hidden = !event;
+    document
+      .getElementById('place-detail')
+      .classList.toggle('is-showing-event', Boolean(event));
+    document
+      .querySelector('.sidebar')
+      .classList.toggle('is-showing-event', Boolean(event));
+    if (!event) return;
+
+    const language = document.documentElement.lang || 'de';
+    const locale =
+      { de: 'de-DE', en: 'en-GB', fr: 'fr-FR' }[language] ?? language;
+    const start = new Date(event.start);
+    const end = new Date(event.end);
+    const dateFormatter = new Intl.DateTimeFormat(locale, {
+      weekday: 'long',
+      day: '2-digit',
+      month: 'long',
+      year: 'numeric',
+    });
+    const timeFormatter = new Intl.DateTimeFormat(locale, {
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+    const statusKey = eventStatusKey(event.status);
+
+    const back = document.createElement('button');
+    back.className = 'event-detail-back';
+    back.type = 'button';
+    back.setAttribute('aria-label', t('eventBackToOverview'));
+    back.innerHTML = '<span aria-hidden="true">←</span>';
+    const backLabel = document.createElement('span');
+    backLabel.textContent = t('eventBackToOverview');
+    back.append(backLabel);
+    back.addEventListener('click', closeEventDetail);
+
+    const cover = document.createElement('figure');
+    cover.className = 'event-detail-cover';
+    const coverImage = document.createElement('img');
+    coverImage.src = event.cover_image_url;
+    coverImage.alt = event.cover_image_alt ?? '';
+    coverImage.decoding = 'async';
+    coverImage.addEventListener('error', () => cover.remove());
+    cover.append(coverImage);
+    if (event.cover_image_credit) {
+      const credit = document.createElement('figcaption');
+      credit.textContent = `© ${event.cover_image_credit}`;
+      cover.append(credit);
+    }
+
+    const eyebrow = document.createElement('div');
+    eyebrow.className = 'event-detail-eyebrow';
+    const format = document.createElement('span');
+    format.textContent = event.format;
+    const status = document.createElement('span');
+    status.className = `event-status ${statusKey === 'eventAvailable' ? 'is-available' : 'is-sold-out'}`;
+    status.textContent = statusKey ? t(statusKey) : event.status;
+    eyebrow.append(format, status);
+
+    const title = document.createElement('h2');
+    title.id = 'event-detail-title';
+    title.tabIndex = -1;
+    title.textContent = event.title;
+
+    const schedule = document.createElement('p');
+    schedule.className = 'event-detail-schedule';
+    schedule.textContent = `${dateFormatter.format(start)} · ${timeFormatter.format(start)}–${timeFormatter.format(end)}`;
+
+    const facts = document.createElement('dl');
+    facts.className = 'event-detail-facts';
+    const addFact = (labelKey, value) => {
+      if (!value) return;
+      const item = document.createElement('div');
+      const term = document.createElement('dt');
+      const description = document.createElement('dd');
+      term.textContent = t(labelKey);
+      description.textContent = value;
+      item.append(term, description);
+      facts.append(item);
+    };
+    addFact('eventLocation', event.location);
+    addFact('eventMeetingPoint', event.meeting_point);
+    addFact('eventTargetGroups', event.target_groups?.join(' · '));
+    addFact('eventPrice', event.price);
+    addFact('eventProvider', event.provider);
+
+    const source = document.createElement('a');
+    source.className = 'event-detail-link';
+    source.href = event.source_url;
+    source.target = '_blank';
+    source.rel = 'noopener noreferrer';
+    source.innerHTML = `<span>${t('eventMoreInformation')}</span><span aria-hidden="true">↗</span>`;
+
+    container.append(back, cover, eyebrow, title, schedule, facts, source);
+  }
+
+  function showEventDetail(event) {
+    state.selectedEventUrl = event.source_url;
+    document.getElementById('event-overview').hidden = true;
+    renderEventDetail();
+    closeTentPopup();
+    requestAnimationFrame(() => {
+      document.querySelector('.sidebar').scrollTo({ top: 0, behavior: 'smooth' });
+      document.getElementById('event-detail-title')?.focus({ preventScroll: true });
+    });
+  }
+
+  function closeEventDetail() {
+    state.selectedEventUrl = null;
+    renderEventDetail();
+    if (state.selected === 'zelt') {
+      document.getElementById('event-overview').hidden = false;
+      requestAnimationFrame(() => {
+        document
+          .getElementById('event-overview-title')
+          ?.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      });
+    }
   }
 
   function refreshEventViews() {
@@ -293,12 +429,11 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       const start = new Date(event.start);
       const end = new Date(event.end);
       const statusKey = eventStatusKey(event.status);
-      const link = document.createElement('a');
+      const link = document.createElement('button');
       link.className = 'tent-popup-event';
-      link.href = event.source_url;
-      link.target = '_blank';
-      link.rel = 'noopener noreferrer';
+      link.type = 'button';
       link.setAttribute('aria-label', t('eventOpen', { event: event.title }));
+      link.addEventListener('click', () => showEventDetail(event));
       const date = document.createElement('span');
       date.className = 'tent-popup-date';
       date.textContent = dateFormatter.format(start).replace('.', '');
@@ -374,6 +509,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     const detailLink = document.getElementById('detail-link');
     const detailDescription = document.getElementById('detail-description');
     const eventOverview = document.getElementById('event-overview');
+    const eventDetail = document.getElementById('event-detail');
     const showsEvents = state.selected === 'zelt';
     detail.classList.toggle('has-events', showsEvents);
     document
@@ -389,8 +525,17 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       ? t(place.descriptionKey)
       : (place.description ?? '');
     detailDescription.hidden = showsEvents;
-    eventOverview.hidden = !showsEvents;
+    if (!showsEvents) state.selectedEventUrl = null;
+    const showsEventDetail =
+      showsEvents &&
+      state.events.some(
+        ({ source_url: sourceUrl }) => sourceUrl === state.selectedEventUrl,
+      );
+    eventOverview.hidden = !showsEvents || showsEventDetail;
+    eventDetail.hidden = !showsEventDetail;
+    detail.classList.toggle('is-showing-event', showsEventDetail);
     if (showsEvents) renderEvents();
+    if (showsEventDetail) renderEventDetail();
     detailLink.hidden = showsEvents || !place.source;
     if (place.source) {
       detailLink.href = place.source;

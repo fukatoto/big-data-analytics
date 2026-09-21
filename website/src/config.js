@@ -44,13 +44,23 @@ export const places = {
     source: 'https://gdi.berlin.de/services/wfs/berlin_txl?service=WFS&request=GetCapabilities',
     projectAreaId: 'tegeler-stadtheide'
   },
-  'heideBlick': {
-    name: 'Heideblick', number: '04 / 04', coordinates: [13.265540, 52.560249],
+  'heideblick': {
+    name: 'Heideblick', number: '04 / 04', coordinates: [13.265539352308727, 52.56025064158781],
     description: 'The "Heideblick" offers a unique change of perspective: Let your gaze wander across the vast expanse of the heath, with the striking Berlin skyline in the background.',
     //source: 'https://urbantechrepublic.de/en/faq/'
   },
+  'bunker': {
+    name: 'Freizeit', number: '04 / 04', coordinates: [13.25783266632616, 52.55416615425812],
+    description: 'Erholung und Freizeit inmitten schützenswerter Natur auf dem ehemaligen Flughafenareal.',
+    //source: 'https://urbantechrepublic.de/en/faq/'
+  },
+  'rundbogenantenne': {
+    name: 'Rundbogenantenne', number: '04 / 04', coordinates: [13.287565760368738, 52.56150630401666],
+    description: 'Landschaftserlebnis und Aufenthaltsmöglichkeiten zwischen historischen Elementen aus der Flughafenära: Die Rundbogenantenne als Aussichtplattform.',
+    //source: 'https://urbantechrepublic.de/en/faq/'
+  },
   'zelt': {
-    name: 'Zelt', number: '04 / 04', coordinates: [13.275592, 52.553011],
+    name: 'Zelt', number: '04 / 04', coordinates: [13.27559195542228, 52.55301043217409],
     description: '',
     //source: 'https://urbantechrepublic.de/en/faq/'
   }

@@ -13,7 +13,10 @@
     "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
     "price": "Personen ab 18 Jahre: 5,00 €; Personen unter 18 Jahren: kostenfrei",
     "provider": "Drea Berg, im Auftrag von Campus Stadt Natur",
-    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-09-22_1700/flora-statt-flugzeug-nachhaltige-stadtentwicklung-am-txl-fahrrad-tour-4/"
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-09-22_1700/flora-statt-flugzeug-nachhaltige-stadtentwicklung-am-txl-fahrrad-tour-4/",
+    "cover_image_url": "https://www.campus-stadt-natur.de/fileadmin/_processed_/9/6/csm_campusstadtnatur_tegelerstadtheide_heide_c_dronebrothers_7f640166a6.jpg",
+    "cover_image_alt": "Blühendes Heidekraut, Berg-Jasione und Gräser auf der Tegeler Stadtheide.",
+    "cover_image_credit": "Dronebrothers"
   },
   {
     "title": "Die Highlights rund ums Rollfeld TXL – Elektrocar-Tour",
@@ -29,7 +32,10 @@
     "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
     "price": "Personen ab 18 Jahre: 5,00 €; Personen unter 18 Jahren: kostenfrei",
     "provider": "Angelika Bruck, im Auftrag von Campus Stadt Natur",
-    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-03_1000/die-highlights-rund-ums-rollfeld-txl-elektrocar-tour-3/"
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-03_1000/die-highlights-rund-ums-rollfeld-txl-elektrocar-tour-3/",
+    "cover_image_url": "https://www.campus-stadt-natur.de/fileadmin/_processed_/6/1/csm_campusstadtnatur_tegelerstadtheide_flughafenlicht_pflanze_c_stefan_klenke_e6be7d3ab1.jpg",
+    "cover_image_alt": "Altes Flughafenlicht auf der Landebahn, überwachsen von Gräsern.",
+    "cover_image_credit": "Stefan Klenke"
   },
   {
     "title": "Ordnung(en) im Insektenreich – Workshop für Schulklassen 2-6 oder 7-9",
@@ -45,7 +51,10 @@
     "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
     "price": "Schulklassen: 15,00 €",
     "provider": "Jannes Stickamp, im Auftrag vom Campus Stadt Natur",
-    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-06_1000/ordnungen-im-insektenreich-workshop-fuer-schulklassen-2-6-oder-7-9-3/"
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-06_1000/ordnungen-im-insektenreich-workshop-fuer-schulklassen-2-6-oder-7-9-3/",
+    "cover_image_url": "https://www.campus-stadt-natur.de/fileadmin/_processed_/8/1/csm_campusstadtnatur_tegelerstadtheide_mikroskop_c_frank_sperling_1ba8cd5947.jpg",
+    "cover_image_alt": "Mikroskopierworkshop auf der Tegeler Stadtheide.",
+    "cover_image_credit": "Frank Sperling"
   },
   {
     "title": "Zugvögel auf der Tegeler Stadtheide",
@@ -61,7 +70,10 @@
     "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
     "price": "kostenfrei; Anmeldung erforderlich",
     "provider": "Frank Sieste (NABU AG Flughafensee), mit Campus Stadt Natur",
-    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-10_0800/zugvoegel-auf-der-tegeler-stadtheide/"
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-10_0800/zugvoegel-auf-der-tegeler-stadtheide/",
+    "cover_image_url": "https://www.campus-stadt-natur.de/fileadmin/_processed_/8/3/csm_CampusStadtNatur_TegelerStadtheide_Zugvoegel_Heribert_Bechen_88d0db645c.jpg",
+    "cover_image_alt": "Zugvögel über der Tegeler Stadtheide.",
+    "cover_image_credit": "Heribert Bechen"
   },
   {
     "title": "Vom Flughafen zum Naturraum Tegeler Stadtheide – Elektrocar-Tour",
@@ -77,6 +89,9 @@
     "meeting_point": "Endhaltestelle Buslinie 109 (Urban Tech Republic), 13405 Berlin",
     "price": "Personen ab 18 Jahre: 5,00 €; Personen unter 18 Jahren: kostenfrei",
     "provider": "Detlev Dahlmann, im Auftrag von Campus Stadt Natur",
-    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-22_1600/vom-flughafen-zum-naturraum-tegeler-stadtheide-elektrocar-tour-4/"
+    "source_url": "https://www.campus-stadt-natur.de/angebote-aktionen/kalender/detail/2026-10-22_1600/vom-flughafen-zum-naturraum-tegeler-stadtheide-elektrocar-tour-4/",
+    "cover_image_url": "https://www.campus-stadt-natur.de/fileadmin/_processed_/8/a/csm_campusstadtnatur_standorte_tegelerstadtheide_header_melextour_c_olebader_929c763ea6.jpg",
+    "cover_image_alt": "Zwei Elektrocars auf der Landebahn des ehemaligen Flughafens Tegel.",
+    "cover_image_credit": "Ole Bader"
   }
 ]
