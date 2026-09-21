@@ -1,154 +1,488 @@
 <!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <meta name="theme-color" content="#101b1e">
-  <meta name="description" content="Explore the former Berlin Tegel Airport terminal campus and Urban Tech Republic in an interactive 3D map.">
-  <title>Berlin TXL • 3D Map</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
-  <link rel="icon" type="image/png" href="/berlin_txl.png">
-</head>
-<body>
-  <div class="app-shell">
-    <aside class="sidebar" aria-label="Map information and places">
-      <div class="sidebar-top">
-        <div class="brand-lockup">
-          <span class="brand-mark" aria-hidden="true">TXL<span class="brand-mark-dot">.</span></span>
-          <span class="brand-caption">BERLIN<br>URBAN TECH REPUBLIC</span>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#101b1e" />
+    <meta
+      name="description"
+      content="Explore the former Berlin Tegel Airport terminal campus and Urban Tech Republic in an interactive 3D map."
+    />
+    <title>Berlin TXL • 3D Map</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="icon" type="image/png" href="/berlin_txl.png" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <aside class="sidebar" aria-label="Map information and places">
+        <div class="sidebar-top">
+          <div class="brand-lockup">
+            <span class="brand-mark" aria-hidden="true"
+              >TXL<span class="brand-mark-dot">.</span></span
+            >
+            <span class="brand-caption">BERLIN<br />URBAN TECH REPUBLIC</span>
+          </div>
+          <div class="edition-label">
+            <span class="edition-line"></span>
+            <span data-i18n="interactiveAtlas">INTERACTIVE ATLAS</span>
+            <span class="edition-number" id="edition-number">01 / 06</span>
+          </div>
+          <h1>
+            <span data-i18n="explore">Explore</span><br /><em>Berlin TXL</em>
+          </h1>
+          <p class="intro" data-i18n="intro">
+            The former Flughafen Berlin Tegel, seen from a new angle. Explore
+            its landmark terminals in 3D.
+          </p>
+          <div class="fact-row">
+            <div>
+              <strong>190 <small>ha</small></strong
+              ><span data-i18n="stadtheide">Tegeler Stadtheide</span>
+            </div>
+            <span class="fact-divider" aria-hidden="true"></span>
+            <div>
+              <strong>500 <small>ha</small></strong
+              ><span data-i18n="formerAirport">Former Airport</span>
+            </div>
+          </div>
         </div>
-        <div class="edition-label"><span class="edition-line"></span> <span data-i18n="interactiveAtlas">INTERACTIVE ATLAS</span> <span class="edition-number" id="edition-number">01 / 06</span></div>
-        <h1><span data-i18n="explore">Explore</span><br><em>Berlin TXL</em></h1>
-        <p class="intro" data-i18n="intro">The former Flughafen Berlin Tegel, seen from a new angle. Explore its landmark terminals in 3D.</p>
-        <div class="fact-row">
-          <div><strong>190 <small>ha</small></strong><span data-i18n="stadtheide">Tegeler Stadtheide</span></div>
-          <span class="fact-divider" aria-hidden="true"></span>
-          <div><strong>500 <small>ha</small></strong><span data-i18n="formerAirport">Former Airport</span></div>
-        </div>
-      </div>
 
-      <div class="places-section">
-        <div class="section-heading"><span data-i18n="placesAndAreas">PLACES &amp; PROJECT AREAS</span><span>06</span></div>
-        <div class="place-list">
-          <div class="place-group-heading"><span data-i18n="projectAreas">PROJECT AREAS</span><span>03</span></div>
-          <button class="place-item is-project-area is-active" style="--area-color: #166cb8" type="button" data-place="tegeler-stadtheide" aria-pressed="true"><span class="place-index">01</span><span class="place-text"><strong data-i18n="tegelerStadtheide">Tegeler Stadtheide landscape area</strong><small data-i18n="natureRecreationArea">Nature and recreation area</small></span><span class="place-arrow" aria-hidden="true">↗</span></button>
-          <button class="place-item is-project-area" style="--area-color: #a61be1" type="button" data-place="urban-tech-republic" aria-pressed="false"><span class="place-index">02</span><span class="place-text"><strong data-i18n="urbanTechRepublic">The Urban Tech Republic</strong><small data-i18n="researchInnovationSite">Research and innovation site</small></span><span class="place-arrow" aria-hidden="true">↗</span></button>
-          <button class="place-item is-project-area" style="--area-color: #c82121" type="button" data-place="schumacher-quartier" aria-pressed="false"><span class="place-index">03</span><span class="place-text"><strong data-i18n="schumacherQuartier">Schumacher Quartier</strong><small data-i18n="newResidentialQuarter">New residential quarter</small></span><span class="place-arrow" aria-hidden="true">↗</span></button>
-          <button id="terminal-places-toggle" class="terminal-places-toggle" type="button" role="switch" aria-checked="false">
-            <span data-i18n="terminalPlaces">TERMINAL LOCATIONS</span><i aria-hidden="true"><b></b></i>
+        <div class="places-section">
+          <div class="section-heading">
+            <span data-i18n="placesAndAreas">PLACES &amp; PROJECT AREAS</span
+            ><span>06</span>
+          </div>
+          <div class="place-list">
+            <div class="place-group-heading">
+              <span data-i18n="projectAreas">PROJECT AREAS</span><span>03</span>
+            </div>
+            <button
+              class="place-item is-project-area is-active"
+              style="--area-color: #166cb8"
+              type="button"
+              data-place="tegeler-stadtheide"
+              aria-pressed="true"
+            >
+              <span class="place-index">01</span
+              ><span class="place-text"
+                ><strong data-i18n="tegelerStadtheide"
+                  >Tegeler Stadtheide landscape area</strong
+                ><small data-i18n="natureRecreationArea"
+                  >Nature and recreation area</small
+                ></span
+              ><span class="place-arrow" aria-hidden="true">↗</span>
+            </button>
+            <button
+              class="place-item is-project-area"
+              style="--area-color: #a61be1"
+              type="button"
+              data-place="urban-tech-republic"
+              aria-pressed="false"
+            >
+              <span class="place-index">02</span
+              ><span class="place-text"
+                ><strong data-i18n="urbanTechRepublic"
+                  >The Urban Tech Republic</strong
+                ><small data-i18n="researchInnovationSite"
+                  >Research and innovation site</small
+                ></span
+              ><span class="place-arrow" aria-hidden="true">↗</span>
+            </button>
+            <button
+              class="place-item is-project-area"
+              style="--area-color: #c82121"
+              type="button"
+              data-place="schumacher-quartier"
+              aria-pressed="false"
+            >
+              <span class="place-index">03</span
+              ><span class="place-text"
+                ><strong data-i18n="schumacherQuartier"
+                  >Schumacher Quartier</strong
+                ><small data-i18n="newResidentialQuarter"
+                  >New residential quarter</small
+                ></span
+              ><span class="place-arrow" aria-hidden="true">↗</span>
+            </button>
+            <button
+              id="terminal-places-toggle"
+              class="terminal-places-toggle"
+              type="button"
+              role="switch"
+              aria-checked="false"
+            >
+              <span data-i18n="places">TERMINAL LOCATIONS</span
+              ><i aria-hidden="true"><b></b></i>
+            </button>
+            <div id="terminal-places" class="terminal-places" hidden>
+              <button
+                class="place-item is-terminal-place"
+                type="button"
+                data-place="terminal-a"
+                aria-pressed="false"
+              >
+                <span class="place-index">04</span
+                ><span class="place-text"
+                  ><strong>Terminal A</strong
+                  ><small data-i18n="futureCampus"
+                    >Future university campus</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="place-item is-terminal-place"
+                type="button"
+                data-place="terminal-b"
+                aria-pressed="false"
+              >
+                <span class="place-index">05</span
+                ><span class="place-text"
+                  ><strong>Terminal B</strong
+                  ><small data-i18n="innovationSpace"
+                    >Innovation &amp; startup space</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="place-item is-terminal-place"
+                type="button"
+                data-place="terminal-d"
+                aria-pressed="false"
+              >
+                <span class="place-index">06</span
+                ><span class="place-text"
+                  ><strong>Terminal D</strong
+                  ><small data-i18n="technologyCentre"
+                    >Technology centre</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+            </div>
+          </div>
+          <div class="place-detail" id="place-detail" aria-live="polite">
+            <div class="detail-kicker">
+              <span id="detail-kicker-label" data-i18n="selectedProjectArea"
+                >SELECTED PROJECT AREA</span
+              >
+              <span id="detail-number">01 / 06</span>
+            </div>
+            <h2 id="detail-title">Tegeler Stadtheide landscape area</h2>
+            <p id="detail-description">
+              The Tegeler Stadtheide landscape area connects nature
+              conservation, recreation and the open landscape of Berlin TXL.
+            </p>
+            <a
+              id="detail-link"
+              href="https://urbantechrepublic.de/en/real-estate-finder-map/"
+              target="_blank"
+              rel="noopener noreferrer"
+              ><span data-i18n="projectInformation">Project information</span>
+              <span aria-hidden="true">↗</span></a
+            >
+            <section
+              id="event-overview"
+              class="event-overview"
+              aria-labelledby="event-overview-title"
+              hidden
+            >
+              <div class="event-overview-heading">
+                <h3 id="event-overview-title">Events</h3>
+                <span id="event-count"></span>
+              </div>
+              <div id="event-list" class="event-list"></div>
+            </section>
+          </div>
+        </div>
+
+        <div class="sidebar-bottom">
+          <span class="sidebar-bottom-dot" aria-hidden="true"></span
+          ><span data-i18n="footer"
+            >Existing map data · future uses are planned</span
+          >
+        </div>
+      </aside>
+
+      <main
+        class="map-stage"
+        aria-label="Interactive map of Berlin TXL"
+        data-i18n-aria="mapStageLabel"
+      >
+        <div
+          id="map"
+          aria-label="Map of the former Tegel Airport terminal area"
+          data-i18n-aria="mapLabel"
+        ></div>
+        <div class="map-tint" aria-hidden="true"></div>
+        <div class="map-topbar">
+          <div class="location-pill">
+            <span class="pulse-dot" aria-hidden="true"></span>
+            <span data-i18n="location">BERLIN, GERMANY</span>
+            <span class="pill-separator">/</span>
+            <span id="map-coordinates">52.554° N · 13.289° E</span>
+          </div>
+          <div class="topbar-actions">
+            <label class="language-control">
+              <span class="sr-only" data-i18n="language">Language</span>
+              <select
+                id="language-select"
+                aria-label="Language"
+                data-i18n-aria="language"
+              >
+                <option value="de">DE</option>
+                <option value="en">EN</option>
+                <option value="fr">FR</option>
+              </select>
+            </label>
+            <div
+              class="view-switch"
+              role="group"
+              aria-label="Map dimension"
+              data-i18n-aria="mapDimension"
+            >
+              <button id="view-2d" type="button" aria-pressed="false">
+                2D
+              </button>
+              <button
+                id="view-3d"
+                class="is-active"
+                type="button"
+                aria-pressed="true"
+              >
+                3D
+              </button>
+            </div>
+          </div>
+        </div>
+        <div class="map-caption" id="map-caption">
+          <span class="caption-line" aria-hidden="true"></span
+          ><span>01 <span class="caption-slash">/</span> TERMINAL CAMPUS</span>
+        </div>
+        <section
+          class="project-area-control mobile-map-panel"
+          aria-labelledby="project-area-control-title"
+        >
+          <button
+            class="mobile-panel-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="project-area-panel-body"
+          >
+            <span
+              class="mobile-panel-toggle-icon is-areas"
+              aria-hidden="true"
+            ></span
+            ><span data-i18n="projectAreas">PROJECT AREAS</span
+            ><span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
           </button>
-          <div id="terminal-places" class="terminal-places" hidden>
-            <button class="place-item is-terminal-place" type="button" data-place="terminal-a" aria-pressed="false"><span class="place-index">04</span><span class="place-text"><strong>Terminal A</strong><small data-i18n="futureCampus">Future university campus</small></span><span class="place-arrow" aria-hidden="true">↗</span></button>
-            <button class="place-item is-terminal-place" type="button" data-place="terminal-b" aria-pressed="false"><span class="place-index">05</span><span class="place-text"><strong>Terminal B</strong><small data-i18n="innovationSpace">Innovation &amp; startup space</small></span><span class="place-arrow" aria-hidden="true">↗</span></button>
-            <button class="place-item is-terminal-place" type="button" data-place="terminal-d" aria-pressed="false"><span class="place-index">06</span><span class="place-text"><strong>Terminal D</strong><small data-i18n="technologyCentre">Technology centre</small></span><span class="place-arrow" aria-hidden="true">↗</span></button>
-          </div>
-        </div>
-        <div class="place-detail" id="place-detail" aria-live="polite">
-          <div class="detail-kicker"><span id="detail-kicker-label" data-i18n="selectedProjectArea">SELECTED PROJECT AREA</span> <span id="detail-number">01 / 06</span></div>
-          <h2 id="detail-title">Tegeler Stadtheide landscape area</h2>
-          <p id="detail-description">The Tegeler Stadtheide landscape area connects nature conservation, recreation and the open landscape of Berlin TXL.</p>
-          <a id="detail-link" href="https://urbantechrepublic.de/en/real-estate-finder-map/" target="_blank" rel="noopener noreferrer"><span data-i18n="projectInformation">Project information</span> <span aria-hidden="true">↗</span></a>
-        </div>
-      </div>
-
-      <div class="sidebar-bottom"><span class="sidebar-bottom-dot" aria-hidden="true"></span><span data-i18n="footer">Existing map data · future uses are planned</span></div>
-    </aside>
-
-    <main class="map-stage" aria-label="Interactive map of Berlin TXL" data-i18n-aria="mapStageLabel">
-      <div id="map" aria-label="Map of the former Tegel Airport terminal area" data-i18n-aria="mapLabel"></div>
-      <div class="map-tint" aria-hidden="true"></div>
-      <div class="map-topbar">
-        <div class="location-pill"><span class="pulse-dot" aria-hidden="true"></span> <span data-i18n="location">BERLIN, GERMANY</span> <span class="pill-separator">/</span> <span id="map-coordinates">52.554° N · 13.289° E</span></div>
-        <div class="topbar-actions">
-          <label class="language-control">
-            <span class="sr-only" data-i18n="language">Language</span>
-            <select id="language-select" aria-label="Language" data-i18n-aria="language">
-              <option value="de">DE</option>
-              <option value="en">EN</option>
-              <option value="fr">FR</option>
-            </select>
-          </label>
-          <div class="view-switch" role="group" aria-label="Map dimension" data-i18n-aria="mapDimension">
-            <button id="view-2d" type="button" aria-pressed="false">2D</button>
-            <button id="view-3d" class="is-active" type="button" aria-pressed="true">3D</button>
-          </div>
-        </div>
-      </div>
-      <div class="map-caption" id="map-caption"><span class="caption-line" aria-hidden="true"></span><span>01 <span class="caption-slash">/</span> TERMINAL CAMPUS</span></div>
-      <section class="project-area-control mobile-map-panel" aria-labelledby="project-area-control-title">
-        <button class="mobile-panel-toggle" type="button" aria-expanded="false" aria-controls="project-area-panel-body">
-          <span class="mobile-panel-toggle-icon is-areas" aria-hidden="true"></span><span data-i18n="projectAreas">PROJECT AREAS</span><span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
-        </button>
-        <div class="mobile-panel-body" id="project-area-panel-body">
-          <div class="project-area-control-heading">
-            <div>
-              <span class="project-area-control-kicker" data-i18n="projectAreas">PROJECT AREAS</span>
-              <h2 id="project-area-control-title" data-i18n="selectAreas">Select areas</h2>
+          <div class="mobile-panel-body" id="project-area-panel-body">
+            <div class="project-area-control-heading">
+              <div>
+                <span
+                  class="project-area-control-kicker"
+                  data-i18n="projectAreas"
+                  >PROJECT AREAS</span
+                >
+                <h2 id="project-area-control-title" data-i18n="selectAreas">
+                  Select areas
+                </h2>
+              </div>
+              <button
+                class="desktop-panel-collapse"
+                type="button"
+                aria-expanded="true"
+                aria-controls="project-area-desktop-content"
+                data-i18n-aria="togglePanel"
+              ></button>
             </div>
-            <button class="desktop-panel-collapse" type="button" aria-expanded="true" aria-controls="project-area-desktop-content" data-i18n-aria="togglePanel"></button>
-          </div>
-          <div id="project-area-desktop-content" class="desktop-collapsible-content">
-            <div class="project-area-options">
-              <button type="button" class="project-area-toggle" style="--area-color: #a61be1" data-project-area="urban-tech-republic" aria-pressed="false">
-                <i aria-hidden="true"></i><span data-i18n="urbanTechRepublic">The Urban Tech Republic</span><b aria-hidden="true">✓</b>
+            <div
+              id="project-area-desktop-content"
+              class="desktop-collapsible-content"
+            >
+              <div class="project-area-options">
+                <button
+                  type="button"
+                  class="project-area-toggle"
+                  style="--area-color: #a61be1"
+                  data-project-area="urban-tech-republic"
+                  aria-pressed="false"
+                >
+                  <i aria-hidden="true"></i
+                  ><span data-i18n="urbanTechRepublic"
+                    >The Urban Tech Republic</span
+                  ><b aria-hidden="true">✓</b>
+                </button>
+                <button
+                  type="button"
+                  class="project-area-toggle"
+                  style="--area-color: #c82121"
+                  data-project-area="schumacher-quartier"
+                  aria-pressed="false"
+                >
+                  <i aria-hidden="true"></i
+                  ><span data-i18n="schumacherQuartier"
+                    >Schumacher Quartier</span
+                  ><b aria-hidden="true">✓</b>
+                </button>
+                <button
+                  type="button"
+                  class="project-area-toggle is-active"
+                  style="--area-color: #166cb8"
+                  data-project-area="tegeler-stadtheide"
+                  aria-pressed="true"
+                >
+                  <i aria-hidden="true"></i
+                  ><span data-i18n="tegelerStadtheide"
+                    >Tegeler Stadtheide landscape area</span
+                  ><b aria-hidden="true">✓</b>
+                </button>
+              </div>
+              <div class="project-area-bulk-actions">
+                <button
+                  id="show-all-project-areas"
+                  type="button"
+                  data-i18n="showAllAreas"
+                >
+                  Show all
+                </button>
+                <button
+                  id="hide-all-project-areas"
+                  type="button"
+                  data-i18n="hideAllAreas"
+                >
+                  Hide all
+                </button>
+              </div>
+              <button
+                id="project-area-fill-toggle"
+                type="button"
+                class="project-fill-toggle"
+                aria-pressed="false"
+              >
+                <span data-i18n="coloredAreaFill">Colored area fill</span
+                ><i aria-hidden="true"><b></b></i>
               </button>
-              <button type="button" class="project-area-toggle" style="--area-color: #c82121" data-project-area="schumacher-quartier" aria-pressed="false">
-                <i aria-hidden="true"></i><span data-i18n="schumacherQuartier">Schumacher Quartier</span><b aria-hidden="true">✓</b>
+              <p data-i18n="projectAreaSource">
+                Official boundaries: Tegel Projekt GmbH / Berlin TXL
+              </p>
+            </div>
+          </div>
+        </section>
+        <section
+          class="height-control mobile-map-panel"
+          aria-labelledby="height-control-title"
+        >
+          <button
+            class="mobile-panel-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="height-panel-body"
+          >
+            <span
+              class="mobile-panel-toggle-icon is-height"
+              aria-hidden="true"
+            ></span
+            ><span data-i18n="heightTolerance">Height tolerance</span
+            ><span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
+          </button>
+          <div class="mobile-panel-body" id="height-panel-body">
+            <div class="height-control-heading">
+              <div>
+                <span class="height-control-kicker" data-i18n="groundAnalysis"
+                  >GROUND ANALYSIS</span
+                >
+                <h2 id="height-control-title" data-i18n="heightTolerance">
+                  Height tolerance
+                </h2>
+              </div>
+              <div class="height-control-heading-actions">
+                <output id="height-threshold-value" for="height-threshold"
+                  >2.5 m</output
+                >
+                <button
+                  class="desktop-panel-collapse"
+                  type="button"
+                  aria-expanded="true"
+                  aria-controls="height-desktop-content"
+                  data-i18n-aria="togglePanel"
+                ></button>
+              </div>
+            </div>
+            <div
+              id="height-desktop-content"
+              class="desktop-collapsible-content"
+            >
+              <button
+                id="height-grid-toggle"
+                type="button"
+                class="height-grid-toggle"
+                role="switch"
+                aria-checked="false"
+                disabled
+              >
+                <span data-i18n="showHeightGrid">Show analysis grid</span
+                ><i aria-hidden="true"><b></b></i>
               </button>
-              <button type="button" class="project-area-toggle is-active" style="--area-color: #166cb8" data-project-area="tegeler-stadtheide" aria-pressed="true">
-                <i aria-hidden="true"></i><span data-i18n="tegelerStadtheide">Tegeler Stadtheide landscape area</span><b aria-hidden="true">✓</b>
-              </button>
+              <label for="height-threshold" data-i18n="maxLocalDifference"
+                >Maximum local difference</label
+              >
+              <input
+                id="height-threshold"
+                type="range"
+                min="0.1"
+                max="3"
+                step="0.1"
+                value="0.5"
+                disabled
+              />
+              <div class="height-legend" aria-live="polite">
+                <span
+                  ><i class="legend-swatch is-obstacle" aria-hidden="true"></i
+                  ><b id="obstacle-count">–</b>
+                  <span data-i18n="obstacles">obstacles</span></span
+                >
+                <span
+                  ><i class="legend-swatch is-clear" aria-hidden="true"></i
+                  ><b id="clear-count">–</b>
+                  <span data-i18n="clear">clear</span></span
+                >
+              </div>
+              <p id="height-data-status" data-i18n="loadingHeightData">
+                Loading CSV height data…
+              </p>
             </div>
-            <div class="project-area-bulk-actions">
-              <button id="show-all-project-areas" type="button" data-i18n="showAllAreas">Show all</button>
-              <button id="hide-all-project-areas" type="button" data-i18n="hideAllAreas">Hide all</button>
-            </div>
-            <button id="project-area-fill-toggle" type="button" class="project-fill-toggle" aria-pressed="false">
-              <span data-i18n="coloredAreaFill">Colored area fill</span><i aria-hidden="true"><b></b></i>
-            </button>
-            <p data-i18n="projectAreaSource">Official boundaries: Tegel Projekt GmbH / Berlin TXL</p>
           </div>
+        </section>
+        <div
+          class="map-actions"
+          role="group"
+          aria-label="Map views"
+          data-i18n-aria="mapViews"
+        >
+          <button id="stadtheide-view" type="button" aria-pressed="false">
+            <span class="action-icon" aria-hidden="true">⌖</span>
+            <span data-i18n="stadtheide">Stadtheide</span>
+          </button>
+          <button id="airport-view" type="button" aria-pressed="false">
+            <span class="action-icon" aria-hidden="true">◇</span>
+            <span data-i18n="formerAirport">Former airport</span>
+          </button>
         </div>
-      </section>
-      <section class="height-control mobile-map-panel" aria-labelledby="height-control-title">
-        <button class="mobile-panel-toggle" type="button" aria-expanded="false" aria-controls="height-panel-body">
-          <span class="mobile-panel-toggle-icon is-height" aria-hidden="true"></span><span data-i18n="heightTolerance">Height tolerance</span><span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
-        </button>
-        <div class="mobile-panel-body" id="height-panel-body">
-          <div class="height-control-heading">
-            <div>
-              <span class="height-control-kicker" data-i18n="groundAnalysis">GROUND ANALYSIS</span>
-              <h2 id="height-control-title" data-i18n="heightTolerance">Height tolerance</h2>
-            </div>
-            <div class="height-control-heading-actions">
-              <output id="height-threshold-value" for="height-threshold">2.5 m</output>
-              <button class="desktop-panel-collapse" type="button" aria-expanded="true" aria-controls="height-desktop-content" data-i18n-aria="togglePanel"></button>
-            </div>
-          </div>
-          <div id="height-desktop-content" class="desktop-collapsible-content">
-            <button id="height-grid-toggle" type="button" class="height-grid-toggle" role="switch" aria-checked="false" disabled>
-              <span data-i18n="showHeightGrid">Show analysis grid</span><i aria-hidden="true"><b></b></i>
-            </button>
-            <label for="height-threshold" data-i18n="maxLocalDifference">Maximum local difference</label>
-            <input id="height-threshold" type="range" min="0.1" max="3" step="0.1" value="0.5" disabled>
-            <div class="height-legend" aria-live="polite">
-              <span><i class="legend-swatch is-obstacle" aria-hidden="true"></i><b id="obstacle-count">–</b> <span data-i18n="obstacles">obstacles</span></span>
-              <span><i class="legend-swatch is-clear" aria-hidden="true"></i><b id="clear-count">–</b> <span data-i18n="clear">clear</span></span>
-            </div>
-            <p id="height-data-status" data-i18n="loadingHeightData">Loading CSV height data…</p>
-          </div>
+        <div class="map-help" data-i18n="mapHelp">
+          Drag to explore · Ctrl + drag to rotate · Scroll to zoom
         </div>
-      </section>
-      <div class="map-actions" role="group" aria-label="Map views" data-i18n-aria="mapViews">
-        <button id="stadtheide-view" type="button" aria-pressed="false"><span class="action-icon" aria-hidden="true">⌖</span> <span data-i18n="stadtheide">Stadtheide</span></button>
-        <button id="airport-view" type="button" aria-pressed="false"><span class="action-icon" aria-hidden="true">◇</span> <span data-i18n="formerAirport">Former airport</span></button>
-      </div>
-      <div class="map-help" data-i18n="mapHelp">Drag to explore · Ctrl + drag to rotate · Scroll to zoom</div>
-      <div class="map-error" id="map-error" role="alert" hidden><strong data-i18n="mapLoadError">The map could not load.</strong><br><span data-i18n="mapLoadHint">Check your connection and reload this page.</span></div>
-    </main>
-  </div>
-  <script type="module" src="/src/main.js"></script>
-</body>
+        <div class="map-error" id="map-error" role="alert" hidden>
+          <strong data-i18n="mapLoadError">The map could not load.</strong
+          ><br /><span data-i18n="mapLoadHint"
+            >Check your connection and reload this page.</span
+          >
+        </div>
+      </main>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
 </html>

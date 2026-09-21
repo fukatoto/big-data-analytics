@@ -1,10 +1,12 @@
 export const translations = {
   en: {
     pageTitle: 'Berlin TXL • 3D Map',
-    metaDescription: 'Explore the former Berlin Tegel Airport terminal campus and Urban Tech Republic in an interactive 3D map.',
+    metaDescription:
+      'Explore the former Berlin Tegel Airport terminal campus and Urban Tech Republic in an interactive 3D map.',
     interactiveAtlas: 'INTERACTIVE ATLAS',
     explore: 'Explore',
-    intro: 'The former Flughafen Berlin Tegel, seen from a new angle. Explore its landmark terminals in 3D.',
+    intro:
+      'The former Flughafen Berlin Tegel, seen from a new angle. Explore its landmark terminals in 3D.',
     mappedBuildings: 'Mapped buildings',
     placesToExplore: 'PLACES TO EXPLORE',
     placesAndAreas: 'PLACES & PROJECT AREAS',
@@ -14,6 +16,13 @@ export const translations = {
     selectedPlace: 'SELECTED PLACE',
     selectedProjectArea: 'SELECTED PROJECT AREA',
     projectInformation: 'Project information',
+    eventsAtTent: 'EVENTS',
+    eventCount: '{count} dates',
+    eventAvailable: 'Available',
+    eventSoldOut: 'Sold out',
+    eventOpen: 'Open event details: {event}',
+    eventsLoading: 'Loading events…',
+    eventsLoadError: 'Events could not be loaded.',
     footer: 'Existing map data · future uses are planned · V 1.0',
     mapStageLabel: 'Interactive map of Berlin TXL',
     mapLabel: 'Map of the former Tegel Airport terminal area',
@@ -22,7 +31,7 @@ export const translations = {
     terminalCampus: 'TERMINAL CAMPUS',
     formerAirportArea: 'FORMER AIRPORT AREA',
     projectAreas: 'PROJECT AREAS',
-    terminalPlaces: 'TERMINALS',
+    places: 'PLACES',
     selectAreas: 'Show or hide areas',
     urbanTechRepublic: 'The Urban Tech Republic',
     schumacherQuartier: 'Schumacher Quartier',
@@ -56,27 +65,37 @@ export const translations = {
     groundHeight: '{height} m ground',
     localReference: 'Local reference: {height} m',
     difference: 'Difference: {height} m',
-    dataStatus: '{points} CSV points · {cells} cells · boundary: Tegel Projekt GmbH / Berlin TXL',
+    dataStatus:
+      '{points} CSV points · {cells} cells · boundary: Tegel Projekt GmbH / Berlin TXL',
     heightCsvEmpty: 'The height CSV does not contain any measurements.',
-    heightCsvColumns: 'Expected CSV columns: longitude, latitude, ground_height_m.',
+    heightCsvColumns:
+      'Expected CSV columns: longitude, latitude, ground_height_m.',
     heightCsvInvalid: 'Invalid numeric value in height CSV row {row}.',
     heightCsvMinimum: 'At least two height measurements are required.',
     heightCsvLoadError: 'Height CSV could not be loaded ({status}).',
     boundaryLoadError: 'TXL boundary could not be loaded ({status}).',
     boundaryFormatError: 'TXL boundary must be a GeoJSON polygon.',
-    terminalADescription: "The airport's distinctive hexagonal terminal is planned as a campus for Berliner Hochschule für Technik.",
-    terminalBDescription: 'The former terminal is being developed into a centre for founders and innovation, with workspace, events and food.',
-    terminalDDescription: 'A technology centre with laboratories, offices and workshops is planned for the former terminal.',
-    urbanTechRepublicDescription: 'The Urban Tech Republic project area covers the research, development and industrial campus at Berlin TXL.',
-    schumacherQuartierDescription: 'Schumacher Quartier is the new urban residential area on the eastern side of the former airport site.',
-    tegelerStadtheideDescription: 'The Tegeler Stadtheide landscape area connects nature conservation, recreation and the open landscape of Berlin TXL.'
+    terminalADescription:
+      "The airport's distinctive hexagonal terminal is planned as a campus for Berliner Hochschule für Technik.",
+    terminalBDescription:
+      'The former terminal is being developed into a centre for founders and innovation, with workspace, events and food.',
+    terminalDDescription:
+      'A technology centre with laboratories, offices and workshops is planned for the former terminal.',
+    urbanTechRepublicDescription:
+      'The Urban Tech Republic project area covers the research, development and industrial campus at Berlin TXL.',
+    schumacherQuartierDescription:
+      'Schumacher Quartier is the new urban residential area on the eastern side of the former airport site.',
+    tegelerStadtheideDescription:
+      'The Tegeler Stadtheide landscape area connects nature conservation, recreation and the open landscape of Berlin TXL.',
   },
   de: {
     pageTitle: 'Berlin TXL • 3D-Karte',
-    metaDescription: 'Entdecke den ehemaligen Flughafen Berlin-Tegel und die Urban Tech Republic auf einer interaktiven 3D-Karte.',
+    metaDescription:
+      'Entdecke den ehemaligen Flughafen Berlin-Tegel und die Urban Tech Republic auf einer interaktiven 3D-Karte.',
     interactiveAtlas: 'INTERAKTIVER ATLAS',
     explore: 'Entdecke',
-    intro: 'Der ehemalige Flughafen Berlin-Tegel aus einer neuen Perspektive. Entdecke seine markanten Terminals in 3D.',
+    intro:
+      'Der ehemalige Flughafen Berlin-Tegel aus einer neuen Perspektive. Entdecke seine markanten Terminals in 3D.',
     mappedBuildings: 'Kartierte Gebäude',
     placesToExplore: 'ORTE ZUM ENTDECKEN',
     placesAndAreas: 'ORTE & PROJEKTRÄUME',
@@ -86,6 +105,13 @@ export const translations = {
     selectedPlace: 'AUSGEWÄHLTER ORT',
     selectedProjectArea: 'AUSGEWÄHLTER PROJEKTRAUM',
     projectInformation: 'Projektinformationen',
+    eventsAtTent: 'EVENTS',
+    eventCount: '{count} Termine',
+    eventAvailable: 'Verfügbar',
+    eventSoldOut: 'Ausgebucht',
+    eventOpen: 'Eventdetails öffnen: {event}',
+    eventsLoading: 'Events werden geladen…',
+    eventsLoadError: 'Events konnten nicht geladen werden.',
     footer: 'Bestehende Kartendaten · künftige Nutzungen sind geplant · V 1.0',
     mapStageLabel: 'Interaktive Karte von Berlin TXL',
     mapLabel: 'Karte des ehemaligen Flughafengeländes Tegel',
@@ -94,7 +120,7 @@ export const translations = {
     terminalCampus: 'TERMINAL-CAMPUS',
     formerAirportArea: 'EHEMALIGES FLUGHAFENGELÄNDE',
     projectAreas: 'PROJEKTRÄUME',
-    terminalPlaces: 'TERMINALS',
+    places: 'ORTE',
     selectAreas: 'Gebiete ein- oder ausblenden',
     urbanTechRepublic: 'The Urban Tech Republic',
     schumacherQuartier: 'Schumacher Quartier',
@@ -117,7 +143,8 @@ export const translations = {
     mapViews: 'Kartenansichten',
     stadtheide: 'Stadtheide',
     formerAirport: 'Ehemaliger Flughafen',
-    mapHelp: 'Ziehen zum Erkunden · Strg + Ziehen zum Drehen · Scrollen zum Zoomen',
+    mapHelp:
+      'Ziehen zum Erkunden · Strg + Ziehen zum Drehen · Scrollen zum Zoomen',
     mapLoadError: 'Die Karte konnte nicht geladen werden.',
     mapLoadHint: 'Prüfe deine Verbindung und lade die Seite neu.',
     language: 'Sprache',
@@ -128,27 +155,37 @@ export const translations = {
     groundHeight: '{height} m Bodenhöhe',
     localReference: 'Lokale Referenz: {height} m',
     difference: 'Differenz: {height} m',
-    dataStatus: '{points} CSV-Punkte · {cells} Zellen · Grenze: Tegel Projekt GmbH / Berlin TXL',
+    dataStatus:
+      '{points} CSV-Punkte · {cells} Zellen · Grenze: Tegel Projekt GmbH / Berlin TXL',
     heightCsvEmpty: 'Die Höhen-CSV enthält keine Messwerte.',
-    heightCsvColumns: 'Erwartete CSV-Spalten: longitude, latitude, ground_height_m.',
+    heightCsvColumns:
+      'Erwartete CSV-Spalten: longitude, latitude, ground_height_m.',
     heightCsvInvalid: 'Ungültiger Zahlenwert in Zeile {row} der Höhen-CSV.',
     heightCsvMinimum: 'Es werden mindestens zwei Höhenmessungen benötigt.',
     heightCsvLoadError: 'Die Höhen-CSV konnte nicht geladen werden ({status}).',
     boundaryLoadError: 'Die TXL-Grenze konnte nicht geladen werden ({status}).',
     boundaryFormatError: 'Die TXL-Grenze muss ein GeoJSON-Polygon sein.',
-    terminalADescription: 'Das markante sechseckige Terminal ist als Campus für die Berliner Hochschule für Technik vorgesehen.',
-    terminalBDescription: 'Das ehemalige Terminal wird zu einem Zentrum für Gründungen und Innovation mit Arbeitsräumen, Veranstaltungen und Gastronomie entwickelt.',
-    terminalDDescription: 'Für das ehemalige Terminal ist ein Technologiezentrum mit Laboren, Büros und Werkstätten geplant.',
-    urbanTechRepublicDescription: 'Der Projektraum Urban Tech Republic umfasst den Forschungs-, Entwicklungs- und Industriecampus von Berlin TXL.',
-    schumacherQuartierDescription: 'Das Schumacher Quartier ist das neue urbane Wohnquartier auf der östlichen Seite des ehemaligen Flughafengeländes.',
-    tegelerStadtheideDescription: 'Der Landschaftsraum Tegeler Stadtheide verbindet Naturschutz, Erholung und die offene Landschaft von Berlin TXL.'
+    terminalADescription:
+      'Das markante sechseckige Terminal ist als Campus für die Berliner Hochschule für Technik vorgesehen.',
+    terminalBDescription:
+      'Das ehemalige Terminal wird zu einem Zentrum für Gründungen und Innovation mit Arbeitsräumen, Veranstaltungen und Gastronomie entwickelt.',
+    terminalDDescription:
+      'Für das ehemalige Terminal ist ein Technologiezentrum mit Laboren, Büros und Werkstätten geplant.',
+    urbanTechRepublicDescription:
+      'Der Projektraum Urban Tech Republic umfasst den Forschungs-, Entwicklungs- und Industriecampus von Berlin TXL.',
+    schumacherQuartierDescription:
+      'Das Schumacher Quartier ist das neue urbane Wohnquartier auf der östlichen Seite des ehemaligen Flughafengeländes.',
+    tegelerStadtheideDescription:
+      'Der Landschaftsraum Tegeler Stadtheide verbindet Naturschutz, Erholung und die offene Landschaft von Berlin TXL.',
   },
   fr: {
     pageTitle: 'Berlin TXL • Carte 3D',
-    metaDescription: 'Découvrez l’ancien aéroport de Berlin-Tegel et l’Urban Tech Republic sur une carte 3D interactive.',
+    metaDescription:
+      'Découvrez l’ancien aéroport de Berlin-Tegel et l’Urban Tech Republic sur une carte 3D interactive.',
     interactiveAtlas: 'ATLAS INTERACTIF',
     explore: 'Explorez',
-    intro: 'L’ancien aéroport de Berlin-Tegel sous un nouvel angle. Découvrez ses terminaux emblématiques en 3D.',
+    intro:
+      'L’ancien aéroport de Berlin-Tegel sous un nouvel angle. Découvrez ses terminaux emblématiques en 3D.',
     mappedBuildings: 'Bâtiments cartographiés',
     placesToExplore: 'LIEUX À EXPLORER',
     placesAndAreas: 'LIEUX ET ZONES DU PROJET',
@@ -158,6 +195,13 @@ export const translations = {
     selectedPlace: 'LIEU SÉLECTIONNÉ',
     selectedProjectArea: 'ZONE DU PROJET SÉLECTIONNÉE',
     projectInformation: 'Informations sur le projet',
+    eventsAtTent: 'ÉVÉNEMENTS',
+    eventCount: '{count} dates',
+    eventAvailable: 'Disponible',
+    eventSoldOut: 'Complet',
+    eventOpen: 'Ouvrir les détails de l’événement : {event}',
+    eventsLoading: 'Chargement des événements…',
+    eventsLoadError: 'Impossible de charger les événements.',
     footer: 'Données cartographiques existantes · usages futurs prévus · V 1.0',
     mapStageLabel: 'Carte interactive de Berlin TXL',
     mapLabel: 'Carte de l’ancien site aéroportuaire de Tegel',
@@ -166,7 +210,7 @@ export const translations = {
     terminalCampus: 'CAMPUS DES TERMINAUX',
     formerAirportArea: 'ANCIEN SITE AÉROPORTUAIRE',
     projectAreas: 'ZONES DU PROJET',
-    terminalPlaces: 'TERMINAUX',
+    places: 'LIEUX',
     selectAreas: 'Afficher ou masquer les zones',
     urbanTechRepublic: 'The Urban Tech Republic',
     schumacherQuartier: 'Quartier Schumacher',
@@ -189,30 +233,42 @@ export const translations = {
     mapViews: 'Vues de la carte',
     stadtheide: 'Stadtheide',
     formerAirport: 'Ancien aéroport',
-    mapHelp: 'Faites glisser pour explorer · Ctrl + glisser pour pivoter · Faites défiler pour zoomer',
+    mapHelp:
+      'Faites glisser pour explorer · Ctrl + glisser pour pivoter · Faites défiler pour zoomer',
     mapLoadError: 'La carte n’a pas pu être chargée.',
     mapLoadHint: 'Vérifiez votre connexion et rechargez la page.',
     language: 'Langue',
     showPlace: 'Afficher {place}',
     zoomIn: 'Zoomer',
     zoomOut: 'Dézoomer',
-    resetBearing: 'Faites glisser pour pivoter, cliquez pour réorienter vers le nord',
+    resetBearing:
+      'Faites glisser pour pivoter, cliquez pour réorienter vers le nord',
     groundHeight: 'Altitude du sol : {height} m',
     localReference: 'Référence locale : {height} m',
     difference: 'Écart : {height} m',
-    dataStatus: '{points} points CSV · {cells} cellules · limite : Tegel Projekt GmbH / Berlin TXL',
+    dataStatus:
+      '{points} points CSV · {cells} cellules · limite : Tegel Projekt GmbH / Berlin TXL',
     heightCsvEmpty: 'Le fichier CSV ne contient aucune mesure de hauteur.',
-    heightCsvColumns: 'Colonnes CSV attendues : longitude, latitude, ground_height_m.',
-    heightCsvInvalid: 'Valeur numérique incorrecte à la ligne {row} du fichier CSV.',
+    heightCsvColumns:
+      'Colonnes CSV attendues : longitude, latitude, ground_height_m.',
+    heightCsvInvalid:
+      'Valeur numérique incorrecte à la ligne {row} du fichier CSV.',
     heightCsvMinimum: 'Au moins deux mesures de hauteur sont nécessaires.',
-    heightCsvLoadError: 'Le fichier CSV des hauteurs n’a pas pu être chargé ({status}).',
+    heightCsvLoadError:
+      'Le fichier CSV des hauteurs n’a pas pu être chargé ({status}).',
     boundaryLoadError: 'La limite TXL n’a pas pu être chargée ({status}).',
     boundaryFormatError: 'La limite TXL doit être un polygone GeoJSON.',
-    terminalADescription: 'L’emblématique terminal hexagonal est destiné à devenir un campus de la Berliner Hochschule für Technik.',
-    terminalBDescription: 'L’ancien terminal devient un centre consacré à l’entrepreneuriat et à l’innovation, avec des espaces de travail, des événements et de la restauration.',
-    terminalDDescription: 'Un centre technologique comprenant des laboratoires, des bureaux et des ateliers est prévu dans l’ancien terminal.',
-    urbanTechRepublicDescription: 'La zone Urban Tech Republic comprend le campus de recherche, de développement et d’industrie de Berlin TXL.',
-    schumacherQuartierDescription: 'Le quartier Schumacher est le nouveau quartier résidentiel urbain situé à l’est de l’ancien site aéroportuaire.',
-    tegelerStadtheideDescription: 'L’espace paysager Tegeler Stadtheide associe protection de la nature, loisirs et paysage ouvert de Berlin TXL.'
-  }
+    terminalADescription:
+      'L’emblématique terminal hexagonal est destiné à devenir un campus de la Berliner Hochschule für Technik.',
+    terminalBDescription:
+      'L’ancien terminal devient un centre consacré à l’entrepreneuriat et à l’innovation, avec des espaces de travail, des événements et de la restauration.',
+    terminalDDescription:
+      'Un centre technologique comprenant des laboratoires, des bureaux et des ateliers est prévu dans l’ancien terminal.',
+    urbanTechRepublicDescription:
+      'La zone Urban Tech Republic comprend le campus de recherche, de développement et d’industrie de Berlin TXL.',
+    schumacherQuartierDescription:
+      'Le quartier Schumacher est le nouveau quartier résidentiel urbain situé à l’est de l’ancien site aéroportuaire.',
+    tegelerStadtheideDescription:
+      'L’espace paysager Tegeler Stadtheide associe protection de la nature, loisirs et paysage ouvert de Berlin TXL.',
+  },
 };

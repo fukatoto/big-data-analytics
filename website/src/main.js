@@ -87,6 +87,7 @@ localization.subscribe(() => {
 });
 
 mapController.bindUi();
+mapController.loadEvents();
 projectAreasOverlay.bindUi();
 groundHeightOverlay.bindUi();
 document

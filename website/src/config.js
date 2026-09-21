@@ -45,10 +45,15 @@ export const places = {
     projectAreaId: 'tegeler-stadtheide'
   },
   'heideBlick': {
-    name: 'Heideblick', number: '04 / 04', coordinates: [13.265540, 52.560249],
-    description: 'The "Heideblick" offers a unique change of perspective: Let your gaze wander across the vast expanse of the heath, with the striking Berlin skyline in the background.',
-    //source: 'https://urbantechrepublic.de/en/faq/'
-  }
+    name: 'Heideblick', number: '04 / 04', coordinates: [13.265540, 52.560249],
+    description: 'The "Heideblick" offers a unique change of perspective: Let your gaze wander across the vast expanse of the heath, with the striking Berlin skyline in the background.',
+    //source: 'https://urbantechrepublic.de/en/faq/'
+  },
+  'zelt': {
+    name: 'Zelt', number: '04 / 04', coordinates: [13.275592, 52.553011],
+    description: '',
+    //source: 'https://urbantechrepublic.de/en/faq/'
+  }
 };
 
 export const campusCamera = {
