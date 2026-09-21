@@ -20,6 +20,10 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
     ];
   }
 
+  function formatThreshold(threshold) {
+    return `${Math.round(threshold * 100)} cm`;
+  }
+
   function refreshStatus() {
     const status = document.getElementById('height-data-status');
     if (loadError) {
@@ -35,7 +39,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
 
   function update() {
     const threshold = Number(document.getElementById('height-threshold').value);
-    document.getElementById('height-threshold-value').textContent = threshold.toFixed(1) + ' m';
+    document.getElementById('height-threshold-value').textContent = formatThreshold(threshold);
 
     if (map.getLayer(groundHeightConfig.fillLayerId)) {
       const color = colorExpression(threshold);
@@ -50,7 +54,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
 
   function scheduleUpdate() {
     const threshold = Number(document.getElementById('height-threshold').value);
-    document.getElementById('height-threshold-value').textContent = threshold.toFixed(1) + ' m';
+    document.getElementById('height-threshold-value').textContent = formatThreshold(threshold);
     window.clearTimeout(updateTimer);
     updateTimer = window.setTimeout(() => {
       updateTimer = null;
@@ -172,7 +176,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       const { groundHeight, referenceHeight, heightDifference } = feature.properties;
       popup
         .setLngLat(event.lngLat)
-        .setHTML(`<strong>${t('groundHeight', { height: Number(groundHeight).toFixed(1) })}</strong><br>${t('localReference', { height: Number(referenceHeight).toFixed(1) })}<br>${t('difference', { height: Number(heightDifference).toFixed(1) })}`)
+        .setHTML(`<strong>${t('groundHeight', { height: Number(groundHeight).toFixed(2) })}</strong><br>${t('localReference', { height: Number(referenceHeight).toFixed(2) })}<br>${t('difference', { height: (Number(heightDifference) * 100).toFixed(1) })}`)
         .addTo(map);
     });
     map.on('mouseleave', groundHeightConfig.fillLayerId, () => {

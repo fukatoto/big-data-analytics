@@ -151,9 +151,9 @@ export function createGroundHeightFeatures(samples, boundaryRing, cellSizeMeters
       features.push({
         type: 'Feature',
         properties: {
-          groundHeight: Number(groundHeight.toFixed(2)),
-          referenceHeight: Number(referenceHeight.toFixed(2)),
-          heightDifference: Number(heightDifference.toFixed(2))
+          groundHeight: Number(groundHeight.toFixed(3)),
+          referenceHeight: Number(referenceHeight.toFixed(3)),
+          heightDifference: Number(heightDifference.toFixed(3))
         },
         geometry: { type: 'Polygon', coordinates: [clippedRing] }
       });

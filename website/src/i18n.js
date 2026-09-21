@@ -82,9 +82,8 @@ export const translations = {
     resetBearing: 'Drag to rotate map, click to reset north',
     groundHeight: '{height} m ground',
     localReference: 'Local reference: {height} m',
-    difference: 'Difference: {height} m',
-    dataStatus:
-      '{points} CSV points · {cells} cells · boundary: Tegel Projekt GmbH / Berlin TXL',
+    difference: 'Difference: {height} cm',
+    dataStatus: '{points} CSV points · {cells} cells',
     heightCsvEmpty: 'The height CSV does not contain any measurements.',
     heightCsvColumns:
       'Expected CSV columns: longitude, latitude, ground_height_m.',
@@ -190,9 +189,8 @@ export const translations = {
     resetBearing: 'Ziehen zum Drehen, klicken zum Ausrichten nach Norden',
     groundHeight: '{height} m Bodenhöhe',
     localReference: 'Lokale Referenz: {height} m',
-    difference: 'Differenz: {height} m',
-    dataStatus:
-      '{points} CSV-Punkte · {cells} Zellen · Grenze: Tegel Projekt GmbH / Berlin TXL',
+    difference: 'Differenz: {height} cm',
+    dataStatus: '{points} CSV-Punkte · {cells} Zellen',
     heightCsvEmpty: 'Die Höhen-CSV enthält keine Messwerte.',
     heightCsvColumns:
       'Erwartete CSV-Spalten: longitude, latitude, ground_height_m.',
@@ -299,9 +297,8 @@ export const translations = {
       'Faites glisser pour pivoter, cliquez pour réorienter vers le nord',
     groundHeight: 'Altitude du sol : {height} m',
     localReference: 'Référence locale : {height} m',
-    difference: 'Écart : {height} m',
-    dataStatus:
-      '{points} points CSV · {cells} cellules · limite : Tegel Projekt GmbH / Berlin TXL',
+    difference: 'Écart : {height} cm',
+    dataStatus: '{points} points CSV · {cells} cellules',
     heightCsvEmpty: 'Le fichier CSV ne contient aucune mesure de hauteur.',
     heightCsvColumns:
       'Colonnes CSV attendues : longitude, latitude, ground_height_m.',
