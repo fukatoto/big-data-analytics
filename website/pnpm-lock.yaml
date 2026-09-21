@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      maplibre:
+        specifier: 0.0.1-security
+        version: 0.0.1-security
       maplibre-gl:
         specifier: 6.9.1
         version: 6.9.1
@@ -262,6 +265,9 @@ packages:
   maplibre-gl@6.9.1:
     resolution: {integrity: sha512-piG2jNSq7crSTzj67UWDlTaxDjWvhFpfubZUuaofmaMcQKWw+kYn7mCfeh6S/Egr8+q8prBWcDqEaa6DdIQ6pw==}
     engines: {node: '>=16.14.0', npm: '>=8.1.0'}
+
+  maplibre@0.0.1-security:
+    resolution: {integrity: sha512-XawLsomeCq3O+x3IYTlU1QH52m9JvgEZvffgzWZ9P61HdSghJFzLUJjGXvtwV3hEuuZy9v9iSCG7W8pfr8p4Eg==}
 
   minimist@1.2.8:
     resolution: {integrity: sha512-2yyAR8qBkN3YuheJanUpWC5U3bb5osDywNB8RzDVlDwDHbocAJveqqj1u8+SVD7jkWT4yvsHCpWqqWqAxb0zCA==}
@@ -544,6 +550,8 @@ snapshots:
       potpack: 2.1.0
       quickselect: 3.0.0
       tinyqueue: 3.0.0
+
+  maplibre@0.0.1-security: {}
 
   minimist@1.2.8: {}
 
