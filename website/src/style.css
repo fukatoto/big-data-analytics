@@ -374,6 +374,99 @@ h1 em {
 .terminal-places-toggle.is-active > i > b {
   transform: translateX(14px);
 }
+.internal-view-section {
+  flex: 0 0 auto;
+  margin-top: 10px;
+}
+.internal-view-section .terminal-places-toggle {
+  margin-top: 0;
+}
+.internal-view-options {
+  display: grid;
+  gap: 5px;
+  padding: 9px 8px 12px;
+}
+.internal-view-options[hidden] {
+  display: none;
+}
+.internal-view-option {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 32px;
+  padding: 6px 9px;
+  border: 1px solid var(--sidebar-border-subtle);
+  border-radius: 4px;
+  background: transparent;
+  color: #8e9c97;
+  font-family: var(--font-display);
+  font-size: 11px;
+  font-weight: 700;
+  text-align: left;
+  cursor: pointer;
+}
+.internal-view-option:hover,
+.internal-view-option.is-active {
+  border-color: var(--bergreen);
+  background: #213233;
+  color: var(--cream);
+}
+.internal-view-option b {
+  color: transparent;
+}
+.internal-view-option.is-active b {
+  color: var(--bergreen);
+}
+.internal-view-bulk-actions {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  padding-top: 4px;
+}
+.internal-view-bulk-actions button {
+  flex: 1;
+  min-height: 30px;
+  padding: 5px 8px;
+  border: 1px solid var(--sidebar-border-subtle);
+  border-radius: 4px;
+  background: transparent;
+  color: #a8b7af;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.internal-view-bulk-actions button:hover {
+  border-color: var(--bergreen);
+  color: var(--cream);
+}
+.internal-view-bulk-actions button:focus-visible {
+  outline: 2px solid var(--bergreen);
+  outline-offset: 2px;
+}
+.internal-forest-marker {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: 2px solid #173b32;
+  border-radius: 50%;
+  background: #e3f3de;
+  box-shadow: 0 2px 8px #10231f70;
+}
+.internal-forest-marker[hidden] {
+  display: none;
+}
+.internal-forest-marker svg {
+  width: 25px;
+  height: 25px;
+  fill: #287c47;
+}
+.internal-view-option:focus-visible,
+.internal-view-section .terminal-places-toggle:focus-visible {
+  outline: 2px solid var(--bergreen);
+  outline-offset: 2px;
+}
 .place-item {
   display: flex;
   align-items: center;
@@ -702,6 +795,7 @@ h1 em {
 }
 .sidebar.is-showing-event .sidebar-top,
 .sidebar.is-showing-event .section-heading,
+.sidebar.is-showing-event .internal-view-section,
 .sidebar.is-showing-event .place-list {
   display: none;
 }
@@ -1205,8 +1299,7 @@ h1 em {
 .project-area-toggle.is-active b {
   color: #2b4b44;
 }
-.project-fill-toggle,
-.height-analysis-toggle {
+.project-fill-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1224,15 +1317,13 @@ h1 em {
   padding: 4px;
 }
 
-.project-fill-toggle > span,
-.height-analysis-toggle > span {
+.project-fill-toggle > span {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
 
-.project-fill-toggle > i,
-.height-analysis-toggle > i {
+.project-fill-toggle > i {
   position: relative;
   width: 30px;
   height: 17px;
@@ -1242,8 +1333,7 @@ h1 em {
   transition: background var(--transition-fast);
 }
 
-.project-fill-toggle > i > b,
-.height-analysis-toggle > i > b {
+.project-fill-toggle > i > b {
   position: absolute;
   top: 3px;
   left: 3px;
@@ -1255,13 +1345,11 @@ h1 em {
   transition: transform var(--transition-fast);
 }
 
-.project-fill-toggle.is-active > i,
-.height-analysis-toggle.is-active > i {
+.project-fill-toggle.is-active > i {
   background: #2d5048;
 }
 
-.project-fill-toggle.is-active > i > b,
-.height-analysis-toggle.is-active > i > b {
+.project-fill-toggle.is-active > i > b {
   transform: translateX(13px);
 }
 .project-area-bulk-actions {
@@ -1332,14 +1420,6 @@ h1 em {
   font-size: 12px;
   font-weight: 700;
   text-align: center;
-}
-.height-analysis-toggle {
-  margin: -4px 0 8px;
-  padding: 4px 0;
-}
-.height-analysis-toggle:disabled {
-  cursor: wait;
-  opacity: 0.45;
 }
 .height-control label {
   display: block;
@@ -2172,6 +2252,10 @@ h1 em {
     order: 0;
     padding-top: 11px;
   }
+  .internal-view-section {
+    order: 1;
+    margin-top: 8px;
+  }
   .place-detail h2 {
     margin: 4px 0;
     font-size: 18px;
@@ -2294,10 +2378,6 @@ h1 em {
   .height-control h2 {
     margin-bottom: 7px;
     font-size: 16px;
-  }
-  .height-analysis-toggle {
-    min-height: 29px;
-    margin-bottom: 5px;
   }
   .height-control p {
     display: none;
@@ -2570,10 +2650,6 @@ h1 em {
   .height-control h2 {
     margin-bottom: 6px;
     font-size: 15px;
-  }
-  .height-analysis-toggle {
-    min-height: 27px;
-    margin-bottom: 4px;
   }
   .height-control label {
     margin-bottom: 3px;

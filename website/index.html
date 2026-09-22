@@ -414,6 +414,35 @@
               </button>
             </div>
           </div>
+          <div class="internal-view-section">
+            <button
+              id="internal-view-toggle"
+              class="terminal-places-toggle"
+              type="button"
+              role="switch"
+              aria-checked="false"
+              aria-controls="internal-view-options"
+            >
+              <span class="terminal-places-label"
+                ><span data-i18n="internalView">INTERNAL VIEW</span></span
+              ><i aria-hidden="true"><b></b></i>
+            </button>
+            <div id="internal-view-options" class="internal-view-options" hidden>
+              <button type="button" class="internal-view-option is-active" data-internal-layer="tree" aria-pressed="true">
+                <span data-i18n="trees">Trees</span><b aria-hidden="true">✓</b>
+              </button>
+              <button type="button" class="internal-view-option is-active" data-internal-layer="depression" aria-pressed="true">
+                <span data-i18n="depressions">Depressions</span><b aria-hidden="true">✓</b>
+              </button>
+              <button type="button" class="internal-view-option is-active" data-internal-layer="forest" aria-pressed="true">
+                <span data-i18n="forest">Forest</span><b aria-hidden="true">✓</b>
+              </button>
+              <div class="internal-view-bulk-actions">
+                <button id="show-all-internal-layers" type="button" data-i18n="showAllAreas">Show all</button>
+                <button id="hide-all-internal-layers" type="button" data-i18n="hideAllAreas">Hide all</button>
+              </div>
+            </div>
+          </div>
           <div class="place-detail" id="place-detail" aria-live="polite">
             <div class="detail-kicker">
               <span id="detail-kicker-label" data-i18n="selectedProjectArea"
@@ -689,6 +718,7 @@
         <section
           class="height-control mobile-map-panel is-desktop-collapsed"
           aria-labelledby="height-control-title"
+          hidden
         >
           <button
             class="mobile-panel-toggle"
@@ -730,17 +760,6 @@
               id="height-desktop-content"
               class="desktop-collapsible-content"
             >
-              <button
-                id="height-analysis-toggle"
-                type="button"
-                class="height-analysis-toggle"
-                role="switch"
-                aria-checked="false"
-                disabled
-              >
-                <span data-i18n="showHeightAnalysis">Show height analysis</span
-                ><i aria-hidden="true"><b></b></i>
-              </button>
               <label for="height-threshold" data-i18n="maxLocalDifference"
                 >Maximum local difference</label
               >

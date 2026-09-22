@@ -2,15 +2,17 @@ import * as maplibregl from 'maplibre-gl';
 import { groundHeightConfig } from './config.js';
 import { parseGroundHeightCsv } from './ground-height-analysis.js';
 
-export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
+export function createGroundHeightOverlay({ map, t, createTranslatedError, onPanelVisibilityChange }) {
   const updateDelay = 200;
   let samples = [];
   let reference = null;
   let referenceHeight = null;
   let sampleCount = 0;
   let loadError = null;
-  let analysisVisible = false;
   let analysisInitialized = false;
+  let internalViewOpen = false;
+  const activeInternalLayers = new Set(['forest', 'tree', 'depression']);
+  let forestMarker = null;
   let popup = null;
   let updateTimer = null;
 
@@ -153,17 +155,11 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
 
   function createMeasurementFeatures() {
     const toFeature = (sample, isReference = false) => {
-      const normalizedLabel = sample.label.trim().toLowerCase();
-      const kind = normalizedLabel.startsWith('baum')
-        ? 'tree'
-        : normalizedLabel.startsWith('kuhle')
-          ? 'depression'
-          : 'measurement';
       return {
         type: 'Feature',
         properties: {
           label: sample.label,
-          kind,
+          kind: sampleKind(sample),
           isReference,
           groundHeight: Number(sample.groundHeight.toFixed(3)),
           referenceHeight: Number(referenceHeight.toFixed(3)),
@@ -197,6 +193,17 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
     ];
   }
 
+  function sampleKind(sample) {
+    const label = sample.label.trim().toLowerCase();
+    if (label.startsWith('baum')) return 'tree';
+    if (label.startsWith('kuhle')) return 'depression';
+    return 'measurement';
+  }
+
+  function visibleSamples() {
+    return samples.filter((sample) => activeInternalLayers.has(sampleKind(sample)));
+  }
+
   function formatThreshold(threshold) {
     return `${Math.round(threshold * 100)} cm`;
   }
@@ -221,10 +228,103 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
         ? t(loadError.translationKey, loadError.translationVariables)
         : loadError.message;
     } else if (sampleCount) {
-      status.textContent = t('dataStatus', { points: sampleCount });
+      status.textContent = t('dataStatus', { points: visibleSamples().length });
     } else {
       status.textContent = t('loadingHeightData');
     }
+  }
+
+  function measurementFilter() {
+    const selectedKinds = ['tree', 'depression'].filter((kind) => activeInternalLayers.has(kind));
+    const kinds = internalViewOpen && selectedKinds.length ? [...selectedKinds, 'person'] : [];
+    return [
+      'all',
+      ['==', ['get', 'isReference'], false],
+      ['in', ['get', 'kind'], ['literal', kinds]],
+    ];
+  }
+
+  function measurementsVisible() {
+    return internalViewOpen &&
+      (activeInternalLayers.has('tree') || activeInternalLayers.has('depression'));
+  }
+
+  function updateMapVisibility() {
+    const showMeasurements = measurementsVisible();
+    const panel = document.querySelector('.height-control');
+    const panelWasHidden = panel.hidden;
+    panel.hidden = !showMeasurements;
+    document.getElementById('height-threshold').disabled = !showMeasurements || !analysisInitialized;
+    if (showMeasurements && panelWasHidden) {
+      panel.classList.remove('is-desktop-collapsed');
+      panel.querySelector('.desktop-panel-collapse').setAttribute('aria-expanded', 'true');
+    }
+    if (panelWasHidden !== panel.hidden) onPanelVisibilityChange?.(showMeasurements);
+    const visibility = showMeasurements ? 'visible' : 'none';
+    [groundHeightConfig.measurementLayerId, groundHeightConfig.measurementLabelLayerId].forEach((layerId) => {
+      if (map.getLayer(layerId)) {
+        map.setFilter(layerId, measurementFilter());
+        map.setLayoutProperty(layerId, 'visibility', visibility);
+      }
+    });
+    if (map.getLayer(groundHeightConfig.referenceLayerId)) {
+      map.setLayoutProperty(groundHeightConfig.referenceLayerId, 'visibility', visibility);
+    }
+    if (forestMarker) {
+      forestMarker.getElement().hidden = !(internalViewOpen && activeInternalLayers.has('forest'));
+    }
+    if (!showMeasurements) {
+      map.getCanvas().style.cursor = '';
+      popup?.remove();
+    }
+    if (analysisInitialized) update();
+    refreshStatus();
+  }
+
+  function syncInternalView() {
+    if (measurementsVisible() && samples.length && !analysisInitialized && !loadError) {
+      try {
+        initializeAnalysis();
+      } catch (error) {
+        showError(error);
+      }
+    }
+    updateMapVisibility();
+  }
+
+  function addForestMarker() {
+    const element = document.createElement('div');
+    element.className = 'internal-forest-marker';
+    element.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 13 20h6L9 34h12v10h6V34h12L29 20h6L24 3Z"/></svg>';
+    forestMarker = new maplibregl.Marker({ element, anchor: 'bottom', offset: [18, 0] })
+      .setLngLat(groundHeightConfig.forestMarkerCoordinates)
+      .addTo(map);
+    refreshForestMarkerLanguage();
+    updateMapVisibility();
+  }
+
+  function refreshForestMarkerLanguage() {
+    if (!forestMarker) return;
+    const element = forestMarker.getElement();
+    element.setAttribute('role', 'img');
+    element.setAttribute('aria-label', t('forest'));
+    element.title = t('forest');
+  }
+
+  function focusInternalView() {
+    const bounds = new maplibregl.LngLatBounds();
+    bounds.extend(groundHeightConfig.forestMarkerCoordinates);
+    groundHeightConfig.annotations
+      .filter(({ kind }) => kind !== 'person')
+      .forEach(({ coordinates }) => bounds.extend(coordinates));
+    samples.forEach(({ longitude, latitude }) => bounds.extend([longitude, latitude]));
+    if (reference) bounds.extend([reference.longitude, reference.latitude]);
+    map.fitBounds(bounds, {
+      padding: window.innerWidth < 700 ? 35 : 70,
+      maxZoom: 16,
+      duration: 800,
+      essential: true,
+    });
   }
 
   function update() {
@@ -239,11 +339,12 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       );
     }
 
-    const obstacles = samples.filter(
+    const selectedSamples = visibleSamples();
+    const obstacles = selectedSamples.filter(
       (sample) => Math.abs(sample.groundHeight - referenceHeight) >= threshold,
     ).length;
     document.getElementById('obstacle-count').textContent = String(obstacles);
-    document.getElementById('clear-count').textContent = String(samples.length - obstacles);
+    document.getElementById('clear-count').textContent = String(selectedSamples.length - obstacles);
   }
 
   function scheduleUpdate() {
@@ -254,29 +355,6 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       updateTimer = null;
       update();
     }, updateDelay);
-  }
-
-  function setAnalysisVisible(visible) {
-    analysisVisible = visible;
-    const button = document.getElementById('height-analysis-toggle');
-    button.classList.toggle('is-active', analysisVisible);
-    button.setAttribute('aria-checked', String(analysisVisible));
-    document.getElementById('height-threshold').disabled = !analysisVisible;
-
-    [
-      groundHeightConfig.measurementLayerId,
-      groundHeightConfig.referenceLayerId,
-      groundHeightConfig.measurementLabelLayerId,
-    ].forEach((layerId) => {
-      if (map.getLayer(layerId)) {
-        map.setLayoutProperty(layerId, 'visibility', analysisVisible ? 'visible' : 'none');
-      }
-    });
-
-    if (!analysisVisible) {
-      map.getCanvas().style.cursor = '';
-      popup?.remove();
-    }
   }
 
   function initializeAnalysis() {
@@ -292,7 +370,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       id: groundHeightConfig.measurementLayerId,
       source: groundHeightConfig.measurementSourceId,
       type: 'symbol',
-      filter: ['==', ['get', 'isReference'], false],
+      filter: measurementFilter(),
       layout: {
         visibility: 'none',
         'icon-image': measurementIconExpression(threshold),
@@ -319,7 +397,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       source: groundHeightConfig.measurementSourceId,
       type: 'symbol',
       minzoom: 18,
-      filter: ['==', ['get', 'isReference'], false],
+      filter: measurementFilter(),
       layout: {
         visibility: 'none',
         'text-field': ['get', 'label'],
@@ -336,22 +414,45 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       },
     });
     analysisInitialized = true;
-    refreshStatus();
-    update();
     addPopupInteraction();
+    updateMapVisibility();
   }
 
   function bindUi() {
-    document.getElementById('height-analysis-toggle').addEventListener('click', () => {
-      if (!analysisVisible && !analysisInitialized) {
-        try {
-          initializeAnalysis();
-        } catch (error) {
-          showError(error);
-          return;
-        }
-      }
-      setAnalysisVisible(!analysisVisible);
+    document.getElementById('internal-view-toggle').addEventListener('click', () => {
+      internalViewOpen = !internalViewOpen;
+      const button = document.getElementById('internal-view-toggle');
+      button.classList.toggle('is-active', internalViewOpen);
+      button.setAttribute('aria-checked', String(internalViewOpen));
+      document.getElementById('internal-view-options').hidden = !internalViewOpen;
+      syncInternalView();
+      if (internalViewOpen) focusInternalView();
+    });
+    document.querySelectorAll('[data-internal-layer]').forEach((button) => {
+      button.addEventListener('click', () => {
+        const layer = button.dataset.internalLayer;
+        if (activeInternalLayers.has(layer)) activeInternalLayers.delete(layer);
+        else activeInternalLayers.add(layer);
+        const active = activeInternalLayers.has(layer);
+        button.classList.toggle('is-active', active);
+        button.setAttribute('aria-pressed', String(active));
+        syncInternalView();
+      });
+    });
+    function setAllInternalLayersVisible(visible) {
+      activeInternalLayers.clear();
+      document.querySelectorAll('[data-internal-layer]').forEach((button) => {
+        if (visible) activeInternalLayers.add(button.dataset.internalLayer);
+        button.classList.toggle('is-active', visible);
+        button.setAttribute('aria-pressed', String(visible));
+      });
+      syncInternalView();
+    }
+    document.getElementById('show-all-internal-layers').addEventListener('click', () => {
+      setAllInternalLayersVisible(true);
+    });
+    document.getElementById('hide-all-internal-layers').addEventListener('click', () => {
+      setAllInternalLayersVisible(false);
     });
   }
 
@@ -395,9 +496,9 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       },
     }, groundHeightConfig.beforeLayerId);
 
-    document.getElementById('height-analysis-toggle').disabled = false;
     sampleCount = samples.length;
     refreshStatus();
+    syncInternalView();
   }
 
   function addPopupInteraction() {
@@ -439,9 +540,13 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
   }
 
   return {
+    addForestMarker,
     bindUi,
     load,
-    refreshLanguage: refreshStatus,
+    refreshLanguage() {
+      refreshStatus();
+      refreshForestMarkerLanguage();
+    },
     scheduleUpdate,
     showError,
   };

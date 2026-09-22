@@ -63,6 +63,12 @@ const groundHeightOverlay = createGroundHeightOverlay({
   map,
   t: localization.t,
   createTranslatedError: localization.createTranslatedError,
+  onPanelVisibilityChange(visible) {
+    if (!mobileViewport.matches) return;
+    const panel = document.querySelector('.height-control');
+    if (visible) closeMobilePanels(panel);
+    else if (panel.classList.contains('is-mobile-open')) closeMobilePanels();
+  },
 });
 
 const appShell = document.querySelector('.app-shell');
@@ -168,6 +174,7 @@ map.on('load', () => {
   mapController.addBuildingLayer();
   projectAreasOverlay.addLayers();
   mapController.addMarkers();
+  groundHeightOverlay.addForestMarker();
   groundHeightOverlay.load().catch(groundHeightOverlay.showError);
 
   document.getElementById('airport-view').click();
