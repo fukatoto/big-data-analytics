@@ -1439,6 +1439,61 @@ h1 em {
   font-family: var(--font-display);
   font-size: 13px;
 }
+.place-info-map-popup {
+  z-index: 7;
+}
+.place-info-map-popup .maplibregl-popup-content {
+  width: min(320px, calc(100vw - 28px));
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid rgba(0, 125, 115, 0.28);
+  background: rgba(255, 255, 249, 0.98);
+}
+.place-info-map-popup .maplibregl-popup-close-button {
+  top: 8px;
+  right: 8px;
+  z-index: 1;
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 255, 249, 0.92);
+  color: #294842;
+  font-size: 20px;
+  line-height: 26px;
+  box-shadow: 0 2px 8px rgba(27, 51, 49, 0.18);
+}
+.place-info-map-popup .maplibregl-popup-close-button:hover {
+  background: #fff;
+}
+.place-popup-visual {
+  display: grid;
+  height: 138px;
+  margin: 0;
+  place-items: center;
+  overflow: hidden;
+  background: linear-gradient(145deg, #dcece7, #b8d4cc);
+}
+.place-popup-visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+.place-popup-body {
+  padding: 17px 18px 19px;
+}
+.maplibregl-popup-content .place-popup-body h3 {
+  margin: 0 30px 8px 0;
+  color: #172d29;
+  font-family: var(--font-display);
+  font-size: 18px;
+  line-height: 1.2;
+}
+.place-popup-body p {
+  margin: 0;
+  color: #526963;
+  font-size: 12px;
+  line-height: 1.55;
+}
 .tent-events-map-popup .maplibregl-popup-content {
   width: min(340px, calc(100vw - 28px));
   padding: 0;
@@ -1695,7 +1750,11 @@ h1 em {
     margin-bottom: 5px;
   }
   .place-list {
-    display: flex;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(128px, 1fr));
+    grid-template-rows: auto auto;
+    grid-auto-columns: 128px;
+    grid-auto-flow: column;
     gap: 5px;
     overflow-x: auto;
     padding-bottom: 3px;
@@ -1704,6 +1763,7 @@ h1 em {
     display: none;
   }
   .place-item {
+    grid-row: 2;
     min-width: 144px;
     padding: 9px 8px;
     border: 1px solid var(--sidebar-border-subtle);
@@ -1865,6 +1925,12 @@ h1 em {
   .app-shell {
     --mobile-sheet-height: clamp(240px, 36dvh, 310px);
   }
+  .app-shell.is-tent-selected {
+    --mobile-sheet-height: 55dvh;
+  }
+  .tent-popup-list {
+    max-height: min(135px, 17dvh);
+  }
   #map,
   .map-tint {
     bottom: var(--mobile-sheet-height);
@@ -1888,14 +1954,22 @@ h1 em {
     scrollbar-width: thin;
   }
   .terminal-places-toggle {
-    width: auto;
-    min-width: 116px;
-    min-height: 46px;
+    position: sticky;
+    left: 0;
+    z-index: 1;
+    grid-row: 1;
+    grid-column: 1 / 4;
+    width: calc(100vw - 28px);
+    min-width: 0;
+    min-height: 32px;
     margin: 0;
-    padding: 7px 9px;
-    border: 1px solid var(--sidebar-border);
-    border-radius: 4px;
-    scroll-snap-align: start;
+    padding: 5px 2px;
+    border-top: 1px solid var(--sidebar-border);
+    border-right: 0;
+    border-bottom: 1px solid var(--sidebar-border-subtle);
+    border-left: 0;
+    border-radius: 0;
+    background: var(--ink);
   }
   .terminal-places-toggle > span {
     font-size: 8px;

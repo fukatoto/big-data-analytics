@@ -111,7 +111,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     },
   };
   const markerElements = new Map();
-  let tentPopup = null;
+  let placePopup = null;
 
   function placeName(place) {
     return place.nameKey ? t(place.nameKey) : place.name;
@@ -331,14 +331,15 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     const event = state.events.find(
       ({ source_url: sourceUrl }) => sourceUrl === state.selectedEventUrl,
     );
+    const showsEventDetail = Boolean(event);
     container.replaceChildren();
-    container.hidden = !event;
+    container.hidden = !showsEventDetail;
     document
       .getElementById('place-detail')
-      .classList.toggle('is-showing-event', Boolean(event));
+      .classList.toggle('is-showing-event', showsEventDetail);
     document
       .querySelector('.sidebar')
-      .classList.toggle('is-showing-event', Boolean(event));
+      .classList.toggle('is-showing-event', showsEventDetail);
     if (!event) return;
 
     const language = document.documentElement.lang || 'de';
@@ -442,7 +443,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     state.selectedEventUrl = event.source_url;
     document.getElementById('event-overview').hidden = true;
     renderEventDetail();
-    closeTentPopup();
+    closePlacePopup();
     requestAnimationFrame(() => {
       document.querySelector('.sidebar').scrollTo({ top: 0, behavior: 'smooth' });
       document.getElementById('event-detail-title')?.focus({ preventScroll: true });
@@ -464,7 +465,42 @@ export function createMapController({ map, t, onSelectProjectArea }) {
 
   function refreshEventViews() {
     renderEvents();
-    if (tentPopup) tentPopup.setDOMContent(createTentPopupContent());
+    if (placePopup && state.selected === 'zelt') {
+      placePopup.setDOMContent(createTentPopupContent());
+    }
+  }
+
+  function placeDescription(place) {
+    return place.descriptionKey
+      ? t(place.descriptionKey)
+      : (place.description ?? '');
+  }
+
+  function createPlacePopupContent(place) {
+    const content = document.createElement('article');
+    content.className = 'place-popup';
+
+    if (place.image) {
+      const visual = document.createElement('figure');
+      visual.className = 'place-popup-visual';
+      const image = document.createElement('img');
+      image.src = place.image;
+      image.alt = place.imageAlt ?? '';
+      image.decoding = 'async';
+      image.addEventListener('error', () => visual.remove());
+      visual.append(image);
+      content.append(visual);
+    }
+
+    const body = document.createElement('div');
+    body.className = 'place-popup-body';
+    const title = document.createElement('h3');
+    title.textContent = placeName(place);
+    const description = document.createElement('p');
+    description.textContent = placeDescription(place);
+    body.append(title, description);
+    content.append(body);
+    return content;
   }
 
   function createTentPopupContent() {
@@ -554,11 +590,17 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     return content;
   }
 
-  function showTentPopup() {
-    tentPopup?.remove();
-    tentPopup = new maplibregl.Popup({
-      anchor: window.innerWidth <= 700 ? 'top' : 'bottom-left',
-      className: 'tent-events-map-popup',
+  function showPlacePopup(id) {
+    const place = places[id];
+    if (!place?.coordinates) return;
+    placePopup?.remove();
+    const showsEvents = id === 'zelt';
+    placePopup = new maplibregl.Popup({
+      anchor:
+        window.innerWidth <= 700
+          ? (showsEvents ? 'bottom' : 'top')
+          : 'bottom-left',
+      className: showsEvents ? 'tent-events-map-popup' : 'place-info-map-popup',
       closeButton: true,
       closeOnClick: false,
       closeOnMove: false,
@@ -566,17 +608,19 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       maxWidth: 'min(340px, calc(100vw - 28px))',
       offset: window.innerWidth <= 700 ? 24 : 20,
     })
-      .setLngLat(places.zelt.coordinates)
-      .setDOMContent(createTentPopupContent())
+      .setLngLat(place.coordinates)
+      .setDOMContent(
+        showsEvents ? createTentPopupContent() : createPlacePopupContent(place),
+      )
       .addTo(map);
-    tentPopup.on('close', () => {
-      tentPopup = null;
+    placePopup.on('close', () => {
+      placePopup = null;
     });
   }
 
-  function closeTentPopup() {
-    tentPopup?.remove();
-    tentPopup = null;
+  function closePlacePopup() {
+    placePopup?.remove();
+    placePopup = null;
   }
 
   function setActiveButtons(selector, activeValue, attribute) {
@@ -611,6 +655,10 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     const eventOverview = document.getElementById('event-overview');
     const eventDetail = document.getElementById('event-detail');
     const showsEvents = state.selected === 'zelt';
+    document
+      .querySelector('.app-shell')
+      .classList.toggle('is-tent-selected', showsEvents);
+    map.resize();
     detail.classList.toggle('has-events', showsEvents);
     document
       .querySelector('.sidebar')
@@ -621,9 +669,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     document.getElementById('detail-title').textContent = placeName(place);
     document.getElementById('detail-number').textContent = place.number;
     document.getElementById('edition-number').textContent = place.number;
-    detailDescription.textContent = place.descriptionKey
-      ? t(place.descriptionKey)
-      : (place.description ?? '');
+    detailDescription.textContent = placeDescription(place);
     detailDescription.hidden = showsEvents;
     if (!showsEvents) state.selectedEventUrl = null;
     const showsEventDetail =
@@ -634,6 +680,9 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     eventOverview.hidden = !showsEvents || showsEventDetail;
     eventDetail.hidden = !showsEventDetail;
     detail.classList.toggle('is-showing-event', showsEventDetail);
+    if (!showsEventDetail) {
+      document.querySelector('.sidebar').classList.remove('is-showing-event');
+    }
     if (showsEvents) renderEvents();
     if (showsEventDetail) renderEventDetail();
     detailLink.hidden = showsEvents || !place.source;
@@ -647,7 +696,9 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   function refreshLanguage() {
     updateSelectedPlace();
     updateCaption();
-    if (tentPopup) showTentPopup();
+    if (placePopup && places[state.selected]?.coordinates) {
+      showPlacePopup(state.selected);
+    }
     markerElements.forEach((element, id) => {
       element.setAttribute(
         'aria-label',
@@ -680,8 +731,6 @@ export function createMapController({ map, t, onSelectProjectArea }) {
           .getElementById('place-detail')
           .scrollIntoView({ behavior: 'smooth', block: 'start' });
       });
-    } else {
-      closeTentPopup();
     }
     if (fly) {
       if (place.bounds) {
@@ -698,12 +747,17 @@ export function createMapController({ map, t, onSelectProjectArea }) {
           zoom: state.dimension === '3d' ? 16.65 : 16.3,
           pitch: state.dimension === '3d' ? 60 : 0,
           bearing: state.dimension === '3d' ? -24 : 0,
+          offset:
+            id === 'zelt' && window.innerWidth <= 700
+              ? [0, Math.round(Math.min(110, window.innerHeight * 0.12))]
+              : [0, 0],
           speed: 0.8,
           essential: true,
         });
       }
     }
-    if (id === 'zelt') showTentPopup();
+    if (place.coordinates) showPlacePopup(id);
+    else closePlacePopup();
   }
 
   function setPlacesVisible(visible) {
@@ -744,7 +798,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   function showAirport() {
     state.view = 'airport';
     state.caption = 'airport';
-    closeTentPopup();
+    closePlacePopup();
     setActiveButtons('.map-actions button', 'airport-view', 'id');
     updateCaption();
     map.fitBounds(airportBounds, {
@@ -814,7 +868,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     state.eventsStatus = 'loading';
     if (state.selected === 'zelt') {
       renderEvents();
-      if (tentPopup) showTentPopup();
+      if (placePopup) showPlacePopup('zelt');
     }
     try {
       const response = await fetch(
@@ -837,7 +891,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     }
     if (state.selected === 'zelt') {
       renderEvents();
-      if (tentPopup) showTentPopup();
+      if (placePopup) showPlacePopup('zelt');
     }
   }
 

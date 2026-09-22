@@ -42,6 +42,59 @@ function distanceInMeters(a, b) {
   return Math.hypot(x, y);
 }
 
+function pointOnSegment([longitude, latitude], start, end) {
+  const crossProduct =
+    (latitude - start[1]) * (end[0] - start[0]) -
+    (longitude - start[0]) * (end[1] - start[1]);
+  if (Math.abs(crossProduct) > 1e-10) return false;
+
+  return (
+    longitude >= Math.min(start[0], end[0]) &&
+    longitude <= Math.max(start[0], end[0]) &&
+    latitude >= Math.min(start[1], end[1]) &&
+    latitude <= Math.max(start[1], end[1])
+  );
+}
+
+function ringContainsPoint(point, ring) {
+  let inside = false;
+  for (let index = 0, previous = ring.length - 1; index < ring.length; previous = index++) {
+    const start = ring[previous];
+    const end = ring[index];
+    if (pointOnSegment(point, start, end)) return true;
+
+    const crossesLatitude = start[1] > point[1] !== end[1] > point[1];
+    if (
+      crossesLatitude &&
+      point[0] <
+        ((end[0] - start[0]) * (point[1] - start[1])) /
+          (end[1] - start[1]) +
+          start[0]
+    ) {
+      inside = !inside;
+    }
+  }
+  return inside;
+}
+
+function polygonContainsPoint(point, rings) {
+  return (
+    Boolean(rings[0]) &&
+    ringContainsPoint(point, rings[0]) &&
+    !rings.slice(1).some((hole) => ringContainsPoint(point, hole))
+  );
+}
+
+export function geometryContainsPoint(geometry, point) {
+  if (geometry?.type === 'Polygon') {
+    return polygonContainsPoint(point, geometry.coordinates);
+  }
+  if (geometry?.type === 'MultiPolygon') {
+    return geometry.coordinates.some((polygon) => polygonContainsPoint(point, polygon));
+  }
+  return false;
+}
+
 function analyseSamples(samples) {
   return samples.map((sample, index) => {
     const nearest = samples
@@ -122,8 +175,17 @@ function clipPolygonToCell(ring, west, south, east, north) {
   return [...polygon, polygon[0]];
 }
 
-export function createGroundHeightFeatures(samples, boundaryRing, cellSizeMeters) {
-  const analysedSamples = analyseSamples(samples);
+export function createGroundHeightFeatures(
+  samples,
+  boundaryRing,
+  analysisGeometry,
+  cellSizeMeters,
+) {
+  const analysisSamples = samples.filter((sample) =>
+    geometryContainsPoint(analysisGeometry, [sample.longitude, sample.latitude]),
+  );
+  const analysedSamples =
+    analysisSamples.length >= 2 ? analyseSamples(analysisSamples) : [];
   const longitudes = boundaryRing.map(([longitude]) => longitude);
   const latitudes = boundaryRing.map(([, latitude]) => latitude);
   const west = Math.min(...longitudes);
@@ -146,19 +208,27 @@ export function createGroundHeightFeatures(samples, boundaryRing, cellSizeMeters
         longitude: (cellWest + cellEast) / 2,
         latitude: (cellSouth + cellNorth) / 2
       };
-      const { groundHeight, referenceHeight } = interpolateAt(point, analysedSamples);
-      const heightDifference = Math.abs(groundHeight - referenceHeight);
-      features.push({
-        type: 'Feature',
-        properties: {
+      const calculated = geometryContainsPoint(analysisGeometry, [
+        point.longitude,
+        point.latitude,
+      ]);
+      const properties = { calculated };
+      if (calculated && analysedSamples.length >= 2) {
+        const { groundHeight, referenceHeight } = interpolateAt(point, analysedSamples);
+        const heightDifference = Math.abs(groundHeight - referenceHeight);
+        Object.assign(properties, {
           groundHeight: Number(groundHeight.toFixed(3)),
           referenceHeight: Number(referenceHeight.toFixed(3)),
-          heightDifference: Number(heightDifference.toFixed(3))
-        },
+          heightDifference: Number(heightDifference.toFixed(3)),
+        });
+      }
+      features.push({
+        type: 'Feature',
+        properties,
         geometry: { type: 'Polygon', coordinates: [clippedRing] }
       });
     }
   }
 
-  return features;
+  return { features, analysisSampleCount: analysisSamples.length };
 }

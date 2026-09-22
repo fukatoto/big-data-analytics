@@ -17,7 +17,7 @@ The map needs an internet connection for OpenFreeMap vector tiles and Google Fon
 
 The interface can be switched between English, German, and French. Translations are maintained in `src/i18n.js`; the selected language is stored locally in the browser.
 
-The three central project areas — Urban Tech Republic, Schumacher Quartier, and Landschaftsraum Tegeler Stadtheide — are loaded from the official Berlin TXL WFS and can be shown or hidden independently with the map controls. The source uses the official `b_teilraeume` layer; the WFS value “Landschaftsraum” is presented in the interface with its full project name.
+The three central project areas — Urban Tech Republic, Schumacher Quartier, and Landschaftsraum Tegeler Stadtheide — are stored locally in `public/data/txl-project-areas.geojson` and can be shown or hidden independently with the map controls. The file is a browser-optimised copy of the official Berlin TXL WFS `b_teilraeume` layer; the source value “Landschaftsraum” is presented in the interface with its full project name.
 
 ## Ground-height CSV
 
@@ -28,9 +28,9 @@ longitude,latitude,ground_height_m
 13.2880,52.5530,36.7
 ```
 
-Comma- and semicolon-separated files are supported. For every measurement, the app uses the median height of up to six nearest measurements as its local reference. The values are interpolated onto a 20-metre analysis grid. The slider threshold marks cells whose absolute difference from that reference is greater than or equal to the selected value as red obstacles; cells within tolerance stay green.
+Comma- and semicolon-separated files are supported. Only measurements inside the official Tegeler Stadtheide landscape area are used. For every such measurement, the app uses the median height of up to six nearest measurements as its local reference. The values are interpolated onto a 20-metre analysis grid. The slider threshold marks analysed cells whose absolute difference from that reference is greater than or equal to the selected value as red obstacles; cells within tolerance stay green.
 
-The grid is clipped to `public/data/txl-project-boundary.geojson`, so no analysis color is drawn outside the Berlin TXL project boundary. The boundary is derived from the official Berlin WFS dataset “Berlin TXL” and simplified for browser rendering. Boundary source: Tegel Projekt GmbH / Berlin TXL, licensed under CC BY 4.0.
+The grid is clipped to `public/data/txl-project-boundary.geojson` and remains visible throughout the Berlin TXL project boundary. Height-tolerance values and red/green analysis colors are only calculated for grid cells whose centres lie inside the local project area “Landschaftsraum” (Tegeler Stadtheide) from `public/data/txl-project-areas.geojson`; the remaining TXL cells are shown as a neutral grid without calculated values. Both boundary files are derived from the official Berlin WFS dataset “Berlin TXL” and simplified for browser rendering. Boundary source: Tegel Projekt GmbH / Berlin TXL, licensed under CC BY 4.0.
 
 ## Project structure
 
@@ -46,4 +46,5 @@ The grid is clipped to `public/data/txl-project-boundary.geojson`, so no analysi
 - `src/style.css` — map layout and responsive styles
 - `public/data/txl-ground-heights.csv` — replaceable ground-height input (currently dummy data)
 - `public/data/txl-project-boundary.geojson` — simplified official Berlin TXL project boundary
+- `public/data/txl-project-areas.geojson` — simplified official project-area boundaries
 - `dist/` — generated production build

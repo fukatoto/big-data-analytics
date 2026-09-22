@@ -14,9 +14,14 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
   function colorExpression(threshold) {
     return [
       'case',
-      ['>=', ['get', 'heightDifference'], threshold],
-      groundHeightConfig.colors.obstacle,
-      groundHeightConfig.colors.clear
+      ['boolean', ['get', 'calculated'], false],
+      [
+        'case',
+        ['>=', ['get', 'heightDifference'], threshold],
+        groundHeightConfig.colors.obstacle,
+        groundHeightConfig.colors.clear,
+      ],
+      groundHeightConfig.colors.grid,
     ];
   }
 
@@ -31,7 +36,14 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
         ? t(loadError.translationKey, loadError.translationVariables)
         : loadError.message;
     } else if (sampleCount) {
-      status.textContent = t('dataStatus', { points: sampleCount, cells: features.length });
+      const analysedCells = features.filter(
+        (feature) => feature.properties.calculated,
+      ).length;
+      status.textContent = t('dataStatus', {
+        points: sampleCount,
+        cells: analysedCells,
+        gridCells: features.length,
+      });
     } else {
       status.textContent = t('loadingHeightData');
     }
@@ -47,9 +59,16 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       map.setPaintProperty(groundHeightConfig.cellOutlineLayerId, 'line-color', color);
     }
 
-    const obstacles = features.filter((feature) => feature.properties.heightDifference >= threshold).length;
+    const analysedFeatures = features.filter(
+      (feature) => feature.properties.calculated,
+    );
+    const obstacles = analysedFeatures.filter(
+      (feature) => feature.properties.heightDifference >= threshold,
+    ).length;
     document.getElementById('obstacle-count').textContent = String(obstacles);
-    document.getElementById('clear-count').textContent = String(features.length - obstacles);
+    document.getElementById('clear-count').textContent = String(
+      analysedFeatures.length - obstacles,
+    );
   }
 
   function scheduleUpdate() {
@@ -93,9 +112,10 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
   }
 
   async function load() {
-    const [heightResponse, boundaryResponse] = await Promise.all([
+    const [heightResponse, boundaryResponse, analysisAreaResponse] = await Promise.all([
       fetch(groundHeightConfig.csvUrl),
-      fetch(groundHeightConfig.boundaryUrl)
+      fetch(groundHeightConfig.boundaryUrl),
+      fetch(groundHeightConfig.analysisAreaUrl),
     ]);
     if (!heightResponse.ok) {
       throw createTranslatedError('heightCsvLoadError', { status: heightResponse.status });
@@ -103,19 +123,38 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
     if (!boundaryResponse.ok) {
       throw createTranslatedError('boundaryLoadError', { status: boundaryResponse.status });
     }
+    if (!analysisAreaResponse.ok) {
+      throw createTranslatedError('analysisAreaLoadError', {
+        status: analysisAreaResponse.status,
+      });
+    }
 
     const samples = parseGroundHeightCsv(await heightResponse.text(), createTranslatedError);
     const boundaryData = await boundaryResponse.json();
+    const analysisAreaData = await analysisAreaResponse.json();
     const boundaryFeature = boundaryData.features?.[0];
     if (boundaryFeature?.geometry?.type !== 'Polygon') {
       throw createTranslatedError('boundaryFormatError');
     }
+    const analysisAreaGeometry = analysisAreaData.features?.find(
+      (feature) =>
+        feature.properties?.[groundHeightConfig.analysisAreaProperty] ===
+        groundHeightConfig.analysisAreaValue,
+    )?.geometry;
+    if (!['Polygon', 'MultiPolygon'].includes(analysisAreaGeometry?.type)) {
+      throw createTranslatedError('analysisAreaFormatError');
+    }
 
-    features = createGroundHeightFeatures(
+    const result = createGroundHeightFeatures(
       samples,
       boundaryFeature.geometry.coordinates[0],
-      groundHeightConfig.cellSizeMeters
+      analysisAreaGeometry,
+      groundHeightConfig.cellSizeMeters,
     );
+    if (result.analysisSampleCount < 2) {
+      throw createTranslatedError('analysisAreaHeightMinimum');
+    }
+    features = result.features;
     const threshold = Number(document.getElementById('height-threshold').value);
 
     map.addSource(groundHeightConfig.boundarySourceId, { type: 'geojson', data: boundaryData });
@@ -132,7 +171,12 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       },
       paint: {
         'fill-color': colorExpression(threshold),
-        'fill-opacity': 0.34
+        'fill-opacity': [
+          'case',
+          ['boolean', ['get', 'calculated'], false],
+          0.34,
+          0.06,
+        ],
       }
     }, groundHeightConfig.beforeLayerId);
     map.addLayer({
@@ -144,7 +188,12 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       },
       paint: {
         'line-color': colorExpression(threshold),
-        'line-opacity': 0.25,
+        'line-opacity': [
+          'case',
+          ['boolean', ['get', 'calculated'], false],
+          0.25,
+          0.48,
+        ],
         'line-width': 0.45
       }
     }, groundHeightConfig.beforeLayerId);
@@ -171,7 +220,11 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
     popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10 });
     map.on('mousemove', groundHeightConfig.fillLayerId, (event) => {
       const feature = event.features?.[0];
-      if (!feature) return;
+      if (!feature?.properties?.calculated) {
+        map.getCanvas().style.cursor = '';
+        popup.remove();
+        return;
+      }
       map.getCanvas().style.cursor = 'pointer';
       const { groundHeight, referenceHeight, heightDifference } = feature.properties;
       popup

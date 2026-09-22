@@ -83,7 +83,8 @@ export const translations = {
     groundHeight: '{height} m ground',
     localReference: 'Local reference: {height} m',
     difference: 'Difference: {height} cm',
-    dataStatus: '{points} CSV points · {cells} cells',
+    dataStatus:
+      '{points} CSV points · {cells} analysed cells · {gridCells} grid cells',
     heightCsvEmpty: 'The height CSV does not contain any measurements.',
     heightCsvColumns:
       'Expected CSV columns: longitude, latitude, ground_height_m.',
@@ -92,6 +93,12 @@ export const translations = {
     heightCsvLoadError: 'Height CSV could not be loaded ({status}).',
     boundaryLoadError: 'TXL boundary could not be loaded ({status}).',
     boundaryFormatError: 'TXL boundary must be a GeoJSON polygon.',
+    analysisAreaLoadError:
+      'Tegeler Stadtheide boundary could not be loaded ({status}).',
+    analysisAreaFormatError:
+      'Tegeler Stadtheide boundary must be a GeoJSON polygon.',
+    analysisAreaHeightMinimum:
+      'At least two height measurements inside Tegeler Stadtheide are required.',
     terminalADescription:
       "The airport's distinctive hexagonal terminal is planned as a campus for Berliner Hochschule für Technik.",
     terminalBDescription:
@@ -190,7 +197,8 @@ export const translations = {
     groundHeight: '{height} m Bodenhöhe',
     localReference: 'Lokale Referenz: {height} m',
     difference: 'Differenz: {height} cm',
-    dataStatus: '{points} CSV-Punkte · {cells} Zellen',
+    dataStatus:
+      '{points} CSV-Punkte · {cells} analysierte Zellen · {gridCells} Rasterzellen',
     heightCsvEmpty: 'Die Höhen-CSV enthält keine Messwerte.',
     heightCsvColumns:
       'Erwartete CSV-Spalten: longitude, latitude, ground_height_m.',
@@ -199,6 +207,12 @@ export const translations = {
     heightCsvLoadError: 'Die Höhen-CSV konnte nicht geladen werden ({status}).',
     boundaryLoadError: 'Die TXL-Grenze konnte nicht geladen werden ({status}).',
     boundaryFormatError: 'Die TXL-Grenze muss ein GeoJSON-Polygon sein.',
+    analysisAreaLoadError:
+      'Die Grenze der Tegeler Stadtheide konnte nicht geladen werden ({status}).',
+    analysisAreaFormatError:
+      'Die Grenze der Tegeler Stadtheide muss ein GeoJSON-Polygon sein.',
+    analysisAreaHeightMinimum:
+      'In der Tegeler Stadtheide werden mindestens zwei Höhenmessungen benötigt.',
     terminalADescription:
       'Das markante sechseckige Terminal ist als Campus für die Berliner Hochschule für Technik vorgesehen.',
     terminalBDescription:
@@ -298,7 +312,8 @@ export const translations = {
     groundHeight: 'Altitude du sol : {height} m',
     localReference: 'Référence locale : {height} m',
     difference: 'Écart : {height} cm',
-    dataStatus: '{points} points CSV · {cells} cellules',
+    dataStatus:
+      '{points} points CSV · {cells} cellules analysées · {gridCells} cellules de grille',
     heightCsvEmpty: 'Le fichier CSV ne contient aucune mesure de hauteur.',
     heightCsvColumns:
       'Colonnes CSV attendues : longitude, latitude, ground_height_m.',
@@ -309,6 +324,12 @@ export const translations = {
       'Le fichier CSV des hauteurs n’a pas pu être chargé ({status}).',
     boundaryLoadError: 'La limite TXL n’a pas pu être chargée ({status}).',
     boundaryFormatError: 'La limite TXL doit être un polygone GeoJSON.',
+    analysisAreaLoadError:
+      'La limite de Tegeler Stadtheide n’a pas pu être chargée ({status}).',
+    analysisAreaFormatError:
+      'La limite de Tegeler Stadtheide doit être un polygone GeoJSON.',
+    analysisAreaHeightMinimum:
+      'Au moins deux mesures d’altitude sont requises dans Tegeler Stadtheide.',
     terminalADescription:
       'L’emblématique terminal hexagonal est destiné à devenir un campus de la Berliner Hochschule für Technik.',
     terminalBDescription:
