@@ -700,10 +700,12 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       showPlacePopup(state.selected);
     }
     markerElements.forEach((element, id) => {
+      const name = placeName(places[id]);
       element.setAttribute(
         'aria-label',
-        t('showPlace', { place: placeName(places[id]) }),
+        t('showPlace', { place: name }),
       );
+      element.querySelector('.marker-label').textContent = name;
     });
   }
 

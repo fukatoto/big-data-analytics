@@ -118,10 +118,15 @@ export const translations = {
     heideblick: 'Heideblick',
     recreation: 'Recreation',
     archedAntenna: 'Arched antenna',
+    tent: 'Tent',
     northernRunway: 'Northern runway',
     southernRunway: 'Southern runway',
     northernRunwaySubtitle: 'Open space of the former airfield',
     southernRunwaySubtitle: 'Airport history in the park landscape',
+    airfieldLighting: 'Airfield lighting system',
+    landscapePark: 'Landscape park',
+    airfieldLightingSubtitle: 'Relic of former flight operations',
+    landscapeParkSubtitle: 'Nature, recreation and open landscape',
     heideblickDescription:
       'From the elevated Heideblick, the view opens across Tegeler Stadtheide to Berlin’s skyline. A footbridge at the end of the former runway creates a new perspective on the protected heath landscape.',
     recreationDescription:
@@ -134,6 +139,10 @@ export const translations = {
       'The northern runway opens onto the broad landscape of Tegeler Stadtheide and makes the scale of the former airfield directly tangible.',
     southernRunwayDescription:
       'The southern runway connects the open park landscape with the former airport site and keeps the history of aviation at Berlin-Tegel visible.',
+    airfieldLightingDescription:
+      'The former airfield lighting system recalls the precise infrastructure that once guided aircraft safely during take-off, landing and ground operations at Berlin-Tegel.',
+    landscapeParkDescription:
+      'The landscape park brings together protected habitats, wide views and new opportunities for recreation in the open landscape of Tegeler Stadtheide.',
   },
   de: {
     pageTitle: 'Berlin TXL • 3D-Karte',
@@ -255,10 +264,15 @@ export const translations = {
     heideblick: 'Heideblick',
     recreation: 'Freizeit',
     archedAntenna: 'Rundbogenantenne',
+    tent: 'Zelt',
     northernRunway: 'Nördliche Landebahn',
     southernRunway: 'Südliche Landebahn',
     northernRunwaySubtitle: 'Weite des ehemaligen Flugfelds',
     southernRunwaySubtitle: 'Flughafengeschichte in der Parklandschaft',
+    airfieldLighting: 'Befeuerungsanlage',
+    landscapePark: 'Landschaftspark',
+    airfieldLightingSubtitle: 'Relikt des früheren Flugbetriebs',
+    landscapeParkSubtitle: 'Natur, Erholung und offene Landschaft',
     heideblickDescription:
       'Vom erhöhten Heideblick öffnet sich die Weite der Tegeler Stadtheide bis zur Berliner Skyline. Ein Steg am Ende der ehemaligen Landebahn macht die geschützte Heidelandschaft aus einer neuen Perspektive erlebbar.',
     recreationDescription:
@@ -271,6 +285,10 @@ export const translations = {
       'Die nördliche Landebahn öffnet den Blick in die weite Landschaft der Tegeler Stadtheide und macht die Dimension des ehemaligen Flugfelds unmittelbar erlebbar.',
     southernRunwayDescription:
       'Die südliche Landebahn verbindet die offene Parklandschaft mit dem ehemaligen Flughafengelände und hält die Luftfahrtgeschichte von Berlin-Tegel sichtbar.',
+    airfieldLightingDescription:
+      'Die ehemalige Befeuerungsanlage erinnert an die präzise Infrastruktur, die Flugzeuge in Berlin-Tegel bei Start, Landung und Bodenbewegungen sicher leitete.',
+    landscapeParkDescription:
+      'Der Landschaftspark verbindet geschützte Lebensräume, weite Ausblicke und neue Möglichkeiten zur Erholung in der offenen Landschaft der Tegeler Stadtheide.',
   },
   fr: {
     pageTitle: 'Berlin TXL • Carte 3D',
@@ -395,10 +413,15 @@ export const translations = {
     heideblick: 'Heideblick',
     recreation: 'Loisirs',
     archedAntenna: 'Antenne arquée',
+    tent: 'Tente',
     northernRunway: 'Piste nord',
     southernRunway: 'Piste sud',
     northernRunwaySubtitle: 'Étendue de l’ancien aérodrome',
     southernRunwaySubtitle: 'Histoire aéroportuaire dans le parc',
+    airfieldLighting: 'Balisage lumineux',
+    landscapePark: 'Parc paysager',
+    airfieldLightingSubtitle: 'Vestige des anciennes opérations aériennes',
+    landscapeParkSubtitle: 'Nature, loisirs et paysage ouvert',
     heideblickDescription:
       'Depuis le Heideblick surélevé, le regard porte sur la Tegeler Stadtheide jusqu’à la silhouette de Berlin. Une passerelle au bout de l’ancienne piste offre une nouvelle perspective sur la lande protégée.',
     recreationDescription:
@@ -411,5 +434,9 @@ export const translations = {
       'La piste nord ouvre le regard sur le vaste paysage de la Tegeler Stadtheide et permet de saisir directement l’échelle de l’ancien aérodrome.',
     southernRunwayDescription:
       'La piste sud relie le paysage ouvert du parc à l’ancien site aéroportuaire et maintient visible l’histoire aéronautique de Berlin-Tegel.',
+    airfieldLightingDescription:
+      'L’ancien balisage lumineux rappelle l’infrastructure précise qui guidait les avions en toute sécurité lors des décollages, atterrissages et déplacements au sol à Berlin-Tegel.',
+    landscapeParkDescription:
+      'Le parc paysager réunit des habitats protégés, de vastes perspectives et de nouvelles possibilités de détente dans le paysage ouvert de la Tegeler Stadtheide.',
   },
 };

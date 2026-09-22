@@ -6,7 +6,7 @@ export const projectAreasDataUrl = '/data/txl-project-areas.geojson';
 export const places = {
   'terminal-a': {
     name: 'Terminal A',
-    number: '04 / 12',
+    number: '04 / 15',
     coordinates: [13.2889469, 52.5544223],
     image: '/images/plane.png',
     imageAlt: '',
@@ -16,7 +16,7 @@ export const places = {
   },
   'terminal-b': {
     name: 'Terminal B',
-    number: '05 / 12',
+    number: '05 / 15',
     coordinates: [13.2920506, 52.5541399],
     image: '/images/plane.png',
     imageAlt: '',
@@ -26,7 +26,7 @@ export const places = {
   },
   'terminal-d': {
     name: 'Terminal D',
-    number: '06 / 12',
+    number: '06 / 15',
     coordinates: [13.2916620, 52.5523579],
     image: '/images/plane.png',
     imageAlt: '',
@@ -36,28 +36,28 @@ export const places = {
   },
   'urban-tech-republic': {
     nameKey: 'urbanTechRepublic',
-    number: '02 / 12',
+    number: '02 / 15',
     bounds: [[13.27488489, 52.54882258], [13.31020587, 52.56154831]],
     descriptionKey: 'urbanTechRepublicDescription',
     projectAreaId: 'urban-tech-republic'
   },
   'schumacher-quartier': {
     nameKey: 'schumacherQuartier',
-    number: '03 / 12',
+    number: '03 / 15',
     bounds: [[13.31067033, 52.55888093], [13.32751649, 52.56537308]],
     descriptionKey: 'schumacherQuartierDescription',
     projectAreaId: 'schumacher-quartier'
   },
   'tegeler-stadtheide': {
     nameKey: 'tegelerStadtheide',
-    number: '01 / 12',
+    number: '01 / 15',
     bounds: [[13.25635322, 52.55243287], [13.30305156, 52.56572367]],
     descriptionKey: 'tegelerStadtheideDescription',
     projectAreaId: 'tegeler-stadtheide'
   },
   'heideblick': {
     nameKey: 'heideblick',
-    number: '07 / 12',
+    number: '07 / 15',
     coordinates: [13.265539352308727, 52.56025064158781],
     image: '/images/plane.png',
     imageAlt: '',
@@ -67,7 +67,7 @@ export const places = {
   },
   'bunker': {
     nameKey: 'recreation',
-    number: '08 / 12',
+    number: '08 / 15',
     coordinates: [13.25783266632616, 52.55416615425812],
     image: '/images/plane.png',
     imageAlt: '',
@@ -77,7 +77,7 @@ export const places = {
   },
   'rundbogenantenne': {
     nameKey: 'archedAntenna',
-    number: '09 / 12',
+    number: '09 / 15',
     coordinates: [13.287565760368738, 52.56150630401666],
     image: '/images/plane.png',
     imageAlt: '',
@@ -86,14 +86,14 @@ export const places = {
     source: 'https://gruen-berlin.de/projekte/urbane-freiraeume/landschaftsraum-tegel-tegeler-stadtheide/ueber-das-projekt'
   },
   'zelt': {
-    name: 'Zelt',
-    number: '10 / 12',
+    nameKey: 'tent',
+    number: '10 / 15',
     coordinates: [13.27559195542228, 52.55301043217409],
     descriptionKey: 'tentDescription'
   },
   'northern-runway': {
     nameKey: 'northernRunway',
-    number: '11 / 12',
+    number: '11 / 15',
     coordinates: [13.27325037503029, 52.55832749635448], //,
     image: '/images/plane.png',
     imageAlt: '',
@@ -102,12 +102,33 @@ export const places = {
   },
   'southern-runway': {
     nameKey: 'southernRunway',
-    number: '12 / 12',
+    number: '12 / 15',
     coordinates: [13.295831615387536, 52.558694994641904],
     image: '/images/plane.png',
     imageAlt: '',
     coverImageCredit: '',
     descriptionKey: 'southernRunwayDescription'
+  },
+  'airfield-lighting': {
+    nameKey: 'airfieldLighting',
+    number: '13 / 15',
+    coordinates: [13.260998045156224, 52.557178333184616], 
+    image: '/images/befeuerungsanlage.jpg',
+    imageAlt: '',
+    coverImageCredit: '',
+    descriptionKey: 'airfieldLightingDescription'
+  },
+  'landscape-park': {
+    nameKey: 'landscapePark',
+    number: '14 / 15',
+    coordinates: [13.3054988885774, 52.56307055794183],
+    descriptionKey: 'landscapeParkDescription'
+  },
+  'schumacher-quartier-place': {
+    nameKey: 'schumacherQuartier',
+    number: '15 / 15',
+    coordinates: [13.314237018067079, 52.560911421590774], //, 
+    descriptionKey: 'schumacherQuartierDescription'
   }
 };
 

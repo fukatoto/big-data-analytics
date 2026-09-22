@@ -6,7 +6,7 @@
     <meta name="theme-color" content="#101b1e" />
     <meta
       name="description"
-      content="Explore the former Berlin Tegel Airport terminal campus and Urban Tech Republic in an interactive 3D map."
+      content="Explore the former Berlin Tegel Airport terminal campus and Tegeler Stadtheide in an interactive 3D map."
     />
     <title>Berlin TXL</title>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -30,7 +30,7 @@
           <div class="edition-label">
             <span class="edition-line"></span>
             <span data-i18n="interactiveAtlas">INTERACTIVE ATLAS</span>
-            <span class="edition-number" id="edition-number">01 / 12</span>
+            <span class="edition-number" id="edition-number">01 / 15</span>
           </div>
           <h1>
             <span data-i18n="explore">Explore</span><br /><em>Berlin TXL</em>
@@ -55,7 +55,7 @@
         <div class="places-section">
           <div class="section-heading">
             <span data-i18n="placesAndAreas">PLACES &amp; PROJECT AREAS</span
-            ><span>12</span>
+            ><span>15</span>
           </div>
           <div class="place-list">
             <div class="place-group-heading">
@@ -117,7 +117,7 @@
               aria-checked="false"
             >
               <span class="terminal-places-label"
-                ><span data-i18n="places">PLACES</span><span>09</span></span
+                ><span data-i18n="places">PLACES</span><span>12</span></span
               ><i aria-hidden="true"><b></b></i>
             </button>
             <div id="terminal-places" class="terminal-places" hidden>
@@ -213,7 +213,7 @@
               >
                 <span class="place-index">10</span
                 ><span class="place-text"
-                  ><strong>Zelt</strong
+                  ><strong data-i18n="tent">Tent</strong
                   ><small data-i18n="tentSubtitle"
                     >Meeting point and events</small
                   ></span
@@ -249,6 +249,51 @@
                   ></span
                 ><span class="place-arrow" aria-hidden="true">↗</span>
               </button>
+              <button
+                class="place-item"
+                type="button"
+                data-place="airfield-lighting"
+                aria-pressed="false"
+              >
+                <span class="place-index">13</span
+                ><span class="place-text"
+                  ><strong data-i18n="airfieldLighting"
+                    >Airfield lighting system</strong
+                  ><small data-i18n="airfieldLightingSubtitle"
+                    >Relic of former flight operations</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="place-item"
+                type="button"
+                data-place="landscape-park"
+                aria-pressed="false"
+              >
+                <span class="place-index">14</span
+                ><span class="place-text"
+                  ><strong data-i18n="landscapePark"
+                    >Landscape park</strong
+                  ><small data-i18n="landscapeParkSubtitle"
+                    >Nature, recreation and open landscape</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="place-item"
+                type="button"
+                data-place="schumacher-quartier-place"
+                aria-pressed="false"
+              >
+                <span class="place-index">15</span
+                ><span class="place-text"
+                  ><strong data-i18n="schumacherQuartier"
+                    >Schumacher Quartier</strong
+                  ><small data-i18n="newResidentialQuarter"
+                    >New residential quarter</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
             </div>
           </div>
           <div class="place-detail" id="place-detail" aria-live="polite">
@@ -256,7 +301,7 @@
               <span id="detail-kicker-label" data-i18n="selectedProjectArea"
                 >SELECTED PROJECT AREA</span
               >
-              <span id="detail-number">01 / 12</span>
+              <span id="detail-number">01 / 15</span>
             </div>
             <h2 id="detail-title">Tegeler Stadtheide landscape area</h2>
             <p id="detail-description">
