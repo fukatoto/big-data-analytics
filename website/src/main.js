@@ -65,6 +65,45 @@ const groundHeightOverlay = createGroundHeightOverlay({
   createTranslatedError: localization.createTranslatedError,
 });
 
+const appShell = document.querySelector('.app-shell');
+const sidebarToggle = document.getElementById('sidebar-toggle');
+let sidebarResizeTimer;
+
+function readSavedSidebarState() {
+  try {
+    return localStorage.getItem('txl-sidebar-collapsed') === 'true';
+  } catch {
+    return false;
+  }
+}
+
+function saveSidebarState(collapsed) {
+  try {
+    localStorage.setItem('txl-sidebar-collapsed', String(collapsed));
+  } catch {
+    // The sidebar still works when browser storage is unavailable.
+  }
+}
+
+function updateSidebarState(collapsed, persist = true) {
+  appShell.classList.toggle('is-sidebar-collapsed', collapsed);
+  sidebarToggle.setAttribute('aria-expanded', String(!collapsed));
+  sidebarToggle.dataset.i18nAria = collapsed ? 'showSidebar' : 'hideSidebar';
+  sidebarToggle.setAttribute(
+    'aria-label',
+    localization.t(sidebarToggle.dataset.i18nAria),
+  );
+
+  if (persist) saveSidebarState(collapsed);
+  window.clearTimeout(sidebarResizeTimer);
+  sidebarResizeTimer = window.setTimeout(() => map.resize(), 300);
+}
+
+updateSidebarState(readSavedSidebarState(), false);
+sidebarToggle.addEventListener('click', () => {
+  updateSidebarState(!appShell.classList.contains('is-sidebar-collapsed'));
+});
+
 function closeMobilePanels(exceptPanel = null) {
   let hasOpenPanel = false;
   document.querySelectorAll('.mobile-map-panel').forEach((panel) => {

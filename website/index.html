@@ -19,7 +19,11 @@
   </head>
   <body>
     <div class="app-shell">
-      <aside class="sidebar" aria-label="Map information and places">
+      <aside
+        id="sidebar"
+        class="sidebar"
+        aria-label="Map information and places"
+      >
         <div class="sidebar-top">
           <div class="brand-lockup">
             <span class="brand-mark" aria-hidden="true"
@@ -425,6 +429,20 @@
           >
         </div>
       </aside>
+
+      <button
+        id="sidebar-toggle"
+        class="sidebar-toggle"
+        type="button"
+        aria-controls="sidebar"
+        aria-expanded="true"
+        aria-label="Hide sidebar"
+        data-i18n-aria="hideSidebar"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="m14.5 6-6 6 6 6" />
+        </svg>
+      </button>
 
       <main
         class="map-stage"
