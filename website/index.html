@@ -4,6 +4,17 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="theme-color" content="#101b1e" />
+    <script>
+      let initialTheme = 'dark';
+      try {
+        if (localStorage.getItem('txl-theme') === 'light') initialTheme = 'light';
+      } catch {
+        // The default remains dark when browser storage is unavailable.
+      }
+      document.documentElement.dataset.theme = initialTheme;
+      document.querySelector('meta[name="theme-color"]').content =
+        initialTheme === 'dark' ? '#101b1e' : '#fbfcf8';
+    </script>
     <meta
       name="description"
       content="Explore the former Berlin Tegel Airport terminal campus and Tegeler Stadtheide in an interactive 3D map."
@@ -57,8 +68,7 @@
 
         <div class="places-section">
           <div class="section-heading">
-            <span data-i18n="placesAndAreas">PLACES &amp; PROJECT AREAS</span
-            ><span>23</span>
+            <span data-i18n="placesAndAreas">PLACES &amp; PROJECT AREAS</span>
           </div>
           <div class="place-list">
             <div class="place-group-heading">
@@ -546,6 +556,25 @@
               </select>
             </label>
             <button
+              id="theme-toggle"
+              class="basemap-toggle theme-toggle"
+              type="button"
+              aria-pressed="false"
+              aria-label="Enable dark mode"
+            >
+              <svg class="theme-icon theme-icon-moon" viewBox="0 0 24 24" aria-hidden="true">
+                <mask id="theme-moon-cutout">
+                  <rect width="24" height="24" fill="white" />
+                  <circle cx="17" cy="8" r="7.5" fill="black" />
+                </mask>
+                <circle cx="11.5" cy="12.5" r="9" mask="url(#theme-moon-cutout)" />
+              </svg>
+              <svg class="theme-icon theme-icon-sun" viewBox="0 0 24 24" aria-hidden="true">
+                <circle cx="12" cy="12" r="4" />
+                <path d="M12 2v2m0 16v2M4.93 4.93l1.42 1.42m11.3 11.3 1.42 1.42M2 12h2m16 0h2M4.93 19.07l1.42-1.42m11.3-11.3 1.42-1.42" />
+              </svg>
+            </button>
+            <button
               id="bee-mode-toggle"
               class="basemap-toggle bee-mode-toggle"
               type="button"
@@ -614,13 +643,15 @@
             type="button"
             aria-expanded="false"
             aria-controls="project-area-panel-body"
+            aria-label="Project areas"
+            data-i18n-aria="projectAreas"
           >
             <span
               class="mobile-panel-toggle-icon is-areas"
               aria-hidden="true"
             ></span
-            ><span data-i18n="projectAreas">PROJECT AREAS</span
-            ><span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
+            ><span class="mobile-panel-toggle-label" data-i18n="projectAreas">PROJECT AREAS</span
+            ><span class="mobile-panel-chevron" aria-hidden="true"></span>
           </button>
           <div class="mobile-panel-body" id="project-area-panel-body">
             <div class="project-area-control-heading">
@@ -731,7 +762,7 @@
               aria-hidden="true"
             ></span
             ><span data-i18n="heightTolerance">Height tolerance</span
-            ><span class="mobile-panel-chevron" aria-hidden="true">⌄</span>
+            ><span class="mobile-panel-chevron" aria-hidden="true"></span>
           </button>
           <div class="mobile-panel-body" id="height-panel-body">
             <div class="height-control-heading">

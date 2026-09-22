@@ -293,9 +293,6 @@ h1 em {
   font-weight: 700;
   letter-spacing: 0.16em;
 }
-.section-heading span:last-child {
-  color: var(--bergreen);
-}
 .place-list {
   flex: 0 0 auto;
 }
@@ -965,14 +962,6 @@ h1 em {
   font-size: 10px;
   white-space: nowrap;
 }
-.sidebar-bottom-dot {
-  width: 6px;
-  height: 6px;
-  flex: 0 0 auto;
-  border-radius: 50%;
-  background: var(--bergreen);
-}
-
 /* ==========================================================================
    Map canvas and top bar
    ========================================================================== */
@@ -1071,8 +1060,8 @@ h1 em {
   outline-offset: 2px;
 }
 .basemap-toggle-icon {
-  width: 16px;
-  height: 16px;
+  width: 20px;
+  height: 20px;
   fill: currentColor;
 }
 .bee-mode-toggle {
@@ -2632,7 +2621,7 @@ h1 em {
     display: block;
     padding: 8px 10px 10px;
   }
-  .map-stage.has-mobile-panel-open .mobile-map-panel:not(.is-mobile-open) {
+  .map-stage.has-mobile-panel-open .height-control:not(.is-mobile-open) {
     display: none;
   }
   .project-area-control-kicker,

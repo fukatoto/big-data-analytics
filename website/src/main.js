@@ -2,6 +2,8 @@ import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import './style.css';
+import './redesign.css';
+import './dark-mode.css';
 import { createBasemapController } from './basemap-controller.js';
 import { createBeeModeController } from './bee-mode-controller.js';
 import { airportNavigationBounds, campusCamera } from './config.js';
@@ -13,6 +15,30 @@ import { createProjectAreasOverlay } from './project-areas-overlay.js';
 maplibregl.setWorkerUrl(workerUrl);
 
 const localization = createLocalization('de');
+const themeToggle = document.getElementById('theme-toggle');
+
+function applyTheme(theme, persist = false) {
+  const isDark = theme === 'dark';
+  document.documentElement.dataset.theme = isDark ? 'dark' : 'light';
+  themeToggle.setAttribute('aria-pressed', String(isDark));
+  const label = localization.t(isDark ? 'darkModeDisable' : 'darkModeEnable');
+  themeToggle.setAttribute('aria-label', label);
+  themeToggle.title = label;
+  document.querySelector('meta[name="theme-color"]').content =
+    isDark ? '#101b1e' : '#fbfcf8';
+  if (persist) {
+    try {
+      localStorage.setItem('txl-theme', isDark ? 'dark' : 'light');
+    } catch {
+      // The choice remains active for this visit.
+    }
+  }
+}
+
+applyTheme(document.documentElement.dataset.theme);
+themeToggle.addEventListener('click', () => {
+  applyTheme(document.documentElement.dataset.theme === 'dark' ? 'light' : 'dark', true);
+});
 const map = new maplibregl.Map({
   container: 'map',
   style: 'https://tiles.openfreemap.org/styles/bright',
@@ -145,6 +171,7 @@ document
   .addEventListener('click', () => closeMobilePanels());
 
 localization.subscribe(() => {
+  applyTheme(document.documentElement.dataset.theme);
   basemapController.refreshLanguage();
   beeModeController.refreshLanguage();
   mapController.refreshLanguage();
