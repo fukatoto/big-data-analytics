@@ -1576,6 +1576,7 @@ h1 em {
 }
 .place-popup-body {
   padding: 17px 18px 19px;
+  border: 4px solid var(--bergreen);
 }
 .maplibregl-popup-content .place-popup-body h3 {
   margin: 0 30px 8px 0;
