@@ -1350,9 +1350,14 @@ h1 em {
   box-shadow: 0 0 0 2px var(--bergreen);
   transition: transform 0.2s ease;
 }
+.map-marker--tent {
+  width: 34px;
+  height: 34px;
+}
 .marker-core--tent {
   display: grid;
   place-items: center;
+  flex: 0 0 34px;
   width: 34px;
   height: 34px;
   border: 2px solid #fff;
