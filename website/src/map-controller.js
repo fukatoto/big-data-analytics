@@ -1044,6 +1044,20 @@ export function createMapController({ map, t, onSelectProjectArea }) {
 
   function addTrees() {
     const beforeLayerId = 'txl-3d-buildings';
+    const treeColor = [
+      'case',
+      ['==', ['typeof', ['get', 'z']], 'number'],
+      [
+        'interpolate', ['linear'], ['get', 'z'],
+        -3,   '#a50026',  // deutlich weniger grün: dunkelrot
+        -2,   '#e8603c',  // Grenze "auffällig": orange-rot
+        -1,   '#d4c45a',  // leicht unterdurchschnittlich: gedecktes Gelb
+        -0.5, '#8cc063',
+        0,    '#4a9e4a',  // typischer Baum: grün
+        1.5,  '#1e6b35',  // überdurchschnittlich grün: dunkelgrün
+      ],
+      '#9e9e9e',          // kein Wert messbar: grau
+    ];
 
     map.addSource('baeume', {
       type: 'geojson',
@@ -1056,7 +1070,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       source: 'baeume',
       minzoom: 15,
       paint: {
-        'fill-color': ['get', 'farbe'],
+        'fill-color': treeColor,
         'fill-opacity': 0.55,
       },
     }, beforeLayerId);
@@ -1067,7 +1081,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       source: 'baeume',
       minzoom: 15,
       paint: {
-        'line-color': ['get', 'farbe'],
+        'line-color': treeColor,
         'line-width': 0.8,
       },
     }, beforeLayerId);
