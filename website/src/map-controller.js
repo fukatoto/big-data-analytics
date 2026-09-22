@@ -480,15 +480,89 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     const content = document.createElement('article');
     content.className = 'place-popup';
 
-    if (place.image) {
+    const popupImages = place.images ??
+      (place.image
+        ? [
+            {
+              src: place.image,
+              alt: place.imageAlt ?? '',
+              credit: place.coverImageCredit ?? '',
+            },
+          ]
+        : []);
+
+    if (popupImages.length) {
       const visual = document.createElement('figure');
       visual.className = 'place-popup-visual';
       const image = document.createElement('img');
-      image.src = place.image;
-      image.alt = place.imageAlt ?? '';
       image.decoding = 'async';
       image.addEventListener('error', () => visual.remove());
-      visual.append(image);
+
+      const caption = document.createElement('figcaption');
+      caption.className = 'place-popup-caption';
+      caption.setAttribute('aria-live', 'polite');
+      const imageMeta = document.createElement('span');
+      imageMeta.className = 'place-popup-image-meta';
+      const imageLabel = document.createElement('span');
+      imageLabel.className = 'place-popup-image-label';
+      const imageCount = document.createElement('span');
+      imageCount.className = 'place-popup-image-count';
+      const imageCredit = document.createElement('span');
+      imageCredit.className = 'place-popup-image-credit';
+      imageMeta.append(imageLabel, imageCount);
+      caption.append(imageMeta, imageCredit);
+
+      let imageIndex = 0;
+      let nextImageButton = null;
+
+      function updatePopupImage() {
+        const currentImage = popupImages[imageIndex];
+        const viewLabel = currentImage.labelKey
+          ? t(currentImage.labelKey)
+          : '';
+        image.src = currentImage.src;
+        image.alt =
+          currentImage.alt ??
+          (viewLabel
+            ? t('placeImageAlt', {
+                place: placeName(place),
+                view: viewLabel,
+              })
+            : '');
+        imageLabel.textContent = viewLabel;
+        imageCount.textContent =
+          popupImages.length > 1
+            ? `${imageIndex + 1}/${popupImages.length}`
+            : '';
+        imageCredit.textContent = currentImage.credit
+          ? `© ${currentImage.credit}`
+          : '';
+
+        if (nextImageButton) {
+          const nextImage = popupImages[(imageIndex + 1) % popupImages.length];
+          const nextView = nextImage.labelKey ? t(nextImage.labelKey) : '';
+          const buttonLabel = t('showNextPlaceImage', {
+            place: placeName(place),
+            view: nextView,
+          });
+          nextImageButton.setAttribute('aria-label', buttonLabel);
+          nextImageButton.title = buttonLabel;
+        }
+      }
+
+      visual.append(image, caption);
+      if (popupImages.length > 1) {
+        nextImageButton = document.createElement('button');
+        nextImageButton.className = 'place-popup-image-next';
+        nextImageButton.type = 'button';
+        nextImageButton.innerHTML = '<span aria-hidden="true">⇄</span>';
+        nextImageButton.addEventListener('click', () => {
+          imageIndex = (imageIndex + 1) % popupImages.length;
+          updatePopupImage();
+        });
+        visual.append(nextImageButton);
+      }
+      updatePopupImage();
       content.append(visual);
     }
 
@@ -595,17 +669,21 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     if (!place?.coordinates) return;
     placePopup?.remove();
     const showsEvents = id === 'zelt';
+    const showsGallery = Boolean(place.images?.length);
     placePopup = new maplibregl.Popup({
       anchor:
         window.innerWidth <= 700
           ? (showsEvents ? 'bottom' : 'top')
-          : 'bottom-left',
+          : (showsGallery || showsEvents ? 'bottom' : 'bottom-left'),
       className: showsEvents ? 'tent-events-map-popup' : 'place-info-map-popup',
       closeButton: true,
       closeOnClick: false,
       closeOnMove: false,
       focusAfterOpen: false,
-      maxWidth: 'min(340px, calc(100vw - 28px))',
+      maxWidth:
+        window.innerWidth > 700
+          ? 'min(480px, calc(100vw - 28px))'
+          : 'min(340px, calc(100vw - 28px))',
       offset: window.innerWidth <= 700 ? 24 : 20,
     })
       .setLngLat(place.coordinates)

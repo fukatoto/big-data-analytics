@@ -1,16 +1,25 @@
 export const projectAreasDataUrl = '/data/txl-project-areas.geojson';
 
-// Coordinate-based places use `image`, `imageAlt`, and `description` (or
-// `descriptionKey`) for their map popup. Replace `/images/plane.png` with a
-// place-specific image stored in `public/` when the final photos are available.
+// Coordinate-based places can use `images` for a small popup gallery or `image`
+// for a single visual. Gallery entries are ordered from the current view to the
+// future concept.
 export const places = {
   'terminal-a': {
     name: 'Terminal A',
     number: '04 / 15',
     coordinates: [13.2889469, 52.5544223],
-    image: '/images/plane.png',
-    imageAlt: '',
-    coverImageCredit: '',
+    images: [
+      {
+        src: '/images/terminal_a_real.png',
+        labelKey: 'currentImage',
+        credit: 'Christian Sommer'
+      },
+      {
+        src: '/images/terminal_a_concept.png',
+        labelKey: 'conceptImage',
+        credit: 'agn Niederberghaus & Partner'
+      }
+    ],
     descriptionKey: 'terminalADescription',
     source: 'https://urbantechrepublic.de/en/real-estate-finder-map/'
   },
@@ -18,9 +27,18 @@ export const places = {
     name: 'Terminal B',
     number: '05 / 15',
     coordinates: [13.2920506, 52.5541399],
-    image: '/images/plane.png',
-    imageAlt: '',
-    coverImageCredit: '',
+    images: [
+      {
+        src: '/images/terminal_b_real.png',
+        labelKey: 'currentImage',
+        credit: 'Gerhard Kassner'
+      },
+      {
+        src: '/images/terminal_b_concept_new.png',
+        labelKey: 'conceptImage',
+        credit: 'Chaix & Morel et Associés'
+      }
+    ],
     descriptionKey: 'terminalBDescription',
     source: 'https://urbantechrepublic.de/en/real-estate-finder-map/'
   },
@@ -28,9 +46,28 @@ export const places = {
     name: 'Terminal D',
     number: '06 / 15',
     coordinates: [13.2916620, 52.5523579],
-    image: '/images/plane.png',
-    imageAlt: '',
-    coverImageCredit: '',
+    images: [
+      {
+        src: '/images/terminal_d_real.jpg',
+        labelKey: 'currentImage',
+        credit: 'Berlin TXL Management GmbH'
+      },
+      {
+        src: '/images/terminal_d_concept.png',
+        labelKey: 'conceptImage',
+        credit: 'GRAFT'
+      },
+      {
+        src: '/images/terminal_d_real_interior.jpg',
+        labelKey: 'currentInteriorImage',
+        credit: 'Berlin TXL Management GmbH'
+      },
+      {
+        src: '/images/terminal_d_concept_interior.png',
+        labelKey: 'conceptInteriorImage',
+        credit: 'GRAFT'
+      }
+    ],
     descriptionKey: 'terminalDDescription',
     source: 'https://urbantechrepublic.de/en/faq/'
   },
@@ -59,9 +96,18 @@ export const places = {
     nameKey: 'heideblick',
     number: '07 / 15',
     coordinates: [13.265539352308727, 52.56025064158781],
-    image: '/images/plane.png',
-    imageAlt: '',
-    coverImageCredit: '',
+    images: [
+      {
+        src: '/images/heideblick.jpg',
+        labelKey: 'currentImage',
+        credit: 'Thomas Rosenthal'
+      },
+      {
+        src: '/images/heideblick_concept.jpg',
+        labelKey: 'conceptImage',
+        credit: 'Atelier Loidl'
+      }
+    ],
     descriptionKey: 'heideblickDescription',
     source: 'https://gruen-berlin.de/projekte/urbane-freiraeume/landschaftsraum-tegel-tegeler-stadtheide/ueber-das-projekt'
   },
@@ -69,9 +115,18 @@ export const places = {
     nameKey: 'recreation',
     number: '08 / 15',
     coordinates: [13.25783266632616, 52.55416615425812],
-    image: '/images/plane.png',
-    imageAlt: '',
-    coverImageCredit: '',
+    images: [
+      {
+        src: '/images/bunker.jpg',
+        labelKey: 'currentImage',
+        credit: 'Thomas Rosenthal'
+      },
+      {
+        src: '/images/bunker_concept.jpg',
+        labelKey: 'conceptImage',
+        credit: 'Atelier Loidl'
+      }
+    ],
     descriptionKey: 'recreationDescription',
     source: 'https://gruen-berlin.de/projekte/urbane-freiraeume/landschaftsraum-tegel-tegeler-stadtheide/ueber-das-projekt'
   },
@@ -79,9 +134,18 @@ export const places = {
     nameKey: 'archedAntenna',
     number: '09 / 15',
     coordinates: [13.287565760368738, 52.56150630401666],
-    image: '/images/plane.png',
-    imageAlt: '',
-    coverImageCredit: '',
+    images: [
+      {
+        src: '/images/rundbogenantenne.jpg',
+        labelKey: 'currentImage',
+        credit: 'Thomas Rosenthal'
+      },
+      {
+        src: '/images/rundbogenantenne_concept.jpg',
+        labelKey: 'conceptImage',
+        credit: 'Atelier Loidl'
+      }
+    ],
     descriptionKey: 'archedAntennaDescription',
     source: 'https://gruen-berlin.de/projekte/urbane-freiraeume/landschaftsraum-tegel-tegeler-stadtheide/ueber-das-projekt'
   },
@@ -95,7 +159,6 @@ export const places = {
     nameKey: 'northernRunway',
     number: '11 / 15',
     coordinates: [13.27325037503029, 52.55832749635448], //,
-    image: '/images/plane.png',
     imageAlt: '',
     coverImageCredit: '',
     descriptionKey: 'northernRunwayDescription'
@@ -104,7 +167,6 @@ export const places = {
     nameKey: 'southernRunway',
     number: '12 / 15',
     coordinates: [13.295831615387536, 52.558694994641904],
-    image: '/images/plane.png',
     imageAlt: '',
     coverImageCredit: '',
     descriptionKey: 'southernRunwayDescription'
