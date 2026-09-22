@@ -127,7 +127,7 @@ export const places = {
   'schumacher-quartier-place': {
     nameKey: 'schumacherQuartier',
     number: '15 / 15',
-    coordinates: [13.314237018067079, 52.560911421590774], //, 
+    coordinates: [13.314237018067079, 52.560911421590774], 
     descriptionKey: 'schumacherQuartierDescription'
   }
 };

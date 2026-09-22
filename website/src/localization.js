@@ -52,12 +52,16 @@ export function createLocalization(defaultLanguage = 'de') {
   }
 
   function translateDocument() {
+    const currentYear = new Date().getFullYear();
+
     document.documentElement.lang = language;
     document.title = t('pageTitle');
     document.querySelector('meta[name="description"]').content = t('metaDescription');
     document.getElementById('language-select').value = language;
     document.querySelectorAll('[data-i18n]').forEach((element) => {
-      element.textContent = t(element.dataset.i18n);
+      const variables =
+        element.dataset.i18n === 'footer' ? { year: currentYear } : {};
+      element.textContent = t(element.dataset.i18n, variables);
     });
     document.querySelectorAll('[data-i18n-aria]').forEach((element) => {
       element.setAttribute('aria-label', t(element.dataset.i18nAria));

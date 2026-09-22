@@ -709,7 +709,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     });
   }
 
-  function selectPlace(id, fly = true) {
+  function selectPlace(id, fly = true, scrollSidebar = false) {
     const place = places[id];
     if (!place) return;
     state.selected = id;
@@ -727,11 +727,11 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     markerElements.forEach((element, key) =>
       element.classList.toggle('is-selected', key === id),
     );
-    if (id === 'zelt') {
+    if (scrollSidebar) {
       requestAnimationFrame(() => {
         document
-          .getElementById('place-detail')
-          .scrollIntoView({ behavior: 'smooth', block: 'start' });
+          .querySelector('.places-section')
+          .scrollTo({ top: 0, behavior: 'smooth' });
       });
     }
     if (fly) {
@@ -941,7 +941,9 @@ export function createMapController({ map, t, onSelectProjectArea }) {
 
   function bindUi() {
     document.querySelectorAll('.place-item').forEach((button) => {
-      button.addEventListener('click', () => selectPlace(button.dataset.place));
+      button.addEventListener('click', () =>
+        selectPlace(button.dataset.place, true, true),
+      );
     });
     document
       .getElementById('view-2d')
