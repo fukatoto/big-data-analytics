@@ -1206,7 +1206,7 @@ h1 em {
   color: #2b4b44;
 }
 .project-fill-toggle,
-.height-grid-toggle {
+.height-analysis-toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1225,14 +1225,14 @@ h1 em {
 }
 
 .project-fill-toggle > span,
-.height-grid-toggle > span {
+.height-analysis-toggle > span {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.04em;
 }
 
 .project-fill-toggle > i,
-.height-grid-toggle > i {
+.height-analysis-toggle > i {
   position: relative;
   width: 30px;
   height: 17px;
@@ -1243,7 +1243,7 @@ h1 em {
 }
 
 .project-fill-toggle > i > b,
-.height-grid-toggle > i > b {
+.height-analysis-toggle > i > b {
   position: absolute;
   top: 3px;
   left: 3px;
@@ -1256,12 +1256,12 @@ h1 em {
 }
 
 .project-fill-toggle.is-active > i,
-.height-grid-toggle.is-active > i {
+.height-analysis-toggle.is-active > i {
   background: #2d5048;
 }
 
 .project-fill-toggle.is-active > i > b,
-.height-grid-toggle.is-active > i > b {
+.height-analysis-toggle.is-active > i > b {
   transform: translateX(13px);
 }
 .project-area-bulk-actions {
@@ -1333,11 +1333,11 @@ h1 em {
   font-weight: 700;
   text-align: center;
 }
-.height-grid-toggle {
+.height-analysis-toggle {
   margin: -4px 0 8px;
   padding: 4px 0;
 }
-.height-grid-toggle:disabled {
+.height-analysis-toggle:disabled {
   cursor: wait;
   opacity: 0.45;
 }
@@ -1357,7 +1357,7 @@ h1 em {
   cursor: pointer;
 }
 .height-control input[type='range']:disabled {
-  cursor: wait;
+  cursor: not-allowed;
   opacity: 0.45;
 }
 .height-legend {
@@ -2291,7 +2291,7 @@ h1 em {
     margin-bottom: 7px;
     font-size: 16px;
   }
-  .height-grid-toggle {
+  .height-analysis-toggle {
     min-height: 29px;
     margin-bottom: 5px;
   }
@@ -2567,7 +2567,7 @@ h1 em {
     margin-bottom: 6px;
     font-size: 15px;
   }
-  .height-grid-toggle {
+  .height-analysis-toggle {
     min-height: 27px;
     margin-bottom: 4px;
   }

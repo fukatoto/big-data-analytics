@@ -269,20 +269,29 @@ export const satelliteBasemapConfig = {
 export const groundHeightConfig = {
   csvUrl: '/data/txl-ground-heights.csv',
   boundaryUrl: '/data/txl-project-boundary.geojson',
-  analysisAreaUrl: projectAreasDataUrl,
-  analysisAreaProperty: 'teilraum',
-  analysisAreaValue: 'Landschaftsraum',
-  cellSizeMeters: 3,
-  sourceId: 'txl-ground-heights',
+  annotations: [
+    {
+      label: 'Alex',
+      kind: 'person',
+      coordinates: [13.259251617531516, 52.555446290177834] 
+    },
+    {
+      label: 'Yann',
+      kind: 'person',
+      coordinates: [13.275141666666667, 52.55308055555556]
+    }
+  ],
+  measurementSourceId: 'txl-ground-height-measurements',
   boundarySourceId: 'txl-project-boundary',
-  fillLayerId: 'txl-ground-height-overlay',
-  cellOutlineLayerId: 'txl-ground-height-outline',
+  measurementLayerId: 'txl-ground-height-measurement-icons',
+  referenceLayerId: 'txl-ground-height-reference-point',
+  measurementLabelLayerId: 'txl-ground-height-measurement-labels',
   boundaryLayerId: 'txl-project-boundary',
   beforeLayerId: 'txl-3d-buildings',
   colors: {
     obstacle: '#dd4444',
     clear: '#35a66f',
-    grid: '#74827e',
+    reference: '#2563eb',
     boundary: '#000000'
   }
 };

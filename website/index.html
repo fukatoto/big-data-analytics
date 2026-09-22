@@ -674,7 +674,7 @@
               </div>
               <div class="height-control-heading-actions">
                 <output id="height-threshold-value" for="height-threshold"
-                  >15 cm</output
+                  >20 cm</output
                 >
                 <button
                   class="desktop-panel-collapse"
@@ -690,14 +690,14 @@
               class="desktop-collapsible-content"
             >
               <button
-                id="height-grid-toggle"
+                id="height-analysis-toggle"
                 type="button"
-                class="height-grid-toggle"
+                class="height-analysis-toggle"
                 role="switch"
                 aria-checked="false"
                 disabled
               >
-                <span data-i18n="showHeightGrid">Show analysis grid</span
+                <span data-i18n="showHeightAnalysis">Show height analysis</span
                 ><i aria-hidden="true"><b></b></i>
               </button>
               <label for="height-threshold" data-i18n="maxLocalDifference"
@@ -706,10 +706,10 @@
               <input
                 id="height-threshold"
                 type="range"
-                min="0.05"
-                max="1"
-                step="0.05"
-                value="0.15"
+                min="0.01"
+                max="0.4"
+                step="0.01"
+                value="0.2"
                 disabled
               />
               <div class="height-legend" aria-live="polite">
