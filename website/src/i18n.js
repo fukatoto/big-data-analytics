@@ -124,7 +124,7 @@ export const translations = {
     archedAntennaSubtitle: 'Historic viewing platform',
     tentSubtitle: 'Meeting point and events',
     heideblick: 'Heideblick',
-    recreation: 'Recreation',
+    recreation: 'Outdoor recreation',
     archedAntenna: 'Arched antenna',
     tent: 'Event tent',
     northernRunway: 'Northern runway',
@@ -133,8 +133,18 @@ export const translations = {
     southernRunwaySubtitle: 'Airport history in the park landscape',
     airfieldLighting: 'Airfield lighting system',
     landscapePark: 'Landscape park',
+    sunbathingLawn: 'Sunbathing Lawn',
+    futureTreeNursery: 'Future Tree Nursery',
+    radarPlateau: 'Radar Plateau',
+    landscapeMaintenanceHub: 'Landscape Maintenance Hub',
+    grazingZone: 'Grazing Zone',
     airfieldLightingSubtitle: 'Relic of former flight operations',
     landscapeParkSubtitle: 'Nature, recreation and open landscape',
+    sunbathingLawnSubtitle: 'Relaxing in nature',
+    futureTreeNurserySubtitle: 'Climate-resilient urban greenery',
+    radarPlateauSubtitle: '360-degree panorama',
+    landscapeMaintenanceHubSubtitle: 'Base for nature conservation',
+    grazingZoneSubtitle: 'Natural landscape management',
     heideblickDescription:
       'From the elevated Heideblick, the view opens across Tegeler Stadtheide to Berlin’s skyline. A footbridge at the end of the former runway creates a new perspective on the protected heath landscape.',
     recreationDescription:
@@ -151,6 +161,16 @@ export const translations = {
       'The former airfield lighting system recalls the precise infrastructure that once guided aircraft safely during take-off, landing and ground operations at Berlin-Tegel.',
     landscapeParkDescription:
       'The landscape park brings together protected habitats, wide views and new opportunities for recreation in the open landscape of Tegeler Stadtheide.',
+    sunbathingLawnDescription:
+      'A place of tranquility amidst the vastness. The expansive sunbathing lawn invites you to enjoy the nature of the Tegeler Heide, watch the sky, and simply unwind.',
+    futureTreeNurseryDescription:
+      "Where tomorrow's urban greenery grows. The Future Tree Nursery researches and cultivates climate-resilient tree species to prepare Berlin's streets for the challenges ahead.",
+    radarPlateauDescription:
+      "A historic viewpoint with a vision. Where air traffic was once monitored, you can now enjoy a spectacular 360-degree panorama of the entire heath and Berlin's architecture.",
+    landscapeMaintenanceHubDescription:
+      'The operational heart of nature conservation. The Landscape Maintenance Hub coordinates all efforts to preserve the heath and serves as the base for the sustainable care of this unique ecosystem.',
+    grazingZoneDescription:
+      'Natural landscape management in action. In these designated areas, sheep, cows, and horses help preserve biodiversity and the open character of the heath through gentle grazing.',
   },
   de: {
     pageTitle: 'Berlin TXL • 3D-Karte',
@@ -278,7 +298,7 @@ export const translations = {
     archedAntennaSubtitle: 'Historische Aussichtplattform',
     tentSubtitle: 'Treffpunkt und Veranstaltungen',
     heideblick: 'Heideblick',
-    recreation: 'Freizeit',
+    recreation: 'Freizeit in der Natur',
     archedAntenna: 'Rundbogenantenne',
     tent: 'Eventzelt',
     northernRunway: 'Nördliche Landebahn',
@@ -287,8 +307,18 @@ export const translations = {
     southernRunwaySubtitle: 'Flughafengeschichte in der Parklandschaft',
     airfieldLighting: 'Befeuerungsanlage',
     landscapePark: 'Landschaftspark',
+    sunbathingLawn: 'Liegewiese',
+    futureTreeNursery: 'Zukunftsbaumschule',
+    radarPlateau: 'Radar-Plateau',
+    landscapeMaintenanceHub: 'Landschaftspflegehof',
+    grazingZone: 'Beweidungszone',
     airfieldLightingSubtitle: 'Relikt des früheren Flugbetriebs',
     landscapeParkSubtitle: 'Natur, Erholung und offene Landschaft',
+    sunbathingLawnSubtitle: 'Entspannen in der Natur',
+    futureTreeNurserySubtitle: 'Klimaresilientes Stadtgrün',
+    radarPlateauSubtitle: '360-Grad-Panorama',
+    landscapeMaintenanceHubSubtitle: 'Basis des Naturschutzes',
+    grazingZoneSubtitle: 'Natürliche Landschaftspflege',
     heideblickDescription:
       'Vom erhöhten Heideblick öffnet sich die Weite der Tegeler Stadtheide bis zur Berliner Skyline. Ein Steg am Ende der ehemaligen Landebahn macht die geschützte Heidelandschaft aus einer neuen Perspektive erlebbar.',
     recreationDescription:
@@ -305,6 +335,16 @@ export const translations = {
       'Die ehemalige Befeuerungsanlage erinnert an die präzise Infrastruktur, die Flugzeuge in Berlin-Tegel bei Start, Landung und Bodenbewegungen sicher leitete.',
     landscapeParkDescription:
       'Der Landschaftspark verbindet geschützte Lebensräume, weite Ausblicke und neue Möglichkeiten zur Erholung in der offenen Landschaft der Tegeler Stadtheide.',
+    sunbathingLawnDescription:
+      'Ein Ort der Ruhe inmitten der Weite. Die große Liegewiese lädt dazu ein, die Natur der Tegeler Heide zu genießen, den Himmel zu beobachten und die Seele baumeln zu lassen.',
+    futureTreeNurseryDescription:
+      'Hier wächst das Stadtgrün von morgen. In der Zukunftsbaumschule werden klimaresiliente Baumarten erforscht und gezüchtet, um Berlins Straßen fit für die Herausforderungen der Zukunft zu machen.',
+    radarPlateauDescription:
+      'Ein historischer Aussichtspunkt mit Weitblick. Wo früher der Flugverkehr überwacht wurde, bietet sich heute ein spektakuläres 360-Grad-Panorama über die gesamte Heide und die Berliner Architektur.',
+    landscapeMaintenanceHubDescription:
+      'Das operative Herzstück des Naturschutzes. Der Landschaftspflegehof bündelt alle Maßnahmen zur Erhaltung der Heide und dient als Basis für die nachhaltige Pflege dieses einzigartigen Ökosystems.',
+    grazingZoneDescription:
+      'Natürliche Landschaftspflege in Aktion. In diesen ausgewiesenen Bereichen helfen Schafe, Kühe und Pferde durch schonende Beweidung, die Biodiversität und den offenen Charakter der Heide zu bewahren.',
   },
   fr: {
     pageTitle: 'Berlin TXL • Carte 3D',
@@ -435,7 +475,7 @@ export const translations = {
     archedAntennaSubtitle: 'Plateforme panoramique historique',
     tentSubtitle: 'Point de rencontre et événements',
     heideblick: 'Heideblick',
-    recreation: 'Loisirs',
+    recreation: 'Loisirs dans la nature',
     archedAntenna: 'Antenne arquée',
     tent: 'Tente événementielle',
     northernRunway: 'Piste nord',
@@ -444,8 +484,18 @@ export const translations = {
     southernRunwaySubtitle: 'Histoire aéroportuaire dans le parc',
     airfieldLighting: 'Balisage lumineux',
     landscapePark: 'Parc paysager',
+    sunbathingLawn: 'Pelouse de détente',
+    futureTreeNursery: 'Pépinière d’arbres du futur',
+    radarPlateau: 'Plateau radar',
+    landscapeMaintenanceHub: 'Centre d’entretien paysager',
+    grazingZone: 'Zone de pâturage',
     airfieldLightingSubtitle: 'Vestige des anciennes opérations aériennes',
     landscapeParkSubtitle: 'Nature, loisirs et paysage ouvert',
+    sunbathingLawnSubtitle: 'Se détendre dans la nature',
+    futureTreeNurserySubtitle: 'Végétation urbaine résiliente au climat',
+    radarPlateauSubtitle: 'Panorama à 360 degrés',
+    landscapeMaintenanceHubSubtitle: 'Base de la protection de la nature',
+    grazingZoneSubtitle: 'Entretien naturel du paysage',
     heideblickDescription:
       'Depuis le Heideblick surélevé, le regard porte sur la Tegeler Stadtheide jusqu’à la silhouette de Berlin. Une passerelle au bout de l’ancienne piste offre une nouvelle perspective sur la lande protégée.',
     recreationDescription:
@@ -462,5 +512,15 @@ export const translations = {
       'L’ancien balisage lumineux rappelle l’infrastructure précise qui guidait les avions en toute sécurité lors des décollages, atterrissages et déplacements au sol à Berlin-Tegel.',
     landscapeParkDescription:
       'Le parc paysager réunit des habitats protégés, de vastes perspectives et de nouvelles possibilités de détente dans le paysage ouvert de la Tegeler Stadtheide.',
+    sunbathingLawnDescription:
+      'Un lieu de calme au cœur de l’immensité. La vaste pelouse invite à profiter de la nature de la lande de Tegel, à contempler le ciel et à se détendre pleinement.',
+    futureTreeNurseryDescription:
+      'C’est ici que pousse la végétation urbaine de demain. La pépinière d’arbres du futur étudie et cultive des essences résilientes au changement climatique afin de préparer les rues de Berlin aux défis à venir.',
+    radarPlateauDescription:
+      'Un point de vue historique qui ouvre de vastes perspectives. Là où le trafic aérien était autrefois surveillé, un spectaculaire panorama à 360 degrés s’étend aujourd’hui sur toute la lande et l’architecture berlinoise.',
+    landscapeMaintenanceHubDescription:
+      'Le cœur opérationnel de la protection de la nature. Le centre d’entretien paysager coordonne toutes les mesures de préservation de la lande et sert de base à l’entretien durable de cet écosystème unique.',
+    grazingZoneDescription:
+      'L’entretien naturel du paysage en action. Dans ces zones délimitées, moutons, vaches et chevaux contribuent, grâce à un pâturage extensif, à préserver la biodiversité et le caractère ouvert de la lande.',
   },
 };

@@ -4,6 +4,73 @@ import { airportBounds, airportViewPadding, places } from './config.js';
 const eventsCalendarUrl =
   'https://www.campus-stadt-natur.de/angebote-aktionen/kalender/?id=524&no_cache=1&tx_events2_events%5Baction%5D=list&tx_events2_events%5Bcontroller%5D=JavaScriptSearch&tx_events2_events%5Bcategories%5D%5B%5D=&tx_events2_events%5Bgroups%5D%5B%5D=&tx_events2_events%5Blocations%5D%5B%5D=50&tx_events2_events%5Bstart%5D=&tx_events2_events%5Bend%5D=&tx_events2_events%5Bsearch%5D=';
 
+const markerLabelPositions = [
+  'bottom',
+  'top',
+  'right',
+  'left',
+  'bottom-right',
+  'bottom-left',
+  'top-right',
+  'top-left',
+];
+const markerLabelCollisionPadding = 4;
+const markerLabelViewportPadding = 6;
+const markerLabelGap = 4;
+
+function rectanglesOverlap(first, second, padding = 0) {
+  return (
+    first.left < second.right + padding &&
+    first.right > second.left - padding &&
+    first.top < second.bottom + padding &&
+    first.bottom > second.top - padding
+  );
+}
+
+function rectangleOverlapArea(first, second, padding = 0) {
+  const width = Math.min(first.right, second.right + padding) -
+    Math.max(first.left, second.left - padding);
+  const height = Math.min(first.bottom, second.bottom + padding) -
+    Math.max(first.top, second.top - padding);
+  return Math.max(0, width) * Math.max(0, height);
+}
+
+function markerLabelRectangle(marker, label, position) {
+  const markerCenterX = marker.left + marker.width / 2;
+  const markerCenterY = marker.top + marker.height / 2;
+  let left = markerCenterX - label.width / 2;
+  let top = marker.bottom + markerLabelGap;
+
+  if (position === 'top') {
+    top = marker.top - markerLabelGap - label.height;
+  } else if (position === 'right') {
+    left = marker.right + markerLabelGap;
+    top = markerCenterY - label.height / 2;
+  } else if (position === 'left') {
+    left = marker.left - markerLabelGap - label.width;
+    top = markerCenterY - label.height / 2;
+  } else if (position === 'bottom-right') {
+    left = markerCenterX;
+  } else if (position === 'bottom-left') {
+    left = markerCenterX - label.width;
+  } else if (position === 'top-right') {
+    left = markerCenterX;
+    top = marker.top - markerLabelGap - label.height;
+  } else if (position === 'top-left') {
+    left = markerCenterX - label.width;
+    top = marker.top - markerLabelGap - label.height;
+  }
+
+  return {
+    top,
+    right: left + label.width,
+    bottom: top + label.height,
+    left,
+    width: label.width,
+    height: label.height,
+  };
+}
+
 function escapeCalendarText(value = '') {
   return String(value)
     .replace(/\\/g, '\\\\')
@@ -112,9 +179,98 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   };
   const markerElements = new Map();
   let placePopup = null;
+  let markerLabelLayoutFrame = null;
+  let markerLabelLayoutBound = false;
 
   function placeName(place) {
     return place.nameKey ? t(place.nameKey) : place.name;
+  }
+
+  function markerLabelOverflow(rectangle, viewport) {
+    return (
+      Math.max(0, viewport.left + markerLabelViewportPadding - rectangle.left) +
+      Math.max(0, rectangle.right - viewport.right + markerLabelViewportPadding) +
+      Math.max(0, viewport.top + markerLabelViewportPadding - rectangle.top) +
+      Math.max(0, rectangle.bottom - viewport.bottom + markerLabelViewportPadding)
+    );
+  }
+
+  function layoutMarkerLabels() {
+    const visibleMarkers = [...markerElements.entries()]
+      .filter(([, element]) => !element.hidden && element.offsetParent)
+      .map(([id, element]) => ({
+        id,
+        element,
+        marker: element.getBoundingClientRect(),
+        point: element.querySelector('.marker-core').getBoundingClientRect(),
+      }))
+      .sort((first, second) => {
+        const selectedDifference =
+          Number(second.id === state.selected) - Number(first.id === state.selected);
+        if (selectedDifference) return selectedDifference;
+        return first.point.top - second.point.top || first.point.left - second.point.left;
+      });
+    if (!visibleMarkers.length) return;
+
+    const viewport = map.getContainer().getBoundingClientRect();
+    const occupiedLabels = [];
+
+    visibleMarkers.forEach(({ element, marker, point }) => {
+      const label = element.querySelector('.marker-label');
+      const labelSize = label.getBoundingClientRect();
+      const otherPoints = visibleMarkers
+        .map((marker) => marker.point)
+        .filter((otherPoint) => otherPoint !== point);
+      const currentPosition = element.dataset.labelPosition ?? 'bottom';
+      const positionPreferences = [
+        currentPosition,
+        ...markerLabelPositions.filter((position) => position !== currentPosition),
+      ];
+      let bestCandidate = null;
+
+      for (const position of positionPreferences) {
+        const rectangle = markerLabelRectangle(marker, labelSize, position);
+        const collides = [...occupiedLabels, ...otherPoints].some((occupied) =>
+          rectanglesOverlap(
+            rectangle,
+            occupied,
+            markerLabelCollisionPadding,
+          ),
+        );
+        const overflow = markerLabelOverflow(rectangle, viewport);
+
+        if (!collides && overflow === 0) {
+          bestCandidate = { position, rectangle, score: 0 };
+          break;
+        }
+
+        const overlapArea = [...occupiedLabels, ...otherPoints].reduce(
+          (total, occupied) =>
+            total +
+            rectangleOverlapArea(
+              rectangle,
+              occupied,
+              markerLabelCollisionPadding,
+            ),
+          0,
+        );
+        const score = overlapArea + overflow * 100;
+        if (!bestCandidate || score < bestCandidate.score) {
+          bestCandidate = { position, rectangle, score };
+        }
+      }
+
+      element.dataset.labelPosition = bestCandidate.position;
+      occupiedLabels.push(bestCandidate.rectangle);
+    });
+  }
+
+  function scheduleMarkerLabelLayout() {
+    if (markerLabelLayoutFrame !== null) return;
+    markerLabelLayoutFrame = requestAnimationFrame(() => {
+      markerLabelLayoutFrame = null;
+      layoutMarkerLabels();
+    });
   }
 
   function eventStatusKey(status = '') {
@@ -785,6 +941,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       );
       element.querySelector('.marker-label').textContent = name;
     });
+    scheduleMarkerLabelLayout();
   }
 
   function selectPlace(id, fly = true, scrollSidebar = false) {
@@ -805,6 +962,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     markerElements.forEach((element, key) =>
       element.classList.toggle('is-selected', key === id),
     );
+    scheduleMarkerLabelLayout();
     if (scrollSidebar) {
       requestAnimationFrame(() => {
         document
@@ -849,6 +1007,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     markerElements.forEach((element, id) => {
       if (!places[id].projectAreaId) element.hidden = !visible;
     });
+    scheduleMarkerLabelLayout();
     if (!visible && !places[state.selected].projectAreaId) {
       selectPlace('tegeler-stadtheide', false);
     }
@@ -987,6 +1146,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       ]
         .filter(Boolean)
         .join(' ');
+      marker.dataset.labelPosition = 'bottom';
       marker.hidden = !place.projectAreaId && !state.PlacesVisible;
       marker.setAttribute(
         'aria-label',
@@ -1015,6 +1175,13 @@ export function createMapController({ map, t, onSelectProjectArea }) {
         .setLngLat(place.coordinates)
         .addTo(map);
     }
+    if (!markerLabelLayoutBound) {
+      markerLabelLayoutBound = true;
+      map.on('move', scheduleMarkerLabelLayout);
+      map.on('resize', scheduleMarkerLabelLayout);
+      document.fonts?.ready.then(scheduleMarkerLabelLayout);
+    }
+    scheduleMarkerLabelLayout();
   }
 
   function bindUi() {

@@ -1426,6 +1426,46 @@ h1 em {
   font-size: 11px;
   font-weight: 700;
   white-space: nowrap;
+  will-change: transform;
+  transition:
+    transform 220ms cubic-bezier(0.22, 1, 0.36, 1),
+    background-color 160ms ease;
+}
+.map-marker[data-label-position='top'] .marker-label {
+  top: auto;
+  bottom: calc(100% + 4px);
+}
+.map-marker[data-label-position='right'] .marker-label {
+  top: 50%;
+  left: calc(100% + 4px);
+  transform: translateY(-50%);
+}
+.map-marker[data-label-position='left'] .marker-label {
+  top: 50%;
+  right: calc(100% + 4px);
+  left: auto;
+  transform: translateY(-50%);
+}
+.map-marker[data-label-position='bottom-right'] .marker-label {
+  left: 50%;
+  transform: none;
+}
+.map-marker[data-label-position='bottom-left'] .marker-label {
+  right: 50%;
+  left: auto;
+  transform: none;
+.map-marker[data-label-position='top-right'] .marker-label {
+  top: auto;
+  bottom: calc(100% + 4px);
+  left: 50%;
+  transform: none;
+}
+.map-marker[data-label-position='top-left'] .marker-label {
+  top: auto;
+  right: 50%;
+  bottom: calc(100% + 4px);
+  left: auto;
+  transform: none;
 }
 .map-marker.is-selected .marker-label {
   background: var(--bergreen);

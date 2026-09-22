@@ -6,7 +6,7 @@ export const projectAreasDataUrl = '/data/txl-project-areas.geojson';
 export const places = {
   'terminal-a': {
     name: 'Terminal A',
-    number: '04 / 15',
+    number: '04 / 20',
     coordinates: [13.2889469, 52.5544223],
     images: [
       {
@@ -25,7 +25,7 @@ export const places = {
   },
   'terminal-b': {
     name: 'Terminal B',
-    number: '05 / 15',
+    number: '05 / 20',
     coordinates: [13.2920506, 52.5541399],
     images: [
       {
@@ -44,7 +44,7 @@ export const places = {
   },
   'terminal-d': {
     name: 'Terminal D',
-    number: '06 / 15',
+    number: '06 / 20',
     coordinates: [13.2916620, 52.5523579],
     images: [
       {
@@ -73,28 +73,28 @@ export const places = {
   },
   'urban-tech-republic': {
     nameKey: 'urbanTechRepublic',
-    number: '02 / 15',
+    number: '02 / 20',
     bounds: [[13.27488489, 52.54882258], [13.31020587, 52.56154831]],
     descriptionKey: 'urbanTechRepublicDescription',
     projectAreaId: 'urban-tech-republic'
   },
   'schumacher-quartier': {
     nameKey: 'schumacherQuartier',
-    number: '03 / 15',
+    number: '03 / 20',
     bounds: [[13.31067033, 52.55888093], [13.32751649, 52.56537308]],
     descriptionKey: 'schumacherQuartierDescription',
     projectAreaId: 'schumacher-quartier'
   },
   'tegeler-stadtheide': {
     nameKey: 'tegelerStadtheide',
-    number: '01 / 15',
+    number: '01 / 20',
     bounds: [[13.25635322, 52.55243287], [13.30305156, 52.56572367]],
     descriptionKey: 'tegelerStadtheideDescription',
     projectAreaId: 'tegeler-stadtheide'
   },
   'heideblick': {
     nameKey: 'heideblick',
-    number: '07 / 15',
+    number: '07 / 20',
     coordinates: [13.265539352308727, 52.56025064158781],
     images: [
       {
@@ -113,7 +113,7 @@ export const places = {
   },
   'bunker': {
     nameKey: 'recreation',
-    number: '08 / 15',
+    number: '08 / 20',
     coordinates: [13.25783266632616, 52.55416615425812],
     images: [
       {
@@ -132,7 +132,7 @@ export const places = {
   },
   'rundbogenantenne': {
     nameKey: 'archedAntenna',
-    number: '09 / 15',
+    number: '09 / 20',
     coordinates: [13.287565760368738, 52.56150630401666],
     images: [
       {
@@ -151,13 +151,13 @@ export const places = {
   },
   'zelt': {
     nameKey: 'tent',
-    number: '10 / 15',
+    number: '10 / 20',
     coordinates: [13.27559195542228, 52.55301043217409],
     descriptionKey: 'tentDescription'
   },
   'northern-runway': {
     nameKey: 'northernRunway',
-    number: '11 / 15',
+    number: '11 / 20',
     coordinates: [13.27325037503029, 52.55832749635448], //,
     imageAlt: '',
     coverImageCredit: '',
@@ -165,7 +165,7 @@ export const places = {
   },
   'southern-runway': {
     nameKey: 'southernRunway',
-    number: '12 / 15',
+    number: '12 / 20',
     coordinates: [13.295831615387536, 52.558694994641904],
     imageAlt: '',
     coverImageCredit: '',
@@ -173,7 +173,7 @@ export const places = {
   },
   'airfield-lighting': {
     nameKey: 'airfieldLighting',
-    number: '13 / 15',
+    number: '13 / 20',
     coordinates: [13.260998045156224, 52.557178333184616], 
     image: '/images/befeuerungsanlage.jpg',
     imageAlt: '',
@@ -182,15 +182,45 @@ export const places = {
   },
   'landscape-park': {
     nameKey: 'landscapePark',
-    number: '14 / 15',
+    number: '14 / 20',
     coordinates: [13.3054988885774, 52.56307055794183],
     descriptionKey: 'landscapeParkDescription'
   },
   'schumacher-quartier-place': {
     nameKey: 'schumacherQuartier',
-    number: '15 / 15',
+    number: '15 / 20',
     coordinates: [13.314237018067079, 52.560911421590774], 
     descriptionKey: 'schumacherQuartierDescription'
+  },
+  'sunbathing-lawn': {
+    nameKey: 'sunbathingLawn',
+    number: '16 / 20',
+    coordinates: [13.267099307246742, 52.55834173147002],
+    descriptionKey: 'sunbathingLawnDescription'
+  },
+  'future-tree-nursery': {
+    nameKey: 'futureTreeNursery',
+    number: '17 / 20',
+    coordinates: [13.274933586150038, 52.55438073692916],
+    descriptionKey: 'futureTreeNurseryDescription'
+  },
+  'radar-plateau': {
+    nameKey: 'radarPlateau',
+    number: '18 / 20',
+    coordinates: [13.280517944905284, 52.56344500035554],
+    descriptionKey: 'radarPlateauDescription'
+  },
+  'landscape-maintenance-hub': {
+    nameKey: 'landscapeMaintenanceHub',
+    number: '19 / 20',
+    coordinates: [13.275860728255148, 52.554660081211594],
+    descriptionKey: 'landscapeMaintenanceHubDescription'
+  },
+  'grazing-zone': {
+    nameKey: 'grazingZone',
+    number: '20 / 20',
+    coordinates: [13.28397881028478, 52.56091067585946],
+    descriptionKey: 'grazingZoneDescription'
   }
 };
 
