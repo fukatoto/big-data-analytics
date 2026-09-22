@@ -13,7 +13,7 @@ pnpm dev
 
 Open the local URL printed by Vite (normally `http://127.0.0.1:4175`). Run `pnpm build` to create production files in `dist/`, and `pnpm preview` to check that build locally.
 
-The map needs an internet connection for OpenFreeMap vector tiles and Google Fonts. MapLibre GL JS is installed and bundled locally through pnpm. Building shapes and heights come from OpenStreetMap via OpenFreeMap. The place pins are based on OpenStreetMap geocoding; descriptions and the 202-hectare figure come from [Urban Tech Republic](https://urbantechrepublic.de/en/faq/). The 3D view shows mapped existing buildings, not a model of proposed construction. The wider airport view is context, not an official project boundary.
+The map needs an internet connection for OpenFreeMap vector tiles, the optional Berlin aerial-photo layer, and Google Fonts. MapLibre GL JS is installed and bundled locally through pnpm. Building shapes and heights come from OpenStreetMap via OpenFreeMap. The satellite toggle uses the official Berlin TrueDOP 2025 summer orthophotos from the Senate Department for Urban Development, Building and Housing under the Data licence Germany – Zero – Version 2.0. The place pins are based on OpenStreetMap geocoding; descriptions and the 202-hectare figure come from [Urban Tech Republic](https://urbantechrepublic.de/en/faq/). The 3D view shows mapped existing buildings, not a model of proposed construction. The wider airport view is context, not an official project boundary.
 
 The interface can be switched between English, German, and French. Translations are maintained in `src/i18n.js`; the selected language is stored locally in the browser.
 
@@ -37,6 +37,7 @@ The grid is clipped to `public/data/txl-project-boundary.geojson` and remains vi
 - `index.html` — Vite's page entry at the project root
 - `src/main.js` — small application bootstrap that connects the modules
 - `src/config.js` — shared map, camera, boundary, and overlay configuration
+- `src/basemap-controller.js` — street/satellite basemap toggle and aerial-photo layer
 - `src/map-controller.js` — map views, markers, 2D/3D controls, and place selection
 - `src/ground-height-analysis.js` — CSV parsing, interpolation, and boundary clipping
 - `src/ground-height-overlay.js` — MapLibre layers, slider updates, counts, and popups

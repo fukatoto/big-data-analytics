@@ -840,6 +840,7 @@ h1 em {
 }
 .location-pill,
 .view-switch,
+.basemap-toggle,
 .language-control {
   display: flex;
   align-items: center;
@@ -875,6 +876,32 @@ h1 em {
   align-items: center;
   gap: 7px;
   pointer-events: auto;
+}
+.basemap-toggle {
+  gap: 7px;
+  padding: 0 11px;
+  border-radius: 5px;
+  font-family: var(--font-display);
+  font-size: 10px;
+  font-weight: 700;
+  cursor: pointer;
+}
+.basemap-toggle:hover {
+  background: #f5f7f2;
+}
+.basemap-toggle.is-active {
+  border-color: var(--ink);
+  background: var(--ink);
+  color: white;
+}
+.basemap-toggle:focus-visible {
+  outline: 2px solid var(--bergreen);
+  outline-offset: 2px;
+}
+.basemap-toggle-icon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
 }
 .language-control {
   padding: 4px;
@@ -1880,6 +1907,13 @@ h1 em {
   }
 }
 
+@media (max-width: 1100px) and (min-width: 701px) {
+  .location-pill .pill-separator,
+  #map-coordinates {
+    display: none;
+  }
+}
+
 /* Tablet widths */
 @media (max-width: 800px) {
   .app-shell {
@@ -1988,7 +2022,7 @@ h1 em {
     gap: 7px;
   }
   .location-pill {
-    max-width: calc(100% - 160px);
+    max-width: calc(100% - 205px);
     padding: 0 9px;
     overflow: hidden;
     font-size: 9px;
@@ -1999,6 +2033,14 @@ h1 em {
   }
   .topbar-actions {
     gap: 5px;
+  }
+  .basemap-toggle {
+    width: 38px;
+    padding: 0;
+    justify-content: center;
+  }
+  .basemap-toggle-label {
+    display: none;
   }
   .language-control select {
     width: 45px;

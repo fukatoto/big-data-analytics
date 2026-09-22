@@ -2,6 +2,7 @@ import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import './style.css';
+import { createBasemapController } from './basemap-controller.js';
 import { airportNavigationBounds, campusCamera } from './config.js';
 import { createGroundHeightOverlay } from './ground-height-overlay.js';
 import { createLocalization } from './localization.js';
@@ -42,6 +43,10 @@ map.addControl(
 );
 
 const projectAreasOverlay = createProjectAreasOverlay({
+  map,
+  t: localization.t,
+});
+const basemapController = createBasemapController({
   map,
   t: localization.t,
 });
@@ -91,12 +96,14 @@ document
   .addEventListener('click', () => closeMobilePanels());
 
 localization.subscribe(() => {
+  basemapController.refreshLanguage();
   mapController.refreshLanguage();
   projectAreasOverlay.refreshLanguage();
   groundHeightOverlay.refreshLanguage();
 });
 
 mapController.bindUi();
+basemapController.bindUi();
 mapController.loadEvents();
 projectAreasOverlay.bindUi();
 groundHeightOverlay.bindUi();
@@ -112,6 +119,7 @@ document
 map.on('load', () => {
   collapseMobileAttribution();
   mapController.constrainAirportView();
+  basemapController.addLayer();
   mapController.addBuildingLayer();
   projectAreasOverlay.addLayers();
   mapController.addMarkers();

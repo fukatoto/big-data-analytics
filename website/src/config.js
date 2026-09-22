@@ -209,6 +209,17 @@ export const airportNavigationBounds = [[13.242, 52.524], [13.342, 52.594]];
 
 export const airportViewPadding = () => window.innerWidth < 700 ? 32 : 72;
 
+export const satelliteBasemapConfig = {
+  sourceId: 'berlin-true-orthophotos',
+  layerId: 'berlin-true-orthophotos-raster',
+  tiles: [
+    'https://gdi.berlin.de/services/wms/truedop_2025_sommer?service=WMS&version=1.1.1&request=GetMap&layers=truedop_2025_sommer_rgb&styles=&format=image/jpeg&transparent=false&srs=EPSG:3857&width=512&height=512&bbox={bbox-epsg-3857}'
+  ],
+  tileSize: 512,
+  attribution:
+    'Luftbild: Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen Berlin · dl-de-zero-2.0'
+};
+
 export const groundHeightConfig = {
   csvUrl: '/data/txl-ground-heights.csv',
   boundaryUrl: '/data/txl-project-boundary.geojson',
