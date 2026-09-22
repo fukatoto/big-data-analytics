@@ -1,3 +1,19 @@
+import airfieldLightingImage from './assets/images/befeuerungsanlage.jpg';
+import bunkerConceptImage from './assets/images/bunker_concept.jpg';
+import bunkerImage from './assets/images/bunker.jpg';
+import heideblickConceptImage from './assets/images/heideblick_concept.jpg';
+import heideblickImage from './assets/images/heideblick.jpg';
+import rundbogenantenneConceptImage from './assets/images/rundbogenantenne_concept.jpg';
+import rundbogenantenneImage from './assets/images/rundbogenantenne.jpg';
+import terminalAConceptImage from './assets/images/terminal_a_concept.png';
+import terminalARealImage from './assets/images/terminal_a_real.png';
+import terminalBConceptImage from './assets/images/terminal_b_concept_new.png';
+import terminalBRealImage from './assets/images/terminal_b_real.png';
+import terminalDConceptInteriorImage from './assets/images/terminal_d_concept_interior.png';
+import terminalDConceptImage from './assets/images/terminal_d_concept.png';
+import terminalDRealInteriorImage from './assets/images/terminal_d_real_interior.jpg';
+import terminalDRealImage from './assets/images/terminal_d_real.jpg';
+
 export const projectAreasDataUrl = '/data/txl-project-areas.geojson';
 
 // Coordinate-based places can use `images` for a small popup gallery or `image`
@@ -10,12 +26,12 @@ export const places = {
     coordinates: [13.2889469, 52.5544223],
     images: [
       {
-        src: '/images/terminal_a_real.png',
+        src: terminalARealImage,
         labelKey: 'currentImage',
         credit: 'Christian Sommer'
       },
       {
-        src: '/images/terminal_a_concept.png',
+        src: terminalAConceptImage,
         labelKey: 'conceptImage',
         credit: 'agn Niederberghaus & Partner'
       }
@@ -29,12 +45,12 @@ export const places = {
     coordinates: [13.2920506, 52.5541399],
     images: [
       {
-        src: '/images/terminal_b_real.png',
+        src: terminalBRealImage,
         labelKey: 'currentImage',
         credit: 'Gerhard Kassner'
       },
       {
-        src: '/images/terminal_b_concept_new.png',
+        src: terminalBConceptImage,
         labelKey: 'conceptImage',
         credit: 'Chaix & Morel et Associés'
       }
@@ -48,22 +64,22 @@ export const places = {
     coordinates: [13.2916620, 52.5523579],
     images: [
       {
-        src: '/images/terminal_d_real.jpg',
+        src: terminalDRealImage,
         labelKey: 'currentImage',
         credit: 'Berlin TXL Management GmbH'
       },
       {
-        src: '/images/terminal_d_concept.png',
+        src: terminalDConceptImage,
         labelKey: 'conceptImage',
         credit: 'GRAFT'
       },
       {
-        src: '/images/terminal_d_real_interior.jpg',
+        src: terminalDRealInteriorImage,
         labelKey: 'currentInteriorImage',
         credit: 'Berlin TXL Management GmbH'
       },
       {
-        src: '/images/terminal_d_concept_interior.png',
+        src: terminalDConceptInteriorImage,
         labelKey: 'conceptInteriorImage',
         credit: 'GRAFT'
       }
@@ -98,12 +114,12 @@ export const places = {
     coordinates: [13.265539352308727, 52.56025064158781],
     images: [
       {
-        src: '/images/heideblick.jpg',
+        src: heideblickImage,
         labelKey: 'currentImage',
         credit: 'Thomas Rosenthal'
       },
       {
-        src: '/images/heideblick_concept.jpg',
+        src: heideblickConceptImage,
         labelKey: 'conceptImage',
         credit: 'Atelier Loidl'
       }
@@ -117,12 +133,12 @@ export const places = {
     coordinates: [13.25783266632616, 52.55416615425812],
     images: [
       {
-        src: '/images/bunker.jpg',
+        src: bunkerImage,
         labelKey: 'currentImage',
         credit: 'Thomas Rosenthal'
       },
       {
-        src: '/images/bunker_concept.jpg',
+        src: bunkerConceptImage,
         labelKey: 'conceptImage',
         credit: 'Atelier Loidl'
       }
@@ -136,12 +152,12 @@ export const places = {
     coordinates: [13.287565760368738, 52.56150630401666],
     images: [
       {
-        src: '/images/rundbogenantenne.jpg',
+        src: rundbogenantenneImage,
         labelKey: 'currentImage',
         credit: 'Thomas Rosenthal'
       },
       {
-        src: '/images/rundbogenantenne_concept.jpg',
+        src: rundbogenantenneConceptImage,
         labelKey: 'conceptImage',
         credit: 'Atelier Loidl'
       }
@@ -175,7 +191,7 @@ export const places = {
     nameKey: 'airfieldLighting',
     number: '13 / 20',
     coordinates: [13.260998045156224, 52.557178333184616], 
-    image: '/images/befeuerungsanlage.jpg',
+    image: airfieldLightingImage,
     imageAlt: '',
     coverImageCredit: '',
     descriptionKey: 'airfieldLightingDescription'
@@ -201,7 +217,7 @@ export const places = {
   'future-tree-nursery': {
     nameKey: 'futureTreeNursery',
     number: '17 / 20',
-    coordinates: [13.274933586150038, 52.55438073692916],
+    coordinates: [13.274756493743066, 52.55403370802851],
     descriptionKey: 'futureTreeNurseryDescription'
   },
   'radar-plateau': {
@@ -213,7 +229,7 @@ export const places = {
   'landscape-maintenance-hub': {
     nameKey: 'landscapeMaintenanceHub',
     number: '19 / 20',
-    coordinates: [13.275860728255148, 52.554660081211594],
+    coordinates: [13.2753790741931632, 52.55445443953052],
     descriptionKey: 'landscapeMaintenanceHubDescription'
   },
   'grazing-zone': {
