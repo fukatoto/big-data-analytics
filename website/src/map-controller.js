@@ -1042,6 +1042,73 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       .addEventListener('click', showAirport);
   }
 
+  function addTrees() {
+    const beforeLayerId = 'txl-3d-buildings';
+
+    map.addSource('baeume', {
+      type: 'geojson',
+      data: '/data/baeume.geojson',
+    });
+
+    map.addLayer({
+      id: 'baeume-fill',
+      type: 'fill',
+      source: 'baeume',
+      minzoom: 15,
+      paint: {
+        'fill-color': ['get', 'farbe'],
+        'fill-opacity': 0.55,
+      },
+    }, beforeLayerId);
+
+    map.addLayer({
+      id: 'baeume-outline',
+      type: 'line',
+      source: 'baeume',
+      minzoom: 15,
+      paint: {
+        'line-color': ['get', 'farbe'],
+        'line-width': 0.8,
+      },
+    }, beforeLayerId);
+
+    map.addLayer({
+      id: 'baeume-auffaellig',
+      type: 'line',
+      source: 'baeume',
+      minzoom: 15,
+      filter: ['to-boolean', ['get', 'auffaellig']],
+      paint: {
+        'line-color': '#d00000',
+        'line-width': 2.5,
+      },
+    }, beforeLayerId);
+
+    map.on('click', 'baeume-fill', (event) => {
+      const p = event.features[0].properties;
+      const lines = [
+        `<strong>${t('treeTitle', { id: p.id })}</strong>`,
+        t('treeHeight', { height: p.hoehe_m }),
+        t('treeCrownDiameter', { diameter: p.durchm_m }),
+        t('treeGreenness', { value: p.gcc ?? '–' }),
+      ];
+      if (p.auffaellig) {
+        lines.push(`<strong style="color:#d00000">${t('treeConspicuous')}</strong>`);
+      }
+      new maplibregl.Popup({ offset: 10 })
+        .setLngLat(event.lngLat)
+        .setHTML(lines.join('<br>'))
+        .addTo(map);
+    });
+
+    map.on('mouseenter', 'baeume-fill', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'baeume-fill', () => {
+      map.getCanvas().style.cursor = '';
+    });
+  }
+
   return {
     addBuildingLayer,
     addMarkers,
@@ -1049,5 +1116,6 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     constrainAirportView,
     loadEvents,
     refreshLanguage,
+    addTrees,
   };
 }

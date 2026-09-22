@@ -151,6 +151,11 @@ export const translations = {
       'The former airfield lighting system recalls the precise infrastructure that once guided aircraft safely during take-off, landing and ground operations at Berlin-Tegel.',
     landscapeParkDescription:
       'The landscape park brings together protected habitats, wide views and new opportunities for recreation in the open landscape of Tegeler Stadtheide.',
+    treeTitle: 'Tree {id}',
+    treeHeight: 'Height: {height} m',
+    treeCrownDiameter: 'Crown diameter: {diameter} m',
+    treeGreenness: 'Green share (GCC): {value}',
+    treeConspicuous: 'Conspicuous crown',  
   },
   de: {
     pageTitle: 'Berlin TXL • 3D-Karte',
@@ -305,6 +310,11 @@ export const translations = {
       'Die ehemalige Befeuerungsanlage erinnert an die präzise Infrastruktur, die Flugzeuge in Berlin-Tegel bei Start, Landung und Bodenbewegungen sicher leitete.',
     landscapeParkDescription:
       'Der Landschaftspark verbindet geschützte Lebensräume, weite Ausblicke und neue Möglichkeiten zur Erholung in der offenen Landschaft der Tegeler Stadtheide.',
+    treeTitle: 'Baum {id}',
+    treeHeight: 'Höhe: {height} m',
+    treeCrownDiameter: 'Kronendurchmesser: {diameter} m',
+    treeGreenness: 'Grünanteil (GCC): {value}',
+    treeConspicuous: 'Auffällige Krone',  
   },
   fr: {
     pageTitle: 'Berlin TXL • Carte 3D',
@@ -462,5 +472,10 @@ export const translations = {
       'L’ancien balisage lumineux rappelle l’infrastructure précise qui guidait les avions en toute sécurité lors des décollages, atterrissages et déplacements au sol à Berlin-Tegel.',
     landscapeParkDescription:
       'Le parc paysager réunit des habitats protégés, de vastes perspectives et de nouvelles possibilités de détente dans le paysage ouvert de la Tegeler Stadtheide.',
+    treeTitle: 'Arbre {id}',
+    treeHeight: 'Hauteur : {height} m',
+    treeCrownDiameter: 'Diamètre de couronne : {diameter} m',
+    treeGreenness: 'Part de vert (GCC) : {value}',
+    treeConspicuous: 'Couronne à surveiller',
   },
 };

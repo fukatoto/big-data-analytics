@@ -122,6 +122,7 @@ map.on('load', () => {
   basemapController.addLayer();
   mapController.addBuildingLayer();
   projectAreasOverlay.addLayers();
+  mapController.addTrees();
   mapController.addMarkers();
   groundHeightOverlay.load().catch(groundHeightOverlay.showError);
 
