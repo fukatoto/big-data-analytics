@@ -254,10 +254,20 @@ h1 em {
   color: #a8b7af;
   cursor: pointer;
 }
-.terminal-places-toggle > span {
+.terminal-places-label {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+.terminal-places-label > span {
   font-size: 9px;
   font-weight: 700;
   letter-spacing: 0.14em;
+}
+.terminal-places-label > span:last-child {
+  color: #8e9c97;
 }
 .terminal-places-toggle > i {
   position: relative;
@@ -1971,7 +1981,7 @@ h1 em {
     border-radius: 0;
     background: var(--ink);
   }
-  .terminal-places-toggle > span {
+  .terminal-places-label > span {
     font-size: 8px;
     line-height: 1.25;
     text-align: left;

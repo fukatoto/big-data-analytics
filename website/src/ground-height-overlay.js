@@ -5,9 +5,14 @@ import { createGroundHeightFeatures, parseGroundHeightCsv } from './ground-heigh
 export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
   const updateDelay = 200;
   let features = [];
+  let samples = [];
+  let boundaryData = null;
+  let boundaryRing = null;
+  let analysisAreaGeometry = null;
   let sampleCount = 0;
   let loadError = null;
   let gridVisible = false;
+  let gridInitialized = false;
   let popup = null;
   let updateTimer = null;
 
@@ -99,8 +104,77 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
     }
   }
 
+  function initializeGrid() {
+    if (gridInitialized) return;
+
+    const result = createGroundHeightFeatures(
+      samples,
+      boundaryRing,
+      analysisAreaGeometry,
+      groundHeightConfig.cellSizeMeters,
+    );
+    if (result.analysisSampleCount < 2) {
+      throw createTranslatedError('analysisAreaHeightMinimum');
+    }
+    features = result.features;
+    const threshold = Number(document.getElementById('height-threshold').value);
+
+    map.addSource(groundHeightConfig.sourceId, {
+      type: 'geojson',
+      data: { type: 'FeatureCollection', features }
+    });
+    map.addLayer({
+      id: groundHeightConfig.fillLayerId,
+      source: groundHeightConfig.sourceId,
+      type: 'fill',
+      layout: {
+        visibility: 'none'
+      },
+      paint: {
+        'fill-color': colorExpression(threshold),
+        'fill-opacity': [
+          'case',
+          ['boolean', ['get', 'calculated'], false],
+          0.34,
+          0.06,
+        ],
+      }
+    }, groundHeightConfig.beforeLayerId);
+    map.addLayer({
+      id: groundHeightConfig.cellOutlineLayerId,
+      source: groundHeightConfig.sourceId,
+      type: 'line',
+      layout: {
+        visibility: 'none'
+      },
+      paint: {
+        'line-color': colorExpression(threshold),
+        'line-opacity': [
+          'case',
+          ['boolean', ['get', 'calculated'], false],
+          0.25,
+          0.48,
+        ],
+        'line-width': 0.45
+      }
+    }, groundHeightConfig.beforeLayerId);
+    gridInitialized = true;
+    document.getElementById('height-threshold').disabled = false;
+    refreshStatus();
+    update();
+    addPopupInteraction();
+  }
+
   function bindUi() {
     document.getElementById('height-grid-toggle').addEventListener('click', () => {
+      if (!gridVisible && !gridInitialized) {
+        try {
+          initializeGrid();
+        } catch (error) {
+          showError(error);
+          return;
+        }
+      }
       setGridVisible(!gridVisible);
     });
   }
@@ -129,14 +203,14 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       });
     }
 
-    const samples = parseGroundHeightCsv(await heightResponse.text(), createTranslatedError);
-    const boundaryData = await boundaryResponse.json();
+    samples = parseGroundHeightCsv(await heightResponse.text(), createTranslatedError);
+    boundaryData = await boundaryResponse.json();
     const analysisAreaData = await analysisAreaResponse.json();
     const boundaryFeature = boundaryData.features?.[0];
     if (boundaryFeature?.geometry?.type !== 'Polygon') {
       throw createTranslatedError('boundaryFormatError');
     }
-    const analysisAreaGeometry = analysisAreaData.features?.find(
+    analysisAreaGeometry = analysisAreaData.features?.find(
       (feature) =>
         feature.properties?.[groundHeightConfig.analysisAreaProperty] ===
         groundHeightConfig.analysisAreaValue,
@@ -145,58 +219,8 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       throw createTranslatedError('analysisAreaFormatError');
     }
 
-    const result = createGroundHeightFeatures(
-      samples,
-      boundaryFeature.geometry.coordinates[0],
-      analysisAreaGeometry,
-      groundHeightConfig.cellSizeMeters,
-    );
-    if (result.analysisSampleCount < 2) {
-      throw createTranslatedError('analysisAreaHeightMinimum');
-    }
-    features = result.features;
-    const threshold = Number(document.getElementById('height-threshold').value);
-
+    boundaryRing = boundaryFeature.geometry.coordinates[0];
     map.addSource(groundHeightConfig.boundarySourceId, { type: 'geojson', data: boundaryData });
-    map.addSource(groundHeightConfig.sourceId, {
-      type: 'geojson',
-      data: { type: 'FeatureCollection', features }
-    });
-    map.addLayer({
-      id: groundHeightConfig.fillLayerId,
-      source: groundHeightConfig.sourceId,
-      type: 'fill',
-      layout: {
-        visibility: gridVisible ? 'visible' : 'none'
-      },
-      paint: {
-        'fill-color': colorExpression(threshold),
-        'fill-opacity': [
-          'case',
-          ['boolean', ['get', 'calculated'], false],
-          0.34,
-          0.06,
-        ],
-      }
-    }, groundHeightConfig.beforeLayerId);
-    map.addLayer({
-      id: groundHeightConfig.cellOutlineLayerId,
-      source: groundHeightConfig.sourceId,
-      type: 'line',
-      layout: {
-        visibility: gridVisible ? 'visible' : 'none'
-      },
-      paint: {
-        'line-color': colorExpression(threshold),
-        'line-opacity': [
-          'case',
-          ['boolean', ['get', 'calculated'], false],
-          0.25,
-          0.48,
-        ],
-        'line-width': 0.45
-      }
-    }, groundHeightConfig.beforeLayerId);
     map.addLayer({
       id: groundHeightConfig.boundaryLayerId,
       source: groundHeightConfig.boundarySourceId,
@@ -208,12 +232,9 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       }
     }, groundHeightConfig.beforeLayerId);
 
-    document.getElementById('height-threshold').disabled = false;
     document.getElementById('height-grid-toggle').disabled = false;
     sampleCount = samples.length;
     refreshStatus();
-    update();
-    addPopupInteraction();
   }
 
   function addPopupInteraction() {

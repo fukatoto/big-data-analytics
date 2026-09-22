@@ -111,6 +111,29 @@ export const translations = {
       'Schumacher Quartier is the new urban residential area on the eastern side of the former airport site.',
     tegelerStadtheideDescription:
       'The Tegeler Stadtheide landscape area connects nature conservation, recreation and the open landscape of Berlin TXL.',
+    heideblickSubtitle: 'Elevated view across the heath',
+    recreationSubtitle: 'Recreation, play and sports',
+    archedAntennaSubtitle: 'Historic viewing platform',
+    tentSubtitle: 'Meeting point and events',
+    heideblick: 'Heideblick',
+    recreation: 'Recreation',
+    archedAntenna: 'Arched antenna',
+    northernRunway: 'Northern runway',
+    southernRunway: 'Southern runway',
+    northernRunwaySubtitle: 'Open space of the former airfield',
+    southernRunwaySubtitle: 'Airport history in the park landscape',
+    heideblickDescription:
+      'From the elevated Heideblick, the view opens across Tegeler Stadtheide to Berlin’s skyline. A footbridge at the end of the former runway creates a new perspective on the protected heath landscape.',
+    recreationDescription:
+      'The former runway will provide space for jogging, cycling, skating, play and sports, combining active recreation with the protected nature of Tegeler Stadtheide.',
+    archedAntennaDescription:
+      'The historic arched antenna from the airport era will be preserved as a viewing platform, combining a landscape experience, a place to pause and the history of the site.',
+    tentDescription:
+      'The tent is the meeting point for Campus Stadt Natur tours and events about nature, planning and the transformation of Tegeler Stadtheide.',
+    northernRunwayDescription:
+      'The northern runway opens onto the broad landscape of Tegeler Stadtheide and makes the scale of the former airfield directly tangible.',
+    southernRunwayDescription:
+      'The southern runway connects the open park landscape with the former airport site and keeps the history of aviation at Berlin-Tegel visible.',
   },
   de: {
     pageTitle: 'Berlin TXL • 3D-Karte',
@@ -225,6 +248,29 @@ export const translations = {
       'Das Schumacher Quartier ist das neue urbane Wohnquartier auf der östlichen Seite des ehemaligen Flughafengeländes.',
     tegelerStadtheideDescription:
       'Der Landschaftsraum Tegeler Stadtheide verbindet Naturschutz, Erholung und die offene Landschaft von Berlin TXL.',
+    heideblickSubtitle: 'Erhöhter Blick über die Heide',
+    recreationSubtitle: 'Erholung, Spiel und Sport',
+    archedAntennaSubtitle: 'Historische Aussichtplattform',
+    tentSubtitle: 'Treffpunkt und Veranstaltungen',
+    heideblick: 'Heideblick',
+    recreation: 'Freizeit',
+    archedAntenna: 'Rundbogenantenne',
+    northernRunway: 'Nördliche Landebahn',
+    southernRunway: 'Südliche Landebahn',
+    northernRunwaySubtitle: 'Weite des ehemaligen Flugfelds',
+    southernRunwaySubtitle: 'Flughafengeschichte in der Parklandschaft',
+    heideblickDescription:
+      'Vom erhöhten Heideblick öffnet sich die Weite der Tegeler Stadtheide bis zur Berliner Skyline. Ein Steg am Ende der ehemaligen Landebahn macht die geschützte Heidelandschaft aus einer neuen Perspektive erlebbar.',
+    recreationDescription:
+      'Auf der ehemaligen Landebahn entstehen Räume zum Joggen, Radfahren, Skaten, Spielen und für weitere Sportarten – aktive Erholung inmitten der geschützten Natur der Tegeler Stadtheide.',
+    archedAntennaDescription:
+      'Die historische Rundbogenantenne aus der Flughafenzeit wird als Aussichtplattform gesichert. Sie verbindet Landschaftserlebnis, Aufenthalt und die Geschichte des Ortes.',
+    tentDescription:
+      'Das Zelt ist Treffpunkt für Führungen und Veranstaltungen von Campus Stadt Natur rund um Natur, Planung und Wandel der Tegeler Stadtheide.',
+    northernRunwayDescription:
+      'Die nördliche Landebahn öffnet den Blick in die weite Landschaft der Tegeler Stadtheide und macht die Dimension des ehemaligen Flugfelds unmittelbar erlebbar.',
+    southernRunwayDescription:
+      'Die südliche Landebahn verbindet die offene Parklandschaft mit dem ehemaligen Flughafengelände und hält die Luftfahrtgeschichte von Berlin-Tegel sichtbar.',
   },
   fr: {
     pageTitle: 'Berlin TXL • Carte 3D',
@@ -342,5 +388,28 @@ export const translations = {
       'Le quartier Schumacher est le nouveau quartier résidentiel urbain situé à l’est de l’ancien site aéroportuaire.',
     tegelerStadtheideDescription:
       'L’espace paysager Tegeler Stadtheide associe protection de la nature, loisirs et paysage ouvert de Berlin TXL.',
+    heideblickSubtitle: 'Vue surélevée sur la lande',
+    recreationSubtitle: 'Détente, jeux et sports',
+    archedAntennaSubtitle: 'Plateforme panoramique historique',
+    tentSubtitle: 'Point de rencontre et événements',
+    heideblick: 'Heideblick',
+    recreation: 'Loisirs',
+    archedAntenna: 'Antenne arquée',
+    northernRunway: 'Piste nord',
+    southernRunway: 'Piste sud',
+    northernRunwaySubtitle: 'Étendue de l’ancien aérodrome',
+    southernRunwaySubtitle: 'Histoire aéroportuaire dans le parc',
+    heideblickDescription:
+      'Depuis le Heideblick surélevé, le regard porte sur la Tegeler Stadtheide jusqu’à la silhouette de Berlin. Une passerelle au bout de l’ancienne piste offre une nouvelle perspective sur la lande protégée.',
+    recreationDescription:
+      'L’ancienne piste accueillera la course, le vélo, le patinage, les jeux et d’autres sports, associant loisirs actifs et nature protégée de la Tegeler Stadtheide.',
+    archedAntennaDescription:
+      'L’antenne arquée historique de l’époque aéroportuaire sera conservée comme plateforme panoramique, entre découverte du paysage, halte et mémoire du site.',
+    tentDescription:
+      'La tente est le point de rencontre des visites et événements de Campus Stadt Natur consacrés à la nature, à la planification et à la transformation de la Tegeler Stadtheide.',
+    northernRunwayDescription:
+      'La piste nord ouvre le regard sur le vaste paysage de la Tegeler Stadtheide et permet de saisir directement l’échelle de l’ancien aérodrome.',
+    southernRunwayDescription:
+      'La piste sud relie le paysage ouvert du parc à l’ancien site aéroportuaire et maintient visible l’histoire aéronautique de Berlin-Tegel.',
   },
 };

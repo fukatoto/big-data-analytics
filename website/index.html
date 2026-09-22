@@ -30,7 +30,7 @@
           <div class="edition-label">
             <span class="edition-line"></span>
             <span data-i18n="interactiveAtlas">INTERACTIVE ATLAS</span>
-            <span class="edition-number" id="edition-number">01 / 06</span>
+            <span class="edition-number" id="edition-number">01 / 12</span>
           </div>
           <h1>
             <span data-i18n="explore">Explore</span><br /><em>Berlin TXL</em>
@@ -55,7 +55,7 @@
         <div class="places-section">
           <div class="section-heading">
             <span data-i18n="placesAndAreas">PLACES &amp; PROJECT AREAS</span
-            ><span>06</span>
+            ><span>12</span>
           </div>
           <div class="place-list">
             <div class="place-group-heading">
@@ -116,7 +116,8 @@
               role="switch"
               aria-checked="false"
             >
-              <span data-i18n="places">TERMINAL LOCATIONS</span
+              <span class="terminal-places-label"
+                ><span data-i18n="places">PLACES</span><span>09</span></span
               ><i aria-hidden="true"><b></b></i>
             </button>
             <div id="terminal-places" class="terminal-places" hidden>
@@ -162,6 +163,92 @@
                   ></span
                 ><span class="place-arrow" aria-hidden="true">↗</span>
               </button>
+              <button
+                class="place-item"
+                type="button"
+                data-place="heideblick"
+                aria-pressed="false"
+              >
+                <span class="place-index">07</span
+                ><span class="place-text"
+                  ><strong data-i18n="heideblick">Heideblick</strong
+                  ><small data-i18n="heideblickSubtitle"
+                    >Elevated view across the heath</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="place-item"
+                type="button"
+                data-place="bunker"
+                aria-pressed="false"
+              >
+                <span class="place-index">08</span
+                ><span class="place-text"
+                  ><strong data-i18n="recreation">Recreation</strong
+                  ><small data-i18n="recreationSubtitle"
+                    >Recreation, play and sports</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="place-item"
+                type="button"
+                data-place="rundbogenantenne"
+                aria-pressed="false"
+              >
+                <span class="place-index">09</span
+                ><span class="place-text"
+                  ><strong data-i18n="archedAntenna">Arched antenna</strong
+                  ><small data-i18n="archedAntennaSubtitle"
+                    >Historic viewing platform</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="place-item"
+                type="button"
+                data-place="zelt"
+                aria-pressed="false"
+              >
+                <span class="place-index">10</span
+                ><span class="place-text"
+                  ><strong>Zelt</strong
+                  ><small data-i18n="tentSubtitle"
+                    >Meeting point and events</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="place-item"
+                type="button"
+                data-place="northern-runway"
+                aria-pressed="false"
+              >
+                <span class="place-index">11</span
+                ><span class="place-text"
+                  ><strong data-i18n="northernRunway"
+                    >Northern runway</strong
+                  ><small data-i18n="northernRunwaySubtitle"
+                    >Open space of the former airfield</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
+              <button
+                class="place-item"
+                type="button"
+                data-place="southern-runway"
+                aria-pressed="false"
+              >
+                <span class="place-index">12</span
+                ><span class="place-text"
+                  ><strong data-i18n="southernRunway"
+                    >Southern runway</strong
+                  ><small data-i18n="southernRunwaySubtitle"
+                    >Airport history in the park landscape</small
+                  ></span
+                ><span class="place-arrow" aria-hidden="true">↗</span>
+              </button>
             </div>
           </div>
           <div class="place-detail" id="place-detail" aria-live="polite">
@@ -169,7 +256,7 @@
               <span id="detail-kicker-label" data-i18n="selectedProjectArea"
                 >SELECTED PROJECT AREA</span
               >
-              <span id="detail-number">01 / 06</span>
+              <span id="detail-number">01 / 12</span>
             </div>
             <h2 id="detail-title">Tegeler Stadtheide landscape area</h2>
             <p id="detail-description">
