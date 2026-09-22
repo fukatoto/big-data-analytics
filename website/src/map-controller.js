@@ -553,15 +553,28 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     title.tabIndex = -1;
     title.textContent = event.title;
 
-    const schedule = document.createElement('p');
+    const schedule = document.createElement('div');
     schedule.className = 'event-detail-schedule';
-    schedule.textContent = `${dateFormatter.format(start)} · ${timeFormatter.format(start)}–${timeFormatter.format(end)}`;
+    const scheduleIcon = document.createElement('span');
+    scheduleIcon.className = 'event-detail-schedule-icon';
+    scheduleIcon.setAttribute('aria-hidden', 'true');
+    scheduleIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>';
+    const scheduleText = document.createElement('span');
+    scheduleText.className = 'event-detail-schedule-text';
+    const date = document.createElement('time');
+    date.dateTime = event.start;
+    date.textContent = dateFormatter.format(start);
+    const time = document.createElement('span');
+    time.textContent = `${timeFormatter.format(start)}–${timeFormatter.format(end)}`;
+    scheduleText.append(date, time);
+    schedule.append(scheduleIcon, scheduleText);
 
     const facts = document.createElement('dl');
     facts.className = 'event-detail-facts';
-    const addFact = (labelKey, value) => {
+    const addFact = (labelKey, value, compact = false) => {
       if (!value) return;
       const item = document.createElement('div');
+      if (compact) item.className = 'event-detail-fact-compact';
       const term = document.createElement('dt');
       const description = document.createElement('dd');
       term.textContent = t(labelKey);
@@ -569,9 +582,9 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       item.append(term, description);
       facts.append(item);
     };
-    addFact('eventLocation', event.location);
+    addFact('eventLocation', event.location, true);
+    addFact('eventTargetGroups', event.target_groups?.join(' · '), true);
     addFact('eventMeetingPoint', event.meeting_point);
-    addFact('eventTargetGroups', event.target_groups?.join(' · '));
     addFact('eventPrice', event.price);
     addFact('eventProvider', event.provider);
 
@@ -581,7 +594,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     const calendarExport = document.createElement('button');
     calendarExport.className = 'event-detail-calendar';
     calendarExport.type = 'button';
-    calendarExport.innerHTML = `<span aria-hidden="true">↓</span><span>${t('eventAddToCalendar')}</span>`;
+    calendarExport.innerHTML = `<span>${t('eventAddToCalendar')}</span><span aria-hidden="true">↓</span>`;
     calendarExport.addEventListener('click', () => downloadCalendarFile(event));
 
     const source = document.createElement('a');
@@ -589,8 +602,8 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     source.href = event.source_url;
     source.target = '_blank';
     source.rel = 'noopener noreferrer';
-    source.innerHTML = `<span>${t('eventMoreInformation')}</span><span aria-hidden="true">↗</span>`;
-    actions.append(calendarExport, source);
+    source.innerHTML = `<span>${t(statusKey === 'eventSoldOut' ? 'eventMoreInformationOnly' : 'eventMoreInformation')}</span><span aria-hidden="true">↗</span>`;
+    actions.append(source, calendarExport);
 
     container.append(back, cover, eyebrow, title, schedule, facts, actions);
   }

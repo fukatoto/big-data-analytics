@@ -4,6 +4,7 @@ import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import './style.css';
 import './redesign.css';
 import './dark-mode.css';
+import './event-detail.css';
 import { createBasemapController } from './basemap-controller.js';
 import { createBeeModeController } from './bee-mode-controller.js';
 import { airportNavigationBounds, campusCamera } from './config.js';
