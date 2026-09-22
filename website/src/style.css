@@ -1645,15 +1645,19 @@ h1 em {
   font-family: var(--font-display);
   font-size: 13px;
 }
-.place-info-map-popup {
+.place-info-map-popup,
+.ground-height-map-popup {
   z-index: 7;
+}
+.place-info-map-popup .maplibregl-popup-content,
+.ground-height-map-popup .maplibregl-popup-content {
+  padding: 0;
+  overflow: hidden;
+  background: rgba(255, 255, 249, 0.98);
 }
 .place-info-map-popup .maplibregl-popup-content {
   width: min(320px, calc(100vw - 28px));
-  padding: 0;
-  overflow: hidden;
   border: 1px solid rgba(0, 125, 115, 0.28);
-  background: rgba(255, 255, 249, 0.98);
 }
 .place-info-map-popup .maplibregl-popup-close-button {
   top: 10px;

@@ -96,12 +96,6 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
       };
       drawBowl('#173b32', 8);
       drawBowl(color, 5);
-      context.beginPath();
-      context.moveTo(11, 12);
-      context.bezierCurveTo(18, 7, 30, 7, 37, 12);
-      context.strokeStyle = color;
-      context.lineWidth = 5;
-      context.stroke();
     } else if (kind === 'reference') {
       context.beginPath();
       context.moveTo(24, 3);
@@ -407,7 +401,12 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
   }
 
   function addPopupInteraction() {
-    popup = new maplibregl.Popup({ closeButton: false, closeOnClick: false, offset: 10 });
+    popup = new maplibregl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+      className: 'ground-height-map-popup',
+      offset: 10,
+    });
     const showPopup = (event) => {
       const feature = event.features?.[0];
       if (!feature) return;
@@ -418,16 +417,15 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError }) {
         feature.properties.isReference === true || feature.properties.isReference === 'true';
       const isAnnotation =
         feature.properties.isAnnotation === true || feature.properties.isAnnotation === 'true';
+      const popupContent = isAnnotation
+        ? `<strong>${escapeHtml(label)}</strong>`
+        : isReference
+          ? `<strong>${t('referencePoint')}</strong><br>${t('groundHeight', { height: Number(groundHeight).toFixed(2) })}`
+          : `<strong>${escapeHtml(label)}</strong><br>${t('groundHeight', { height: Number(groundHeight).toFixed(2) })}<br>${t('localReference', { height: Number(csvReference).toFixed(2) })}<br>${t('difference', { height: (Number(heightDifference) * 100).toFixed(1) })}`;
       map.getCanvas().style.cursor = 'pointer';
       popup
         .setLngLat(event.lngLat)
-        .setHTML(
-          isAnnotation
-            ? `<strong>${escapeHtml(label)}</strong>`
-            : isReference
-            ? `<strong>${t('referencePoint')}</strong><br>${t('groundHeight', { height: Number(groundHeight).toFixed(2) })}`
-            : `<strong>${escapeHtml(label)}</strong><br>${t('groundHeight', { height: Number(groundHeight).toFixed(2) })}<br>${t('localReference', { height: Number(csvReference).toFixed(2) })}<br>${t('difference', { height: (Number(heightDifference) * 100).toFixed(1) })}`,
-        )
+        .setHTML(`<div class="place-popup-body">${popupContent}</div>`)
         .addTo(map);
     };
     const hidePopup = () => {

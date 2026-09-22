@@ -902,7 +902,8 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     );
     document.getElementById('detail-title').textContent = placeName(place);
     document.getElementById('detail-number').textContent = place.number;
-    document.getElementById('edition-number').textContent = place.number;
+    const editionNumber = document.getElementById('edition-number');
+    if (editionNumber) editionNumber.textContent = place.number;
     detailDescription.textContent = placeDescription(place);
     detailDescription.hidden = showsEvents;
     if (!showsEvents) state.selectedEventUrl = null;

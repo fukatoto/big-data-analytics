@@ -77,7 +77,7 @@ export const translations = {
     togglePanel: 'Expand or collapse panel',
     showSidebar: 'Show sidebar',
     hideSidebar: 'Hide sidebar',
-    showHeightAnalysis: 'Show height analysis',
+    showHeightAnalysis: 'Show ground analysis',
     maxLocalDifference: 'Maximum difference from reference',
     obstacles: 'obstacles',
     clear: 'clear',
@@ -141,9 +141,12 @@ export const translations = {
     landscapePark: 'Landscape park',
     sunbathingLawn: 'Sunbathing Lawn',
     futureTreeNursery: 'Future Tree Nursery',
-    radarPlateau: 'Radar Plateau',
+    radarPlateau: 'Radar station',
     landscapeMaintenanceHub: 'Landscape Maintenance Hub',
     grazingZone: 'Grazing Zone',
+    heideSteg: 'Heide Walkway',
+    heidetribuene: 'Heide Stands',
+    runwayOase: 'Runway Oasis',
     airfieldLightingSubtitle: 'Relic of former flight operations',
     landscapeParkSubtitle: 'Nature, recreation and open landscape',
     sunbathingLawnSubtitle: 'Relaxing in nature',
@@ -151,6 +154,9 @@ export const translations = {
     radarPlateauSubtitle: '360-degree panorama',
     landscapeMaintenanceHubSubtitle: 'Base for nature conservation',
     grazingZoneSubtitle: 'Natural landscape management',
+    heideStegSubtitle: 'Floating path through nature',
+    heidetribueneSubtitle: 'A new perspective with a view of the sheep',
+    runwayOaseSubtitle: 'Green oasis on former asphalt',
     heideblickDescription:
       'From the elevated Heideblick, the view opens across Tegeler Stadtheide to Berlin’s skyline. A footbridge at the end of the former runway creates a new perspective on the protected heath landscape.',
     recreationDescription:
@@ -177,6 +183,12 @@ export const translations = {
       'The operational heart of nature conservation. The Landscape Maintenance Hub coordinates all efforts to preserve the heath and serves as the base for the sustainable care of this unique ecosystem.',
     grazingZoneDescription:
       'Natural landscape management in action. In these designated areas, sheep, cows, and horses help preserve biodiversity and the open character of the heath through gentle grazing.',
+    heideStegDescription:
+      'The Heide Walkway offers visitors a new perspective: the gently elevated path leads through nature and opens up sweeping views across the urban heath.',
+    heidetribueneDescription:
+      'The Heide Stands invite you to linger and offer a fresh perspective on the area. From here, you can take in the vast landscape and watch the grazing flock of sheep acting as natural caretakers of the heath.',
+    runwayOaseDescription:
+      'Where airplanes once taxied, a "Tiny Forest" is now taking root. This green oasis breaks up the hard asphalt of the old runway, creating a dense, vibrant biotope amidst the vast urban expanse.',
   },
   de: {
     pageTitle: 'Berlin TXL • 3D-Karte',
@@ -256,7 +268,7 @@ export const translations = {
     togglePanel: 'Bereich ein- oder ausklappen',
     showSidebar: 'Seitenleiste einblenden',
     hideSidebar: 'Seitenleiste ausblenden',
-    showHeightAnalysis: 'Höhenanalyse anzeigen',
+    showHeightAnalysis: 'Bodenanalyse anzeigen',
     maxLocalDifference: 'Maximale Differenz zur Referenz',
     obstacles: 'Hindernisse',
     clear: 'unauffällig',
@@ -322,9 +334,12 @@ export const translations = {
     landscapePark: 'Landschaftspark',
     sunbathingLawn: 'Liegewiese',
     futureTreeNursery: 'Zukunftsbaumschule',
-    radarPlateau: 'Radar-Plateau',
+    radarPlateau: 'Radarstation',
     landscapeMaintenanceHub: 'Landschaftspflegehof',
     grazingZone: 'Beweidungszone',
+    heideSteg: 'Heidesteg',
+    heidetribuene: 'Heidetribüne',
+    runwayOase: 'Landebahnoase',
     airfieldLightingSubtitle: 'Relikt des früheren Flugbetriebs',
     landscapeParkSubtitle: 'Natur, Erholung und offene Landschaft',
     sunbathingLawnSubtitle: 'Entspannen in der Natur',
@@ -332,6 +347,9 @@ export const translations = {
     radarPlateauSubtitle: '360-Grad-Panorama',
     landscapeMaintenanceHubSubtitle: 'Basis des Naturschutzes',
     grazingZoneSubtitle: 'Natürliche Landschaftspflege',
+    heideStegSubtitle: 'Schwebender Pfad durch die Natur',
+    heidetribueneSubtitle: 'Perspektivwechsel mit Schafblick',
+    runwayOaseSubtitle: 'Grüne Oase auf altem Asphalt',
     heideblickDescription:
       'Vom erhöhten Heideblick öffnet sich die Weite der Tegeler Stadtheide bis zur Berliner Skyline. Ein Steg am Ende der ehemaligen Landebahn macht die geschützte Heidelandschaft aus einer neuen Perspektive erlebbar.',
     recreationDescription:
@@ -358,6 +376,12 @@ export const translations = {
       'Das operative Herzstück des Naturschutzes. Der Landschaftspflegehof bündelt alle Maßnahmen zur Erhaltung der Heide und dient als Basis für die nachhaltige Pflege dieses einzigartigen Ökosystems.',
     grazingZoneDescription:
       'Natürliche Landschaftspflege in Aktion. In diesen ausgewiesenen Bereichen helfen Schafe, Kühe und Pferde durch schonende Beweidung, die Biodiversität und den offenen Charakter der Heide zu bewahren.',
+    heideStegDescription:
+      'Der Heidesteg ermöglicht Besucherinnen und Besuchern einen Perspektivwechsel: Der leicht erhöhte Weg führt durch die Natur und eröffnet weite Blicke über die Stadtheide.',
+    heidetribueneDescription:
+      'Die Heidetribüne lädt zum Verweilen ein und bietet einen völlig neuen Blickwinkel auf das Areal. Von hier aus lässt sich die Weite entspannt genießen und die weidende Schafherde beobachten, die als natürliche Landschaftspfleger der Heide im Einsatz ist.',
+    runwayOaseDescription:
+      'Wo früher tonnenschwere Flugzeuge rollten, schlägt nun ein „Tiny Forest“ Wurzeln. Diese grüne Oase bricht den harten Asphalt der ehemaligen Landebahn auf und schafft ein dichtes, lebendiges Biotop mitten in der urbanen Weite.',
   },
   fr: {
     pageTitle: 'Berlin TXL • Carte 3D',
@@ -437,7 +461,7 @@ export const translations = {
     togglePanel: 'Développer ou réduire le panneau',
     showSidebar: 'Afficher la barre latérale',
     hideSidebar: 'Masquer la barre latérale',
-    showHeightAnalysis: 'Afficher l’analyse des hauteurs',
+    showHeightAnalysis: 'Afficher l’analyse du sol',
     maxLocalDifference: 'Écart maximal par rapport à la référence',
     obstacles: 'obstacles',
     clear: 'conformes',
@@ -507,9 +531,12 @@ export const translations = {
     landscapePark: 'Parc paysager',
     sunbathingLawn: 'Pelouse de détente',
     futureTreeNursery: 'Pépinière d’arbres du futur',
-    radarPlateau: 'Plateau radar',
+    radarPlateau: 'Station radar',
     landscapeMaintenanceHub: 'Centre d’entretien paysager',
     grazingZone: 'Zone de pâturage',
+    heideSteg: 'Passerelle de la lande',
+    heidetribuene: 'Tribune de la lande',
+    runwayOase: 'Oasis de la piste',
     airfieldLightingSubtitle: 'Vestige des anciennes opérations aériennes',
     landscapeParkSubtitle: 'Nature, loisirs et paysage ouvert',
     sunbathingLawnSubtitle: 'Se détendre dans la nature',
@@ -517,6 +544,9 @@ export const translations = {
     radarPlateauSubtitle: 'Panorama à 360 degrés',
     landscapeMaintenanceHubSubtitle: 'Base de la protection de la nature',
     grazingZoneSubtitle: 'Entretien naturel du paysage',
+    heideStegSubtitle: 'Passerelle suspendue au cœur de la nature',
+    heidetribueneSubtitle: 'Un nouveau point de vue sur les moutons',
+    runwayOaseSubtitle: 'Une oasis verte sur l’ancien asphalte',
     heideblickDescription:
       'Depuis le Heideblick surélevé, le regard porte sur la Tegeler Stadtheide jusqu’à la silhouette de Berlin. Une passerelle au bout de l’ancienne piste offre une nouvelle perspective sur la lande protégée.',
     recreationDescription:
@@ -543,5 +573,11 @@ export const translations = {
       'Le cœur opérationnel de la protection de la nature. Le centre d’entretien paysager coordonne toutes les mesures de préservation de la lande et sert de base à l’entretien durable de cet écosystème unique.',
     grazingZoneDescription:
       'L’entretien naturel du paysage en action. Dans ces zones délimitées, moutons, vaches et chevaux contribuent, grâce à un pâturage extensif, à préserver la biodiversité et le caractère ouvert de la lande.',
+    heideStegDescription:
+      'La passerelle de la lande offre une nouvelle perspective aux visiteurs : ce chemin légèrement surélevé traverse la nature et ouvre de vastes vues sur la lande urbaine.',
+    heidetribueneDescription:
+      'La tribune de la lande invite à faire une pause et offre un tout nouveau point de vue sur le site. De là, on peut contempler le vaste paysage et observer le troupeau de moutons qui entretient naturellement la lande.',
+    runwayOaseDescription:
+      'Là où roulaient autrefois des avions de plusieurs tonnes, une « forêt miniature » prend aujourd’hui racine. Cette oasis verte fend l’asphalte dur de l’ancienne piste et crée un biotope dense et vivant au cœur de l’immensité urbaine.',
   },
 };
