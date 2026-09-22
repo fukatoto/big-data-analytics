@@ -903,6 +903,36 @@ h1 em {
   height: 16px;
   fill: currentColor;
 }
+.bee-mode-toggle {
+  width: 38px;
+  justify-content: center;
+  padding: 0;
+}
+.bee-mode-toggle-icon {
+  width: 28px;
+  height: 28px;
+  object-fit: contain;
+}
+.bee-mode-toggle.is-active .bee-mode-toggle-icon {
+  filter: drop-shadow(0 0 1px #fff);
+}
+.bee-mode .bee-mode-toggle-icon {
+  animation: bee-hover 0.65s ease-in-out infinite alternate;
+}
+.bee-mode,
+.bee-mode * {
+  cursor: url('./assets/bee-cursor.svg') 20 20, auto !important;
+}
+@keyframes bee-hover {
+  to {
+    transform: translateY(-2px) rotate(4deg);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .bee-mode .bee-mode-toggle-icon {
+    animation: none;
+  }
+}
 .language-control {
   padding: 4px;
   border-radius: 5px;

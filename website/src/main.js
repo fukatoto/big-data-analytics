@@ -3,6 +3,7 @@ import 'maplibre-gl/dist/maplibre-gl.css';
 import workerUrl from 'maplibre-gl/dist/maplibre-gl-worker.mjs?worker&url';
 import './style.css';
 import { createBasemapController } from './basemap-controller.js';
+import { createBeeModeController } from './bee-mode-controller.js';
 import { airportNavigationBounds, campusCamera } from './config.js';
 import { createGroundHeightOverlay } from './ground-height-overlay.js';
 import { createLocalization } from './localization.js';
@@ -48,6 +49,9 @@ const projectAreasOverlay = createProjectAreasOverlay({
 });
 const basemapController = createBasemapController({
   map,
+  t: localization.t,
+});
+const beeModeController = createBeeModeController({
   t: localization.t,
 });
 const mapController = createMapController({
@@ -97,6 +101,7 @@ document
 
 localization.subscribe(() => {
   basemapController.refreshLanguage();
+  beeModeController.refreshLanguage();
   mapController.refreshLanguage();
   projectAreasOverlay.refreshLanguage();
   groundHeightOverlay.refreshLanguage();
@@ -104,6 +109,7 @@ localization.subscribe(() => {
 
 mapController.bindUi();
 basemapController.bindUi();
+beeModeController.bindUi();
 mapController.loadEvents();
 projectAreasOverlay.bindUi();
 groundHeightOverlay.bindUi();
