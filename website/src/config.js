@@ -6,7 +6,8 @@ import heideblickImage from './assets/images/heideblick.jpg';
 import heideStegConceptImage from './assets/images/heidesteg.jpg';
 import heidetribueneConceptImage from './assets/images/heidetribune.jpg';
 import landscapeParkConceptImage from './assets/images/landschaftspark.jpg';
-import northernRunwayConceptImage from './assets/images/nord-landebahn.jpg';
+import northernRunwayImage from './assets/images/nord-landebahn.jpg';
+import northernRunwayConceptImage from './assets/images/nord-landebahn_concept.jpg';
 import radarPlateauImage from './assets/images/radarstation.jpg';
 import rundbogenantenneConceptImage from './assets/images/rundbogenantenne_concept.jpg';
 import rundbogenantenneImage from './assets/images/rundbogenantenne.jpg';
@@ -203,6 +204,11 @@ export const places = {
     number: '11 / 23',
     coordinates: [13.27325037503029, 52.55832749635448], //,
     images: [
+      {
+        src: northernRunwayImage,
+        labelKey: 'currentImage',
+        credit: 'Yann-Cédric Gagern / Alexander Gottwald',
+      },
       {
         src: northernRunwayConceptImage,
         labelKey: 'conceptImage',
