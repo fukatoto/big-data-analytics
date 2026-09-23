@@ -352,7 +352,7 @@ h1 em { color: #087d70; }
 .project-fill-toggle > span { font-size: 11px; }
 .project-area-control p,
 .height-control p { font-size: 10px; }
-.height-control { right: 74px; bottom: 54px; width: min(350px, calc(100% - 50px)); }
+.height-control { right: 74px; bottom: 54px; width: min(330px, calc(100% - 50px)); }
 .height-control output { border-radius: 7px; background: #145e54; }
 .height-control label { font-size: 11px; }
 .height-legend { font-size: 11px; }
@@ -578,7 +578,7 @@ h1 em { color: #087d70; }
   right: var(--tree-health-right, 74px);
 }
 @media (min-width: 701px) {
-  .tree-health-control { width: min(450px, calc(100% - 50px)); }
+  .tree-health-control { width: min(420px, calc(100% - 50px)); }
 }
 .tree-green-range {
   display: flex;

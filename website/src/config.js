@@ -161,7 +161,7 @@ export const places = {
       {
         src: bunkerImage,
         labelKey: 'currentImage',
-        credit: 'Alexander Gottwald / Yann-Cédric Gagern',
+        credit: 'Alexander Gottwald',
       },
       {
         src: bunkerConceptImage,
@@ -207,7 +207,7 @@ export const places = {
       {
         src: northernRunwayImage,
         labelKey: 'currentImage',
-        credit: 'Yann-Cédric Gagern / Alexander Gottwald',
+        credit: 'Yann-Cédric Gagern',
       },
       {
         src: northernRunwayConceptImage,
