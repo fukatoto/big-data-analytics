@@ -100,7 +100,7 @@ export const translations = {
     clear: 'clear',
     loadingHeightData: 'Loading CSV height data…',
     mapViews: 'Map views',
-    stadtheide: 'Stadtheide',
+    stadtheide: 'Tegeler Stadtheide',
     formerAirport: 'Former airport',
     mapHelp: 'Drag to explore · Ctrl + drag to rotate · Scroll to zoom',
     mapLoadError: 'The map could not load.',
@@ -313,7 +313,7 @@ export const translations = {
     clear: 'unauffällig',
     loadingHeightData: 'CSV-Höhendaten werden geladen…',
     mapViews: 'Kartenansichten',
-    stadtheide: 'Stadtheide',
+    stadtheide: 'Tegeler Stadtheide',
     formerAirport: 'Ehemaliger Flughafen',
     mapHelp:
       'Ziehen zum Erkunden · Strg + Ziehen zum Drehen · Scrollen zum Zoomen',
@@ -528,7 +528,7 @@ export const translations = {
     clear: 'conformes',
     loadingHeightData: 'Chargement des hauteurs CSV…',
     mapViews: 'Vues de la carte',
-    stadtheide: 'Stadtheide',
+    stadtheide: 'Tegeler Stadtheide',
     formerAirport: 'Ancien aéroport',
     mapHelp:
       'Faites glisser pour explorer · Ctrl + glisser pour pivoter · Faites défiler pour zoomer',
