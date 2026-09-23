@@ -1,14 +1,7 @@
 import { satelliteBasemapConfig } from './config.js';
 
-export function createBasemapController({ map, t }) {
+export function createBasemapController({ map }) {
   let satelliteVisible = false;
-
-  function updateButton() {
-    const button = document.getElementById('satellite-toggle');
-    button.classList.toggle('is-active', satelliteVisible);
-    button.setAttribute('aria-pressed', String(satelliteVisible));
-    button.setAttribute('title', t('satelliteView'));
-  }
 
   function setSatelliteVisible(visible) {
     satelliteVisible = visible;
@@ -19,14 +12,6 @@ export function createBasemapController({ map, t }) {
         visible ? 'visible' : 'none',
       );
     }
-    updateButton();
-  }
-
-  function bindUi() {
-    document
-      .getElementById('satellite-toggle')
-      .addEventListener('click', () => setSatelliteVisible(!satelliteVisible));
-    updateButton();
   }
 
   function addLayer() {
@@ -61,7 +46,6 @@ export function createBasemapController({ map, t }) {
 
   return {
     addLayer,
-    bindUi,
-    refreshLanguage: updateButton,
+    setSatelliteVisible,
   };
 }

@@ -197,7 +197,7 @@ export const translations = {
     radarPlateauDescription:
       "A historic viewpoint with a vision. Where air traffic was once monitored, you can now enjoy a spectacular 360-degree panorama of the entire heath and Berlin's architecture.",
     landscapeMaintenanceHubDescription:
-      'The operational heart of nature conservation. The Landscape Maintenance Hub coordinates all efforts to preserve the heath and serves as the base for the sustainable care of this unique ecosystem.',
+      'The heart of animal husbandry. The Landscape Maintenance Hub coordinates all measures to preserve the heath and serves as the base for the sustainable care of this unique ecosystem.',
     grazingZoneDescription:
       'Natural landscape management in action. In these designated areas, sheep, cows, and horses help preserve biodiversity and the open character of the heath through gentle grazing.',
     heideStegDescription:
@@ -287,7 +287,7 @@ export const translations = {
     minimumGreenShare: 'Mindest-Grünanteil (GCC)',
     maximumGreenShare: 'Maximaler Grünanteil (GCC)',
     minimumTreeHeight: 'Mindest-Baumhöhe',
-    maximumTreeHeight: 'Maximum-Baumhöhe',
+    maximumTreeHeight: 'Maximale Baumhöhe',
     minimumCrownDiameter: 'Mindest-Kronendurchmesser',
     maximumCrownDiameter: 'Maximaler Kronendurchmesser',
     trees: 'Bäume',
@@ -412,7 +412,7 @@ export const translations = {
     radarPlateauDescription:
       'Ein historischer Aussichtspunkt mit Weitblick. Wo früher der Flugverkehr überwacht wurde, bietet sich heute ein spektakuläres 360-Grad-Panorama über die gesamte Heide und die Berliner Architektur.',
     landscapeMaintenanceHubDescription:
-      'Das operative Herzstück des Naturschutzes. Der Landschaftspflegehof bündelt alle Maßnahmen zur Erhaltung der Heide und dient als Basis für die nachhaltige Pflege dieses einzigartigen Ökosystems.',
+      'Das Herzstück der Tierhaltung. Der Landschaftspflegehof bündelt alle Maßnahmen zur Erhaltung der Heide und dient als Basis für die nachhaltige Pflege dieses einzigartigen Ökosystems.',
     grazingZoneDescription:
       'Natürliche Landschaftspflege in Aktion. In diesen ausgewiesenen Bereichen helfen Schafe, Kühe und Pferde durch schonende Beweidung, die Biodiversität und den offenen Charakter der Heide zu bewahren.',
     heideStegDescription:
@@ -631,7 +631,7 @@ export const translations = {
     radarPlateauDescription:
       'Un point de vue historique qui ouvre de vastes perspectives. Là où le trafic aérien était autrefois surveillé, un spectaculaire panorama à 360 degrés s’étend aujourd’hui sur toute la lande et l’architecture berlinoise.',
     landscapeMaintenanceHubDescription:
-      'Le cœur opérationnel de la protection de la nature. Le centre d’entretien paysager coordonne toutes les mesures de préservation de la lande et sert de base à l’entretien durable de cet écosystème unique.',
+      'Le cœur de l’élevage. Le centre d’entretien paysager coordonne toutes les mesures de préservation de la lande et sert de base à l’entretien durable de cet écosystème unique.',
     grazingZoneDescription:
       'L’entretien naturel du paysage en action. Dans ces zones délimitées, moutons, vaches et chevaux contribuent, grâce à un pâturage extensif, à préserver la biodiversité et le caractère ouvert de la lande.',
     heideStegDescription:

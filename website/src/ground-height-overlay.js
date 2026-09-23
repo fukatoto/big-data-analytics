@@ -3,7 +3,7 @@ import { groundHeightConfig } from './config.js';
 import { parseGroundHeightCsv } from './ground-height-analysis.js';
 import { formatDecimal } from './number-format.js';
 
-export function createGroundHeightOverlay({ map, t, createTranslatedError, onPanelVisibilityChange, onTreeHealthVisibilityChange, onMobilePanelSelectionChange }) {
+export function createGroundHeightOverlay({ map, t, state, createTranslatedError, getTreeHealthBounds, onPanelVisibilityChange, onTreeHealthVisibilityChange, onMobilePanelSelectionChange, onInternalViewChange }) {
   const updateDelay = 200;
   let samples = [];
   let reference = null;
@@ -204,10 +204,6 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
     return samples.filter((sample) => activeInternalLayers.has(sampleKind(sample)));
   }
 
-  function formatThreshold(threshold) {
-    return `${Math.round(threshold * 100)} cm`;
-  }
-
   function escapeHtml(value) {
     return String(value).replace(
       /[&<>'"]/g,
@@ -222,16 +218,12 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
   }
 
   function refreshStatus() {
-    const status = document.getElementById('height-data-status');
-    if (loadError) {
-      status.textContent = loadError.translationKey
-        ? t(loadError.translationKey, loadError.translationVariables)
-        : loadError.message;
-    } else if (sampleCount) {
-      status.textContent = t('dataStatus', { points: visibleSamples().length });
-    } else {
-      status.textContent = t('loadingHeightData');
-    }
+    state.visibleSamples = sampleCount ? visibleSamples().length : null;
+    state.error = loadError && {
+      key: loadError.translationKey,
+      variables: loadError.translationVariables,
+      message: loadError.message,
+    };
   }
 
   function measurementFilter() {
@@ -254,7 +246,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
     const panel = document.querySelector('.height-control');
     const panelWasHidden = panel.hidden;
     panel.hidden = !showMeasurements;
-    document.getElementById('height-threshold').disabled = !showMeasurements || !analysisInitialized;
+    state.enabled = showMeasurements && analysisInitialized;
     if (showMeasurements && panelWasHidden) {
       panel.classList.remove('is-desktop-collapsed');
       panel.querySelector('.desktop-panel-collapse').setAttribute('aria-expanded', 'true');
@@ -292,14 +284,39 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
 
   function focusInternalView() {
     const bounds = new maplibregl.LngLatBounds();
-    groundHeightConfig.annotations
-      .filter(({ kind }) => kind !== 'person')
-      .forEach(({ coordinates }) => bounds.extend(coordinates));
-    samples.forEach(({ longitude, latitude }) => bounds.extend([longitude, latitude]));
-    if (reference) bounds.extend([reference.longitude, reference.latitude]);
+    if (measurementsVisible()) {
+      visibleSamples().forEach(({ longitude, latitude }) => bounds.extend([longitude, latitude]));
+      if (reference) bounds.extend([reference.longitude, reference.latitude]);
+    }
+    if (activeInternalLayers.has('tree-health')) {
+      const treeBounds = getTreeHealthBounds?.();
+      if (treeBounds && !treeBounds.isEmpty()) {
+        bounds.extend(treeBounds.getSouthWest());
+        bounds.extend(treeBounds.getNorthEast());
+      }
+    }
     if (bounds.isEmpty()) return;
+
+    const mapRect = map.getContainer().getBoundingClientRect();
+    const mobile = window.matchMedia('(max-width: 700px)').matches;
+    const topbar = document.querySelector('.map-topbar').getBoundingClientRect();
+    const visiblePanels = [...document.querySelectorAll('.height-control')]
+      .filter((panel) => !panel.hidden)
+      .map((panel) => panel.getBoundingClientRect());
+    const padding = {
+      top: Math.max(60, topbar.bottom - mapRect.top + 20,
+        ...(mobile ? visiblePanels.map((rect) => rect.bottom - mapRect.top + 20) : [])),
+      bottom: mobile
+        ? mapRect.bottom - document.querySelector('.sidebar').getBoundingClientRect().top + 24
+        : 80,
+      left: 35,
+      right: mobile ? 35 : Math.min(mapRect.width * 0.4, 35 + Math.max(0,
+        ...visiblePanels.map((rect) => mapRect.right - rect.left))),
+    };
     map.fitBounds(bounds, {
-      padding: window.innerWidth < 700 ? 35 : 70,
+      padding,
+      pitch: 40,
+      bearing: 0,
       maxZoom: 16,
       duration: 800,
       essential: true,
@@ -307,8 +324,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
   }
 
   function update() {
-    const threshold = Number(document.getElementById('height-threshold').value);
-    document.getElementById('height-threshold-value').textContent = formatThreshold(threshold);
+    const threshold = state.threshold;
 
     if (map.getLayer(groundHeightConfig.measurementLayerId)) {
       map.setLayoutProperty(
@@ -322,13 +338,11 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
     const obstacles = selectedSamples.filter(
       (sample) => Math.abs(sample.groundHeight - referenceHeight) >= threshold,
     ).length;
-    document.getElementById('obstacle-count').textContent = String(obstacles);
-    document.getElementById('clear-count').textContent = String(selectedSamples.length - obstacles);
+    state.obstacles = obstacles;
+    state.clear = selectedSamples.length - obstacles;
   }
 
   function scheduleUpdate() {
-    const threshold = Number(document.getElementById('height-threshold').value);
-    document.getElementById('height-threshold-value').textContent = formatThreshold(threshold);
     window.clearTimeout(updateTimer);
     updateTimer = window.setTimeout(() => {
       updateTimer = null;
@@ -339,7 +353,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
   function initializeAnalysis() {
     if (analysisInitialized) return;
 
-    const threshold = Number(document.getElementById('height-threshold').value);
+    const threshold = state.threshold;
     registerMeasurementIcons();
     map.addSource(groundHeightConfig.measurementSourceId, {
       type: 'geojson',
@@ -393,62 +407,45 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
       },
     });
     analysisInitialized = true;
+    state.enabled = measurementsVisible();
     addPopupInteraction();
     updateMapVisibility();
   }
 
-  function bindUi() {
-    const syncMobilePanels = () => {
-      onMobilePanelSelectionChange?.(internalViewOpen ? [...activeInternalLayers] : []);
-    };
-    document.getElementById('internal-view-toggle').addEventListener('click', () => {
-      internalViewOpen = !internalViewOpen;
-      const button = document.getElementById('internal-view-toggle');
-      button.classList.toggle('is-active', internalViewOpen);
-      button.setAttribute('aria-checked', String(internalViewOpen));
-      const options = document.getElementById('internal-view-options');
-      options.hidden = !internalViewOpen;
-      syncInternalView();
-      syncMobilePanels();
-      if (internalViewOpen) {
-        focusInternalView();
-        if (window.matchMedia('(max-width: 700px)').matches) {
-          requestAnimationFrame(() => {
-            const sidebar = document.querySelector('.sidebar');
-            const hiddenBottom = options.getBoundingClientRect().bottom - sidebar.getBoundingClientRect().bottom;
-            if (hiddenBottom > 0) sidebar.scrollBy({ top: hiddenBottom + 12, behavior: 'auto' });
-          });
-        }
-      }
-    });
-    document.querySelectorAll('[data-internal-layer]').forEach((button) => {
-      button.addEventListener('click', () => {
-        const layer = button.dataset.internalLayer;
-        if (activeInternalLayers.has(layer)) activeInternalLayers.delete(layer);
-        else activeInternalLayers.add(layer);
-        const active = activeInternalLayers.has(layer);
-        button.classList.toggle('is-active', active);
-        button.setAttribute('aria-pressed', String(active));
-        syncInternalView();
-        syncMobilePanels();
+  function publishInternalView() {
+    const selectedLayers = internalViewOpen ? [...activeInternalLayers] : [];
+    onInternalViewChange?.(internalViewOpen, [...activeInternalLayers]);
+    onMobilePanelSelectionChange?.(selectedLayers);
+  }
+
+  function setInternalViewOpen(open) {
+    internalViewOpen = open;
+    syncInternalView();
+    publishInternalView();
+    if (!open) return;
+    focusInternalView();
+    if (window.matchMedia('(max-width: 700px)').matches) {
+      requestAnimationFrame(() => {
+        const options = document.getElementById('internal-view-options');
+        const sidebar = document.querySelector('.sidebar');
+        const hiddenBottom = options.getBoundingClientRect().bottom - sidebar.getBoundingClientRect().bottom;
+        if (hiddenBottom > 0) sidebar.scrollBy({ top: hiddenBottom + 12, behavior: 'auto' });
       });
-    });
-    function setAllInternalLayersVisible(visible) {
-      activeInternalLayers.clear();
-      document.querySelectorAll('[data-internal-layer]').forEach((button) => {
-        if (visible) activeInternalLayers.add(button.dataset.internalLayer);
-        button.classList.toggle('is-active', visible);
-        button.setAttribute('aria-pressed', String(visible));
-      });
-      syncInternalView();
-      syncMobilePanels();
     }
-    document.getElementById('show-all-internal-layers').addEventListener('click', () => {
-      setAllInternalLayersVisible(true);
-    });
-    document.getElementById('hide-all-internal-layers').addEventListener('click', () => {
-      setAllInternalLayersVisible(false);
-    });
+  }
+
+  function toggleInternalLayer(layer) {
+    if (activeInternalLayers.has(layer)) activeInternalLayers.delete(layer);
+    else activeInternalLayers.add(layer);
+    syncInternalView();
+    publishInternalView();
+  }
+
+  function setAllInternalLayersVisible(visible) {
+    activeInternalLayers.clear();
+    if (visible) ['tree-health', 'tree', 'depression'].forEach((layer) => activeInternalLayers.add(layer));
+    syncInternalView();
+    publishInternalView();
   }
 
   function showError(error) {
@@ -494,7 +491,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
     sampleCount = samples.length;
     refreshStatus();
     syncInternalView();
-    if (internalViewOpen && window.matchMedia('(max-width: 700px)').matches) focusInternalView();
+    if (internalViewOpen) focusInternalView();
   }
 
   function addPopupInteraction() {
@@ -536,11 +533,11 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
   }
 
   return {
-    bindUi,
+    setInternalViewOpen,
+    toggleInternalLayer,
+    setAllInternalLayersVisible,
+    refocusIfOpen: () => { if (internalViewOpen) focusInternalView(); },
     load,
-    refreshLanguage() {
-      refreshStatus();
-    },
     scheduleUpdate,
     showError,
   };

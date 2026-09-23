@@ -375,7 +375,7 @@ export const places = {
     ],
     descriptionKey: 'heidetribueneDescription',
   },
-  'runway-Oase': {
+  'runway-oase': {
     nameKey: 'runwayOase',
     number: '23 / 23',
     coordinates: [13.283032631067696, 52.55931600598261],
@@ -439,13 +439,13 @@ export const groundHeightConfig = {
     {
       label: 'Finn',
       kind: 'person',
-      coordinates: [13.266351973650105, 52.55777387164781], 
+      coordinates: [13.266351973650105, 52.55777387164781],
     },
     {
       label: 'Julius',
       kind: 'person',
-      coordinates: [13.262232793634189, 52.55461090738936], 
-    }
+      coordinates: [13.262232793634189, 52.55461090738936],
+    },
   ],
   measurementSourceId: 'txl-ground-height-measurements',
   boundarySourceId: 'txl-project-boundary',

@@ -1,6 +1,6 @@
 import { projectAreaConfig, projectAreas } from './config.js';
 
-export function createProjectAreasOverlay({ map, t }) {
+export function createProjectAreasOverlay({ map, t, onChange }) {
   const activeAreas = new Set(['tegeler-stadtheide']);
   let fillVisible = false;
   const layerIds = [
@@ -47,20 +47,15 @@ export function createProjectAreasOverlay({ map, t }) {
       activeAreas.add(id);
     }
 
-    const button = document.querySelector(`[data-project-area="${id}"]`);
-    const active = activeAreas.has(id);
-    button?.classList.toggle('is-active', active);
-    button?.setAttribute('aria-pressed', String(active));
     updateFilters();
+    onChange?.([...activeAreas], fillVisible);
   }
 
   function showArea(id) {
     if (!projectAreas[id]) return;
     activeAreas.add(id);
-    const button = document.querySelector(`[data-project-area="${id}"]`);
-    button?.classList.add('is-active');
-    button?.setAttribute('aria-pressed', 'true');
     updateFilters();
+    onChange?.([...activeAreas], fillVisible);
   }
 
   function setAllAreasVisible(visible) {
@@ -68,19 +63,12 @@ export function createProjectAreasOverlay({ map, t }) {
     if (visible) {
       Object.keys(projectAreas).forEach((id) => activeAreas.add(id));
     }
-    document.querySelectorAll('[data-project-area]').forEach((button) => {
-      const active = activeAreas.has(button.dataset.projectArea);
-      button.classList.toggle('is-active', active);
-      button.setAttribute('aria-pressed', String(active));
-    });
     updateFilters();
+    onChange?.([...activeAreas], fillVisible);
   }
 
   function toggleFill() {
     fillVisible = !fillVisible;
-    const button = document.getElementById('project-area-fill-toggle');
-    button?.classList.toggle('is-active', fillVisible);
-    button?.setAttribute('aria-pressed', String(fillVisible));
     if (map.getLayer(projectAreaConfig.fillLayerId)) {
       map.setLayoutProperty(
         projectAreaConfig.fillLayerId,
@@ -88,19 +76,7 @@ export function createProjectAreasOverlay({ map, t }) {
         fillVisible ? 'visible' : 'none'
       );
     }
-  }
-
-  function bindUi() {
-    document.querySelectorAll('[data-project-area]').forEach((button) => {
-      button.addEventListener('click', () => toggleArea(button.dataset.projectArea));
-    });
-    document.getElementById('project-area-fill-toggle').addEventListener('click', toggleFill);
-    document.getElementById('show-all-project-areas').addEventListener('click', () => {
-      setAllAreasVisible(true);
-    });
-    document.getElementById('hide-all-project-areas').addEventListener('click', () => {
-      setAllAreasVisible(false);
-    });
+    onChange?.([...activeAreas], fillVisible);
   }
 
   function addLayers() {
@@ -167,5 +143,5 @@ export function createProjectAreasOverlay({ map, t }) {
     }
   }
 
-  return { addLayers, bindUi, refreshLanguage, showArea };
+  return { addLayers, refreshLanguage, showArea, toggleArea, setAllAreasVisible, toggleFill };
 }

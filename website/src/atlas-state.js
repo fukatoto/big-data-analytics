@@ -1,0 +1,40 @@
+export function createInitialAtlasState() {
+  return {
+    dimension: '3d',
+    view: 'campus',
+    caption: 'campus',
+    selected: 'tegeler-stadtheide',
+    placesVisible: false,
+    events: [],
+    eventsStatus: 'loading',
+    selectedEventUrl: null,
+    eventFilters: {
+      status: 'all',
+      format: 'all',
+      targetGroup: 'all',
+    },
+    treeFilters: {
+      conspicuousOnly: false,
+      greenMode: 'minimum',
+      greenValues: { minimum: 0, maximum: 100 },
+      heightMode: 'minimum',
+      heightValues: { minimum: null, maximum: null },
+      crownMode: 'minimum',
+      crownValues: { minimum: null, maximum: null },
+      minimumHeight: null,
+      maximumHeight: null,
+      minimumCrownDiameter: null,
+      maximumCrownDiameter: null,
+      visibleCount: null,
+      totalCount: null,
+    },
+    heightAnalysis: {
+      threshold: 0.2,
+      enabled: false,
+      obstacles: null,
+      clear: null,
+      visibleSamples: null,
+      error: null,
+    },
+  };
+}

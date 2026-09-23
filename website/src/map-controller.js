@@ -1,9 +1,14 @@
 import * as maplibregl from 'maplibre-gl';
 import { airportBounds, airportViewPadding, places } from './config.js';
-import { formatDecimal } from './number-format.js';
-
-const eventsCalendarUrl =
-  'https://www.campus-stadt-natur.de/angebote-aktionen/kalender/?id=524&no_cache=1&tx_events2_events%5Baction%5D=list&tx_events2_events%5Bcontroller%5D=JavaScriptSearch&tx_events2_events%5Bcategories%5D%5B%5D=&tx_events2_events%5Bgroups%5D%5B%5D=&tx_events2_events%5Blocations%5D%5B%5D=50&tx_events2_events%5Bstart%5D=&tx_events2_events%5Bend%5D=&tx_events2_events%5Bsearch%5D=';
+import {
+  eventCountText,
+  eventFilterOptions,
+  eventLocale,
+  eventsCalendarUrl,
+  eventStatusKey,
+  filterEvents,
+  hasActiveEventFilters,
+} from './event-utils.js';
 
 const markerLabelPositions = [
   'bottom',
@@ -72,136 +77,11 @@ function markerLabelRectangle(marker, label, position) {
   };
 }
 
-function escapeCalendarText(value = '') {
-  return String(value)
-    .replace(/\\/g, '\\\\')
-    .replace(/\r?\n/g, '\\n')
-    .replace(/;/g, '\\;')
-    .replace(/,/g, '\\,');
-}
-
-function formatCalendarDate(date) {
-  return date
-    .toISOString()
-    .replace(/[-:]/g, '')
-    .replace(/\.\d{3}Z$/, 'Z');
-}
-
-function calendarFilename(title) {
-  const slug = title
-    .normalize('NFKD')
-    .replace(/[\u0300-\u036f]/g, '')
-    .toLocaleLowerCase('de-DE')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '')
-    .slice(0, 70);
-  return `${slug || 'event'}.ics`;
-}
-
-function foldCalendarLine(line) {
-  const encoder = new TextEncoder();
-  const folded = [];
-  let part = '';
-  let limit = 75;
-  for (const character of line) {
-    if (encoder.encode(part + character).length > limit) {
-      folded.push(part);
-      part = ` ${character}`;
-      limit = 75;
-    } else {
-      part += character;
-    }
-  }
-  folded.push(part);
-  return folded.join('\r\n');
-}
-
-function createCalendarFile(event) {
-  const start = new Date(event.start);
-  const end = new Date(event.end);
-  const location = [event.location, event.meeting_point]
-    .filter(Boolean)
-    .filter((value, index, values) => values.indexOf(value) === index)
-    .join(' – ');
-  const description = [event.format, event.provider, event.price]
-    .filter(Boolean)
-    .join('\n');
-  const uidSource = `${event.source_url || event.title}-${event.start}`;
-  const uid = `${encodeURIComponent(uidSource).replace(/%/g, '')}@berlin-txl`;
-  const lines = [
-    'BEGIN:VCALENDAR',
-    'VERSION:2.0',
-    'PRODID:-//Berlin TXL//Eventkalender//DE',
-    'CALSCALE:GREGORIAN',
-    'METHOD:PUBLISH',
-    'BEGIN:VEVENT',
-    `UID:${uid}`,
-    `DTSTAMP:${formatCalendarDate(new Date())}`,
-    `DTSTART:${formatCalendarDate(start)}`,
-    `DTEND:${formatCalendarDate(end)}`,
-    `SUMMARY:${escapeCalendarText(event.title)}`,
-  ];
-  if (location) lines.push(`LOCATION:${escapeCalendarText(location)}`);
-  if (description) lines.push(`DESCRIPTION:${escapeCalendarText(description)}`);
-  if (event.source_url) lines.push(`URL:${event.source_url}`);
-  lines.push('END:VEVENT', 'END:VCALENDAR');
-  return `${lines.map(foldCalendarLine).join('\r\n')}\r\n`;
-}
-
-function downloadCalendarFile(event) {
-  const blob = new Blob([createCalendarFile(event)], {
-    type: 'text/calendar;charset=utf-8',
-  });
-  const url = URL.createObjectURL(blob);
-  const download = document.createElement('a');
-  download.href = url;
-  download.download = calendarFilename(event.title);
-  document.body.append(download);
-  download.click();
-  download.remove();
-  window.setTimeout(() => URL.revokeObjectURL(url), 0);
-}
-
-export function createMapController({ map, t, onSelectProjectArea }) {
-  const state = {
-    dimension: '3d',
-    view: 'campus',
-    caption: 'campus',
-    selected: 'tegeler-stadtheide',
-    PlacesVisible: false,
-    events: [],
-    eventsStatus: 'loading',
-    selectedEventUrl: null,
-    eventFilters: {
-      status: 'all',
-      format: 'all',
-      targetGroup: 'all',
-    },
-  };
+export function createMapController({ map, t, onSelectProjectArea, onEventFilterChange, state }) {
   const markerElements = new Map();
   let placePopup = null;
-  const treePopups = new Map();
-  let treeHoverPopup = null;
-  let treeHealthVisible = false;
-  let treeFeatures = null;
-  let displayedTreeCount = 0;
-  let treeMinimumHeight = null;
-  let treeMaximumHeight = null;
-  let treeMinimumCrownDiameter = null;
-  let treeMaximumCrownDiameter = null;
-  let treeGreenMode = 'minimum';
-  const treeGreenValues = { minimum: 0, maximum: 100 };
-  let treeHeightMode = 'minimum';
-  const treeHeightValues = { minimum: null, maximum: null };
-  let treeCrownMode = 'minimum';
-  const treeCrownValues = { minimum: null, maximum: null };
   let markerLabelLayoutFrame = null;
   let markerLabelLayoutBound = false;
-
-  function closeTreePopups() {
-    for (const popup of treePopups.values()) popup.remove();
-    treePopups.clear();
-  }
 
   function placeName(place) {
     return place.nameKey ? t(place.nameKey) : place.name;
@@ -227,8 +107,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       }))
       .sort((first, second) => {
         const selectedDifference =
-          Number(second.element.classList.contains('is-selected')) -
-          Number(first.element.classList.contains('is-selected'));
+          Number(second.id === state.selected) - Number(first.id === state.selected);
         if (selectedDifference) return selectedDifference;
         return first.point.top - second.point.top || first.point.left - second.point.left;
       });
@@ -295,38 +174,13 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     });
   }
 
-  function eventStatusKey(status = '') {
-    return status.toLocaleLowerCase('de-DE') === 'verfügbar'
-      ? 'eventAvailable'
-      : status.toLocaleLowerCase('de-DE') === 'ausgebucht'
-        ? 'eventSoldOut'
-        : null;
-  }
-
-  function uniqueEventValues(getValues) {
-    return [...new Set(state.events.flatMap(getValues).filter(Boolean))].sort(
-      (a, b) => a.localeCompare(b, 'de'),
-    );
-  }
-
   function filteredEvents() {
-    const { status, format, targetGroup } = state.eventFilters;
-    return state.events.filter(
-      (event) =>
-        (status === 'all' || event.status === status) &&
-        (format === 'all' || event.format === format) &&
-        (targetGroup === 'all' || event.target_groups?.includes(targetGroup)),
-    );
+    return filterEvents(state.events, state.eventFilters);
   }
 
-  function eventCountText() {
+  function filteredEventCountText() {
     const visibleCount = filteredEvents().length;
-    return visibleCount === state.events.length
-      ? t('eventCount', { count: visibleCount })
-      : t('eventFilteredCount', {
-          count: visibleCount,
-          total: state.events.length,
-        });
+    return eventCountText(t, visibleCount, state.events.length);
   }
 
   function createFilterSelect({
@@ -351,8 +205,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     });
     select.value = state.eventFilters[key];
     select.addEventListener('change', () => {
-      state.eventFilters[key] = select.value;
-      refreshEventViews();
+      onEventFilterChange({ key, value: select.value });
     });
     return select;
   }
@@ -360,12 +213,13 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   function createEventFilters() {
     const controls = document.createElement('div');
     controls.className = 'event-filter-controls';
+    const options = eventFilterOptions(state.events);
     controls.append(
       createFilterSelect({
         key: 'status',
         labelKey: 'filterByStatus',
         allKey: 'allStatuses',
-        values: uniqueEventValues((event) => event.status),
+        values: options.status,
         formatValue: (value) => {
           const statusKey = eventStatusKey(value);
           return statusKey ? t(statusKey) : value;
@@ -375,18 +229,16 @@ export function createMapController({ map, t, onSelectProjectArea }) {
         key: 'format',
         labelKey: 'filterByFormat',
         allKey: 'allFormats',
-        values: uniqueEventValues((event) => event.format),
+        values: options.format,
       }),
       createFilterSelect({
         key: 'targetGroup',
         labelKey: 'filterByTargetGroup',
         allKey: 'allTargetGroups',
-        values: uniqueEventValues((event) => event.target_groups ?? []),
+        values: options.targetGroup,
       }),
     );
-    const filtersActive = Object.values(state.eventFilters).some(
-      (value) => value !== 'all',
-    );
+    const filtersActive = hasActiveEventFilters(state.eventFilters);
     controls.classList.toggle('has-active-filters', filtersActive);
     if (filtersActive) {
       const reset = document.createElement('button');
@@ -394,246 +246,15 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       reset.type = 'button';
       reset.textContent = t('resetFilters');
       reset.addEventListener('click', () => {
-        state.eventFilters = {
-          status: 'all',
-          format: 'all',
-          targetGroup: 'all',
-        };
-        refreshEventViews();
+        onEventFilterChange({ type: 'reset' });
       });
       controls.append(reset);
     }
     return controls;
   }
 
-  function createEventCard(event) {
-    const language = document.documentElement.lang || 'de';
-    const locale =
-      { de: 'de-DE', en: 'en-GB', fr: 'fr-FR' }[language] ?? language;
-    const start = new Date(event.start);
-    const end = new Date(event.end);
-    const dateParts = new Intl.DateTimeFormat(locale, {
-      day: '2-digit',
-      month: 'short',
-    }).formatToParts(start);
-    const timeFormatter = new Intl.DateTimeFormat(locale, {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-    const statusKey = eventStatusKey(event.status);
-    const card = document.createElement('button');
-    card.className = 'event-card';
-    card.type = 'button';
-    card.setAttribute('aria-label', t('eventOpen', { event: event.title }));
-    card.addEventListener('click', () => showEventDetail(event));
-
-    const visual = document.createElement('span');
-    visual.className = 'event-card-visual';
-    const image = document.createElement('img');
-    image.src = event.cover_image_url;
-    image.alt = '';
-    image.loading = 'lazy';
-    image.addEventListener('error', () =>
-      visual.classList.add('has-image-error'),
-    );
-    const date = document.createElement('span');
-    date.className = 'event-date';
-    const day = document.createElement('strong');
-    day.textContent =
-      dateParts.find((part) => part.type === 'day')?.value ?? '';
-    const month = document.createElement('span');
-    month.textContent = (
-      dateParts.find((part) => part.type === 'month')?.value ?? ''
-    ).replace('.', '');
-    date.append(day, month);
-    visual.append(image, date);
-
-    const content = document.createElement('span');
-    content.className = 'event-card-content';
-    const topLine = document.createElement('span');
-    topLine.className = 'event-card-topline';
-    const format = document.createElement('span');
-    format.className = 'event-format';
-    format.textContent = event.format;
-    const status = document.createElement('span');
-    status.className = `event-status ${statusKey === 'eventAvailable' ? 'is-available' : 'is-sold-out'}`;
-    status.textContent = statusKey ? t(statusKey) : event.status;
-    topLine.append(format, status);
-    const title = document.createElement('strong');
-    title.className = 'event-title';
-    title.textContent = event.title;
-    const meta = document.createElement('span');
-    meta.className = 'event-meta';
-    meta.textContent = `${timeFormatter.format(start)}–${timeFormatter.format(end)} · ${event.price}`;
-    content.append(topLine, title, meta);
-    card.append(visual, content);
-    return card;
-  }
-
-  function renderEvents() {
-    const title = document.getElementById('event-overview-link-label');
-    const count = document.getElementById('event-count');
-    const filters = document.getElementById('event-filters');
-    const list = document.getElementById('event-list');
-    title.textContent = t('eventsAtTent');
-    count.textContent =
-      state.eventsStatus === 'ready'
-        ? eventCountText()
-        : '';
-    filters.replaceChildren();
-    list.replaceChildren();
-
-    if (state.eventsStatus !== 'ready') {
-      const message = document.createElement('p');
-      message.className = `event-message ${state.eventsStatus === 'error' ? 'is-error' : ''}`;
-      message.textContent = t(
-        state.eventsStatus === 'error' ? 'eventsLoadError' : 'eventsLoading',
-      );
-      list.append(message);
-      return;
-    }
-    filters.append(createEventFilters());
-    const events = filteredEvents();
-    if (!events.length) {
-      const message = document.createElement('p');
-      message.className = 'event-message';
-      message.textContent = t('eventsNoResults');
-      list.append(message);
-      return;
-    }
-    events.forEach((event) => list.append(createEventCard(event)));
-  }
-
-  function renderEventDetail() {
-    const container = document.getElementById('event-detail');
-    const event = state.events.find(
-      ({ source_url: sourceUrl }) => sourceUrl === state.selectedEventUrl,
-    );
-    const showsEventDetail = Boolean(event);
-    container.replaceChildren();
-    container.hidden = !showsEventDetail;
-    document
-      .getElementById('place-detail')
-      .classList.toggle('is-showing-event', showsEventDetail);
-    document
-      .querySelector('.sidebar')
-      .classList.toggle('is-showing-event', showsEventDetail);
-    if (!event) return;
-
-    const language = document.documentElement.lang || 'de';
-    const locale =
-      { de: 'de-DE', en: 'en-GB', fr: 'fr-FR' }[language] ?? language;
-    const start = new Date(event.start);
-    const end = new Date(event.end);
-    const dateFormatter = new Intl.DateTimeFormat(locale, {
-      weekday: 'long',
-      day: '2-digit',
-      month: 'long',
-      year: 'numeric',
-    });
-    const timeFormatter = new Intl.DateTimeFormat(locale, {
-      hour: '2-digit',
-      minute: '2-digit',
-    });
-    const statusKey = eventStatusKey(event.status);
-
-    const back = document.createElement('button');
-    back.className = 'event-detail-back';
-    back.type = 'button';
-    back.setAttribute('aria-label', t('eventBackToOverview'));
-    back.innerHTML = '<span aria-hidden="true">←</span>';
-    const backLabel = document.createElement('span');
-    backLabel.textContent = t('eventBackToOverview');
-    back.append(backLabel);
-    back.addEventListener('click', closeEventDetail);
-
-    const cover = document.createElement('figure');
-    cover.className = 'event-detail-cover';
-    const coverImage = document.createElement('img');
-    coverImage.src = event.cover_image_url;
-    coverImage.alt = event.cover_image_alt ?? '';
-    coverImage.decoding = 'async';
-    coverImage.addEventListener('error', () => cover.remove());
-    cover.append(coverImage);
-    if (event.cover_image_credit) {
-      const credit = document.createElement('figcaption');
-      credit.textContent = `© ${event.cover_image_credit}`;
-      cover.append(credit);
-    }
-
-    const eyebrow = document.createElement('div');
-    eyebrow.className = 'event-detail-eyebrow';
-    const format = document.createElement('span');
-    format.textContent = event.format;
-    const status = document.createElement('span');
-    status.className = `event-status ${statusKey === 'eventAvailable' ? 'is-available' : 'is-sold-out'}`;
-    status.textContent = statusKey ? t(statusKey) : event.status;
-    eyebrow.append(format, status);
-
-    const title = document.createElement('h2');
-    title.id = 'event-detail-title';
-    title.tabIndex = -1;
-    title.textContent = event.title;
-
-    const schedule = document.createElement('div');
-    schedule.className = 'event-detail-schedule';
-    const scheduleIcon = document.createElement('span');
-    scheduleIcon.className = 'event-detail-schedule-icon';
-    scheduleIcon.setAttribute('aria-hidden', 'true');
-    scheduleIcon.innerHTML = '<svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M7 3v4M17 3v4M3 10h18"/></svg>';
-    const scheduleText = document.createElement('span');
-    scheduleText.className = 'event-detail-schedule-text';
-    const date = document.createElement('time');
-    date.dateTime = event.start;
-    date.textContent = dateFormatter.format(start);
-    const time = document.createElement('span');
-    time.textContent = `${timeFormatter.format(start)}–${timeFormatter.format(end)}`;
-    scheduleText.append(date, time);
-    schedule.append(scheduleIcon, scheduleText);
-
-    const facts = document.createElement('dl');
-    facts.className = 'event-detail-facts';
-    const addFact = (labelKey, value, compact = false) => {
-      if (!value) return;
-      const item = document.createElement('div');
-      if (compact) item.className = 'event-detail-fact-compact';
-      const term = document.createElement('dt');
-      const description = document.createElement('dd');
-      term.textContent = t(labelKey);
-      description.textContent = value;
-      item.append(term, description);
-      facts.append(item);
-    };
-    addFact('eventLocation', event.location, true);
-    addFact('eventTargetGroups', event.target_groups?.join(' · '), true);
-    addFact('eventMeetingPoint', event.meeting_point);
-    addFact('eventPrice', event.price);
-    addFact('eventProvider', event.provider);
-
-    const actions = document.createElement('div');
-    actions.className = 'event-detail-actions';
-
-    const calendarExport = document.createElement('button');
-    calendarExport.className = 'event-detail-calendar';
-    calendarExport.type = 'button';
-    calendarExport.innerHTML = `<span>${t('eventAddToCalendar')}</span><span aria-hidden="true">↓</span>`;
-    calendarExport.addEventListener('click', () => downloadCalendarFile(event));
-
-    const source = document.createElement('a');
-    source.className = 'event-detail-link';
-    source.href = event.source_url;
-    source.target = '_blank';
-    source.rel = 'noopener noreferrer';
-    source.innerHTML = `<span>${t(statusKey === 'eventSoldOut' ? 'eventMoreInformationOnly' : 'eventMoreInformation')}</span><span aria-hidden="true">↗</span>`;
-    actions.append(source, calendarExport);
-
-    container.append(back, cover, eyebrow, title, schedule, facts, actions);
-  }
-
   function showEventDetail(event) {
     state.selectedEventUrl = event.source_url;
-    document.getElementById('event-overview').hidden = true;
-    renderEventDetail();
     closePlacePopup();
     requestAnimationFrame(() => {
       document.querySelector('.sidebar').scrollTo({ top: 0, behavior: 'smooth' });
@@ -641,11 +262,14 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     });
   }
 
+  function selectEvent(url) {
+    const event = state.events.find((item) => item.source_url === url);
+    if (event) showEventDetail(event);
+  }
+
   function closeEventDetail() {
     state.selectedEventUrl = null;
-    renderEventDetail();
     if (state.selected === 'zelt') {
-      document.getElementById('event-overview').hidden = false;
       requestAnimationFrame(() => {
         document
           .getElementById('event-overview-title')
@@ -655,7 +279,6 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   }
 
   function refreshEventViews() {
-    renderEvents();
     if (placePopup && state.selected === 'zelt') {
       placePopup.setDOMContent(createTentPopupContent());
     }
@@ -787,8 +410,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
 
   function createTentPopupContent() {
     const language = document.documentElement.lang || 'de';
-    const locale =
-      { de: 'de-DE', en: 'en-GB', fr: 'fr-FR' }[language] ?? language;
+    const locale = eventLocale(language);
     const dateFormatter = new Intl.DateTimeFormat(locale, {
       day: '2-digit',
       month: 'short',
@@ -817,7 +439,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     const count = document.createElement('span');
     count.textContent =
       state.eventsStatus === 'ready'
-        ? eventCountText()
+        ? filteredEventCountText()
         : '';
     const headingTitle = document.createElement('div');
     headingTitle.className = 'tent-popup-heading-title';
@@ -881,7 +503,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   function showPlacePopup(id) {
     const place = places[id];
     if (!place?.coordinates) return;
-    closePlacePopup();
+    placePopup?.remove();
     const showsEvents = id === 'zelt';
     const showsGallery = Boolean(place.images?.length);
     const popup = new maplibregl.Popup({
@@ -906,99 +528,21 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       )
       .addTo(map);
     placePopup = popup;
+    markerElements.get(id)?.classList.add('is-selected');
     popup.on('close', () => {
       if (placePopup !== popup) return;
-      placePopup = null;
       markerElements.get(id)?.classList.remove('is-selected');
       scheduleMarkerLabelLayout();
+      placePopup = null;
     });
   }
 
   function closePlacePopup() {
-    const popup = placePopup;
+    placePopup?.remove();
     placePopup = null;
-    popup?.remove();
-  }
-
-  function setActiveButtons(selector, activeValue, attribute) {
-    document.querySelectorAll(selector).forEach((button) => {
-      const active = button.getAttribute(attribute) === activeValue;
-      button.classList.toggle('is-active', active);
-      button.setAttribute('aria-pressed', String(active));
-    });
-  }
-
-  function updateCaption() {
-    let number = '01';
-    let label = t('terminalCampus');
-    if (state.caption === 'airport') {
-      number = '02';
-      label = t('formerAirportArea');
-    } else if (state.caption === 'place') {
-      const place = places[state.selected];
-      number = place.number.slice(0, 2);
-      label = placeName(place).toUpperCase();
-    }
-    document.getElementById('map-caption').innerHTML =
-      `<span class="caption-line" aria-hidden="true"></span><span>${number} <span class="caption-slash">/</span> ${label}</span>`;
-  }
-
-  function updateSelectedPlace() {
-    const place = places[state.selected];
-    if (!place) return;
-    const detail = document.getElementById('place-detail');
-    const detailLink = document.getElementById('detail-link');
-    const detailDescription = document.getElementById('detail-description');
-    const eventOverview = document.getElementById('event-overview');
-    const eventDetail = document.getElementById('event-detail');
-    const showsEvents = state.selected === 'zelt';
-    document
-      .querySelector('.app-shell')
-      .classList.toggle('is-tent-selected', showsEvents);
-    map.resize();
-    detail.classList.toggle('has-events', showsEvents);
-    document
-      .querySelector('.sidebar')
-      .classList.toggle('has-event-detail', showsEvents);
-    document.getElementById('detail-kicker-label').textContent = t(
-      place.projectAreaId ? 'selectedProjectArea' : 'selectedPlace',
-    );
-    document.getElementById('detail-title').textContent = placeName(place);
-    document.getElementById('detail-number').textContent = place.number;
-    const editionNumber = document.getElementById('edition-number');
-    if (editionNumber) editionNumber.textContent = place.number;
-    detailDescription.textContent = placeDescription(place);
-    detailDescription.hidden = showsEvents;
-    if (!showsEvents) state.selectedEventUrl = null;
-    const showsEventDetail =
-      showsEvents &&
-      state.events.some(
-        ({ source_url: sourceUrl }) => sourceUrl === state.selectedEventUrl,
-      );
-    eventOverview.hidden = !showsEvents || showsEventDetail;
-    eventDetail.hidden = !showsEventDetail;
-    detail.classList.toggle('is-showing-event', showsEventDetail);
-    if (!showsEventDetail) {
-      document.querySelector('.sidebar').classList.remove('is-showing-event');
-    }
-    if (showsEvents) renderEvents();
-    if (showsEventDetail) renderEventDetail();
-    detailLink.hidden = showsEvents || !place.source;
-    if (place.source) {
-      detailLink.href = place.source;
-    } else {
-      detailLink.removeAttribute('href');
-    }
   }
 
   function refreshLanguage() {
-    updateTreeGreenModeUi();
-    updateTreeHeightModeUi();
-    updateTreeCrownModeUi();
-    document.querySelector('.tree-conspicuous-control').title = t('onlyConspicuousTrees');
-    updateTreeVisibleCount();
-    updateSelectedPlace();
-    updateCaption();
     if (placePopup && places[state.selected]?.coordinates) {
       showPlacePopup(state.selected);
     }
@@ -1020,14 +564,8 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     state.view = place.bounds ? 'project-area' : 'campus';
     state.caption = 'place';
     if (place.projectAreaId) onSelectProjectArea?.(place.projectAreaId);
-    updateSelectedPlace();
-    updateCaption();
-    setActiveButtons('.place-item', id, 'data-place');
-    setActiveButtons(
-      '.map-actions button',
-      id === 'tegeler-stadtheide' ? 'stadtheide-view' : null,
-      'id',
-    );
+    if (id !== 'zelt') state.selectedEventUrl = null;
+    requestAnimationFrame(() => map.resize());
     markerElements.forEach((element, key) =>
       element.classList.toggle('is-selected', key === id),
     );
@@ -1068,11 +606,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   }
 
   function setPlacesVisible(visible) {
-    state.PlacesVisible = visible;
-    const toggle = document.getElementById('terminal-places-toggle');
-    toggle.classList.toggle('is-active', visible);
-    toggle.setAttribute('aria-checked', String(visible));
-    document.getElementById('terminal-places').hidden = !visible;
+    state.placesVisible = visible;
     markerElements.forEach((element, id) => {
       if (!places[id].projectAreaId) element.hidden = !visible;
     });
@@ -1084,7 +618,6 @@ export function createMapController({ map, t, onSelectProjectArea }) {
 
   function setDimension(dimension) {
     state.dimension = dimension;
-    setActiveButtons('.view-switch button', 'view-' + dimension, 'id');
     if (map.getLayer('txl-3d-buildings')) {
       map.setLayoutProperty(
         'txl-3d-buildings',
@@ -1107,8 +640,6 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     state.view = 'airport';
     state.caption = 'airport';
     closePlacePopup();
-    setActiveButtons('.map-actions button', 'airport-view', 'id');
-    updateCaption();
     map.fitBounds(airportBounds, {
       padding: airportViewPadding(),
       pitch: state.dimension === '3d' ? 48 : 0,
@@ -1175,7 +706,6 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   async function loadEvents() {
     state.eventsStatus = 'loading';
     if (state.selected === 'zelt') {
-      renderEvents();
       if (placePopup) showPlacePopup('zelt');
     }
     try {
@@ -1198,7 +728,6 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       state.eventsStatus = 'error';
     }
     if (state.selected === 'zelt') {
-      renderEvents();
       if (placePopup) showPlacePopup('zelt');
     }
   }
@@ -1216,7 +745,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
         .filter(Boolean)
         .join(' ');
       marker.dataset.labelPosition = 'bottom';
-      marker.hidden = !place.projectAreaId && !state.PlacesVisible;
+      marker.hidden = !place.projectAreaId && !state.placesVisible;
       marker.setAttribute(
         'aria-label',
         t('showPlace', { place: placeName(place) }),
@@ -1253,391 +782,18 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     scheduleMarkerLabelLayout();
   }
 
-  function bindUi() {
-    document.getElementById('tree-conspicuous-only').addEventListener('change', setTreeFilters);
-    document.getElementById('tree-green-threshold').addEventListener('input', () => {
-      setTreeFilters();
-    });
-    document.getElementById('tree-green-mode-toggle').addEventListener('click', () => {
-      const greenSlider = document.getElementById('tree-green-threshold');
-      treeGreenValues[treeGreenMode] = Number(greenSlider.value);
-      treeGreenMode = treeGreenMode === 'minimum' ? 'maximum' : 'minimum';
-      greenSlider.value = String(treeGreenValues[treeGreenMode]);
-      updateTreeGreenModeUi();
-      setTreeFilters();
-    });
-    document.getElementById('tree-height-threshold').addEventListener('input', () => {
-      setTreeFilters();
-    });
-    document.getElementById('tree-crown-threshold').addEventListener('input', () => {
-      setTreeFilters();
-    });
-    document.getElementById('tree-crown-mode-toggle').addEventListener('click', () => {
-      const crownSlider = document.getElementById('tree-crown-threshold');
-      treeCrownValues[treeCrownMode] = Number(crownSlider.value);
-      treeCrownMode = treeCrownMode === 'minimum' ? 'maximum' : 'minimum';
-      crownSlider.value = String(treeCrownValues[treeCrownMode]);
-      updateTreeCrownModeUi();
-      setTreeFilters();
-    });
-    document.getElementById('tree-height-mode-toggle').addEventListener('click', () => {
-      const heightSlider = document.getElementById('tree-height-threshold');
-      treeHeightValues[treeHeightMode] = Number(heightSlider.value);
-      treeHeightMode = treeHeightMode === 'minimum' ? 'maximum' : 'minimum';
-      heightSlider.value = String(treeHeightValues[treeHeightMode]);
-      updateTreeHeightModeUi();
-      setTreeFilters();
-    });
-    document.querySelectorAll('.place-item').forEach((button) => {
-      button.addEventListener('click', () =>
-        selectPlace(button.dataset.place, true, true),
-      );
-    });
-    document
-      .getElementById('view-2d')
-      .addEventListener('click', () => setDimension('2d'));
-    document
-      .getElementById('view-3d')
-      .addEventListener('click', () => setDimension('3d'));
-    document.getElementById('stadtheide-view').addEventListener('click', () => {
-      selectPlace('tegeler-stadtheide');
-    });
-    document
-      .getElementById('terminal-places-toggle')
-      .addEventListener('click', () => {
-        setPlacesVisible(!state.PlacesVisible);
-      });
-    document
-      .getElementById('airport-view')
-      .addEventListener('click', showAirport);
-  }
-
-  async function addTrees() {
-    const beforeLayerId = 'txl-3d-buildings';
-    const visibility = treeHealthVisible ? 'visible' : 'none';
-    const response = await fetch('/data/baeume.geojson');
-    if (!response.ok) throw new Error(`Tree data could not be loaded (${response.status}).`);
-    const treeData = await response.json();
-    const heights = treeData.features
-      .map((feature) => feature.properties?.hoehe_m)
-      .filter((height) => typeof height === 'number' && Number.isFinite(height));
-    if (!heights.length) throw new Error('Tree data does not contain valid heights.');
-    const minimumHeight = Math.floor(Math.min(...heights) * 10) / 10;
-    const maximumHeight = Math.ceil(Math.max(...heights) * 10) / 10;
-    treeMinimumHeight = minimumHeight;
-    treeMaximumHeight = maximumHeight;
-    treeHeightValues.minimum = minimumHeight;
-    treeHeightValues.maximum = maximumHeight;
-    const heightSlider = document.getElementById('tree-height-threshold');
-    heightSlider.min = String(minimumHeight);
-    heightSlider.max = String(maximumHeight);
-    heightSlider.value = String(minimumHeight);
-    heightSlider.disabled = minimumHeight === maximumHeight;
-    document.getElementById('tree-height-mode-toggle').disabled = minimumHeight === maximumHeight;
-    document.getElementById('tree-height-min').textContent = `${formatDecimal(minimumHeight, 1)} m`;
-    document.getElementById('tree-height-max').textContent = `${formatDecimal(maximumHeight, 1)} m`;
-    const crownDiameters = treeData.features
-      .map((feature) => feature.properties?.durchm_m)
-      .filter((diameter) => typeof diameter === 'number' && Number.isFinite(diameter));
-    if (!crownDiameters.length) throw new Error('Tree data does not contain valid crown diameters.');
-    const minimumCrownDiameter = Math.floor(Math.min(...crownDiameters) * 10) / 10;
-    const maximumCrownDiameter = Math.ceil(Math.max(...crownDiameters) * 10) / 10;
-    treeMinimumCrownDiameter = minimumCrownDiameter;
-    treeMaximumCrownDiameter = maximumCrownDiameter;
-    treeCrownValues.minimum = minimumCrownDiameter;
-    treeCrownValues.maximum = maximumCrownDiameter;
-    const crownSlider = document.getElementById('tree-crown-threshold');
-    crownSlider.min = String(minimumCrownDiameter);
-    crownSlider.max = String(maximumCrownDiameter);
-    crownSlider.value = String(minimumCrownDiameter);
-    crownSlider.disabled = minimumCrownDiameter === maximumCrownDiameter;
-    document.getElementById('tree-crown-mode-toggle').disabled = minimumCrownDiameter === maximumCrownDiameter;
-    document.getElementById('tree-crown-min').textContent = `${formatDecimal(minimumCrownDiameter, 1)} m`;
-    document.getElementById('tree-crown-max').textContent = `${formatDecimal(maximumCrownDiameter, 1)} m`;
-    treeFeatures = treeData.features;
-    const treeColor = [
-      'case',
-      ['==', ['typeof', ['get', 'z']], 'number'],
-      [
-        'interpolate', ['linear'], ['get', 'z'],
-        -3,   '#a50026',  // deutlich weniger grün: dunkelrot
-        -2,   '#e8603c',  // Grenze "auffällig": orange-rot
-        -1,   '#d4c45a',  // leicht unterdurchschnittlich: gedecktes Gelb
-        -0.5, '#8cc063',
-        0,    '#4a9e4a',  // typischer Baum: grün
-        1.5,  '#1e6b35',  // überdurchschnittlich grün: dunkelgrün
-      ],
-      '#9e9e9e',          // kein Wert messbar: grau
-    ];
-
-    map.addSource('baeume', {
-      type: 'geojson',
-      data: treeData,
-    });
-
-    map.addLayer({
-      id: 'baeume-fill',
-      type: 'fill',
-      source: 'baeume',
-      minzoom: 15,
-      layout: { visibility },
-      paint: {
-        'fill-color': treeColor,
-        'fill-opacity': 0.55,
-      },
-    }, beforeLayerId);
-
-    map.addLayer({
-      id: 'baeume-outline',
-      type: 'line',
-      source: 'baeume',
-      minzoom: 15,
-      layout: { visibility },
-      paint: {
-        'line-color': treeColor,
-        'line-width': 0.8,
-      },
-    }, beforeLayerId);
-
-    map.addLayer({
-      id: 'baeume-auffaellig',
-      type: 'line',
-      source: 'baeume',
-      minzoom: 15,
-      layout: { visibility },
-      filter: ['to-boolean', ['get', 'auffaellig']],
-      paint: {
-        'line-color': '#d00000',
-        'line-width': 2.5,
-      },
-    }, beforeLayerId);
-
-    function treePopupContent(p) {
-      const gcc = Number(p.gcc);
-      const greenShare = p.gcc == null || !Number.isFinite(gcc)
-        ? '–'
-        : `${formatDecimal(gcc * 100, 1)} %`;
-      const lines = [
-        `<strong>${t('treeTitle', { id: p.id })}</strong>`,
-        t('treeHeight', { height: formatDecimal(Number(p.hoehe_m), 1) }),
-        t('treeCrownDiameter', { diameter: formatDecimal(Number(p.durchm_m), 1) }),
-        t('treeGreenness', { value: greenShare }),
-      ];
-      if (p.auffaellig) {
-        lines.push(`<strong style="color:#d00000">${t('treeConspicuous')}</strong>`);
-      }
-      return `<div class="place-popup-body">${lines.join('<br>')}</div>`;
-    }
-
-    treeHoverPopup = new maplibregl.Popup({
-      closeButton: false,
-      closeOnClick: false,
-      className: 'ground-height-map-popup tree-hover-popup',
-      offset: 10,
-    });
-    let hoveredTreeId = null;
-
-    map.on('mousemove', 'baeume-fill', (event) => {
-      const feature = event.features?.[0];
-      if (!feature) return;
-      if (treePopups.has(feature.properties.id)) {
-        treeHoverPopup.remove();
-        hoveredTreeId = null;
-        return;
-      }
-      if (hoveredTreeId !== feature.properties.id || !treeHoverPopup.isOpen()) {
-        treeHoverPopup.setHTML(treePopupContent(feature.properties));
-        hoveredTreeId = feature.properties.id;
-      }
-      treeHoverPopup.setLngLat(event.lngLat);
-      if (!treeHoverPopup.isOpen()) treeHoverPopup.addTo(map);
-    });
-
-    map.on('click', 'baeume-fill', (event) => {
-      const feature = event.features?.[0];
-      if (!feature) return;
-      treeHoverPopup.remove();
-      hoveredTreeId = null;
-      const treeId = feature.properties.id;
-      const existingPopup = treePopups.get(treeId);
-      if (existingPopup) {
-        existingPopup.setLngLat(event.lngLat);
-        return;
-      }
-      const popup = new maplibregl.Popup({
-        className: 'ground-height-map-popup tree-map-popup',
-        closeOnClick: false,
-        offset: 10,
-      })
-        .setLngLat(event.lngLat)
-        .setHTML(treePopupContent(feature.properties))
-        .addTo(map);
-      treePopups.set(treeId, popup);
-      popup.on('close', () => {
-        if (treePopups.get(treeId) === popup) treePopups.delete(treeId);
-      });
-    });
-
-    map.on('mouseenter', 'baeume-fill', () => {
-      map.getCanvas().style.cursor = 'pointer';
-    });
-    map.on('mouseleave', 'baeume-fill', () => {
-      map.getCanvas().style.cursor = '';
-      treeHoverPopup.remove();
-      hoveredTreeId = null;
-    });
-    setTreeFilters();
-  }
-
-  function setTreeHealthVisible(visible) {
-    if (treeHealthVisible === visible) return;
-    treeHealthVisible = visible;
-    const panel = document.querySelector('.tree-health-control');
-    panel.hidden = !visible;
-    if (visible) {
-      panel.classList.remove('is-desktop-collapsed');
-      panel.querySelector('.desktop-panel-collapse').setAttribute('aria-expanded', 'true');
-    }
-    ['baeume-fill', 'baeume-outline', 'baeume-auffaellig'].forEach((layerId) => {
-      if (map.getLayer(layerId)) {
-        map.setLayoutProperty(layerId, 'visibility', visible ? 'visible' : 'none');
-      }
-    });
-    if (!visible) {
-      closeTreePopups();
-      treeHoverPopup?.remove();
-      map.getCanvas().style.cursor = '';
-    }
-  }
-
-  function updateTreeGreenModeUi() {
-    const isMaximum = treeGreenMode === 'maximum';
-    const label = document.querySelector('label[for="tree-green-threshold"]');
-    const button = document.getElementById('tree-green-mode-toggle');
-    label.dataset.i18n = isMaximum ? 'maximumGreenShare' : 'minimumGreenShare';
-    label.textContent = t(label.dataset.i18n);
-    button.dataset.i18nAria = isMaximum ? 'minimumGreenShare' : 'maximumGreenShare';
-    button.setAttribute('aria-label', t(button.dataset.i18nAria));
-    button.title = t(button.dataset.i18nAria);
-  }
-
-  function updateTreeHeightModeUi() {
-    const isMaximum = treeHeightMode === 'maximum';
-    const label = document.querySelector('label[for="tree-height-threshold"]');
-    const button = document.getElementById('tree-height-mode-toggle');
-    label.dataset.i18n = isMaximum ? 'maximumTreeHeight' : 'minimumTreeHeight';
-    label.textContent = t(label.dataset.i18n);
-    button.dataset.i18nAria = isMaximum ? 'minimumTreeHeight' : 'maximumTreeHeight';
-    button.setAttribute('aria-label', t(button.dataset.i18nAria));
-    button.title = t(button.dataset.i18nAria);
-  }
-
-  function updateTreeCrownModeUi() {
-    const isMaximum = treeCrownMode === 'maximum';
-    const label = document.querySelector('label[for="tree-crown-threshold"]');
-    const button = document.getElementById('tree-crown-mode-toggle');
-    label.dataset.i18n = isMaximum ? 'maximumCrownDiameter' : 'minimumCrownDiameter';
-    label.textContent = t(label.dataset.i18n);
-    button.dataset.i18nAria = isMaximum ? 'minimumCrownDiameter' : 'maximumCrownDiameter';
-    button.setAttribute('aria-label', t(button.dataset.i18nAria));
-    button.title = t(button.dataset.i18nAria);
-  }
-
-  function updateTreeVisibleCount() {
-    if (!treeFeatures) return;
-    const numberFormat = new Intl.NumberFormat(document.documentElement.lang);
-    const countKey = document.getElementById('tree-conspicuous-only').checked
-      ? 'treeVisibleCountConspicuous'
-      : 'treeVisibleCount';
-    document.getElementById('tree-visible-count').textContent = t(countKey, {
-      count: numberFormat.format(displayedTreeCount),
-      total: numberFormat.format(treeFeatures.length),
-    });
-  }
-
-  function numericTreeValue(value) {
-    if (value == null) return -1;
-    const number = Number(value);
-    return Number.isFinite(number) ? number : -1;
-  }
-
-  function setTreeFilters() {
-    const conspicuousOnly = document.getElementById('tree-conspicuous-only').checked;
-    const percent = Number(document.getElementById('tree-green-threshold').value);
-    const selectedHeight = Number(document.getElementById('tree-height-threshold').value);
-    const selectedCrownDiameter = Number(document.getElementById('tree-crown-threshold').value);
-    document.getElementById('tree-green-value').textContent =
-      `${treeGreenMode === 'maximum' ? '≤' : '≥'} ${percent} %`;
-    document.getElementById('tree-height-value').textContent =
-      treeMinimumHeight === null
-        ? '– m'
-        : `${treeHeightMode === 'maximum' ? '≤' : '≥'} ${formatDecimal(selectedHeight, 1)} m`;
-    document.getElementById('tree-crown-value').textContent =
-      treeMinimumCrownDiameter === null
-        ? 'Ø – m'
-        : `Ø ${treeCrownMode === 'maximum' ? '≤' : '≥'} ${formatDecimal(selectedCrownDiameter, 1)} m`;
-    const filters = [];
-    const matches = [];
-    if (conspicuousOnly) {
-      filters.push(['to-boolean', ['get', 'auffaellig']]);
-      matches.push((properties) => properties.auffaellig === true);
-    }
-    const greenShare = ['to-number', ['get', 'gcc'], -1];
-    if (treeGreenMode === 'minimum' && percent > 0) {
-      filters.push(['>=', greenShare, percent / 100]);
-      matches.push((properties) => numericTreeValue(properties.gcc) >= percent / 100);
-    } else if (treeGreenMode === 'maximum' && percent < 100) {
-      filters.push(['all', ['>=', greenShare, 0], ['<=', greenShare, percent / 100]]);
-      matches.push((properties) => {
-        const value = numericTreeValue(properties.gcc);
-        return value >= 0 && value <= percent / 100;
-      });
-    }
-    if (treeMinimumHeight !== null && treeHeightMode === 'minimum' && selectedHeight > treeMinimumHeight) {
-      filters.push(['>=', ['to-number', ['get', 'hoehe_m'], -1], selectedHeight]);
-      matches.push((properties) => numericTreeValue(properties.hoehe_m) >= selectedHeight);
-    } else if (treeMaximumHeight !== null && treeHeightMode === 'maximum' && selectedHeight < treeMaximumHeight) {
-      filters.push(['<=', ['to-number', ['get', 'hoehe_m'], -1], selectedHeight]);
-      matches.push((properties) => numericTreeValue(properties.hoehe_m) <= selectedHeight);
-    }
-    const crownDiameter = ['to-number', ['get', 'durchm_m'], -1];
-    if (treeMinimumCrownDiameter !== null && treeCrownMode === 'minimum' && selectedCrownDiameter > treeMinimumCrownDiameter) {
-      filters.push(['>=', crownDiameter, selectedCrownDiameter]);
-      matches.push((properties) => numericTreeValue(properties.durchm_m) >= selectedCrownDiameter);
-    } else if (treeMaximumCrownDiameter !== null && treeCrownMode === 'maximum' && selectedCrownDiameter < treeMaximumCrownDiameter) {
-      filters.push(['all', ['>=', crownDiameter, 0], ['<=', crownDiameter, selectedCrownDiameter]]);
-      matches.push((properties) => {
-        const value = numericTreeValue(properties.durchm_m);
-        return value >= 0 && value <= selectedCrownDiameter;
-      });
-    }
-    const filter = filters.length ? ['all', ...filters] : null;
-    ['baeume-fill', 'baeume-outline'].forEach((layerId) => {
-      if (map.getLayer(layerId)) map.setFilter(layerId, filter);
-    });
-    if (map.getLayer('baeume-auffaellig')) {
-      const conspicuousFilter = ['to-boolean', ['get', 'auffaellig']];
-      map.setFilter('baeume-auffaellig', filter
-        ? ['all', conspicuousFilter, filter]
-        : conspicuousFilter);
-    }
-    if (treeFeatures) {
-      displayedTreeCount = treeFeatures.filter((feature) =>
-        matches.every((matchesFilter) => matchesFilter(feature.properties ?? {}))).length;
-      updateTreeVisibleCount();
-    }
-    closeTreePopups();
-    treeHoverPopup?.remove();
-  }
-
   return {
     addBuildingLayer,
     addMarkers,
-    bindUi,
     constrainAirportView,
     loadEvents,
     refreshLanguage,
-    addTrees,
-    setTreeHealthVisible,
+    selectPlace,
+    setPlacesVisible,
+    setDimension,
+    showAirport,
+    selectEvent,
+    closeEvent: closeEventDetail,
+    refreshEventPopup: refreshEventViews,
   };
 }

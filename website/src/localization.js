@@ -1,33 +1,11 @@
-import { translations } from './i18n.js';
+import { translate } from './translate.js';
+import { uiPreferences } from './ui-preferences.js';
 
-export function createLocalization(defaultLanguage = 'de') {
+export function createLocalization() {
   const listeners = new Set();
-  let language = readSavedLanguage() ?? defaultLanguage;
-  if (!translations[language]) language = defaultLanguage;
-
-  function readSavedLanguage() {
-    try {
-      const savedLanguage = localStorage.getItem('txl-language');
-      return translations[savedLanguage] ? savedLanguage : null;
-    } catch {
-      return null;
-    }
-  }
-
-  function saveLanguage() {
-    try {
-      localStorage.setItem('txl-language', language);
-    } catch {
-      // The selection still works when browser storage is unavailable.
-    }
-  }
 
   function t(key, variables = {}) {
-    const template = translations[language]?.[key] ?? translations.en[key] ?? key;
-    return Object.entries(variables).reduce(
-      (text, [name, value]) => text.replaceAll(`{${name}}`, String(value)),
-      template
-    );
+    return translate(uiPreferences.language, key, variables);
   }
 
   function createTranslatedError(key, variables = {}) {
@@ -52,28 +30,17 @@ export function createLocalization(defaultLanguage = 'de') {
   }
 
   function translateDocument() {
-    const currentYear = new Date().getFullYear();
-
-    document.documentElement.lang = language;
+    document.documentElement.lang = uiPreferences.language;
     document.title = t('pageTitle');
     document.querySelector('meta[name="description"]').content = t('metaDescription');
-    document.getElementById('language-select').value = language;
-    document.querySelectorAll('[data-i18n]').forEach((element) => {
-      const variables =
-        element.dataset.i18n === 'footer' ? { year: currentYear } : {};
-      element.textContent = t(element.dataset.i18n, variables);
-    });
-    document.querySelectorAll('[data-i18n-aria]').forEach((element) => {
-      element.setAttribute('aria-label', t(element.dataset.i18nAria));
-    });
     updateNavigationControlLabels();
   }
 
-  function applyLanguage(nextLanguage = language) {
-    language = translations[nextLanguage] ? nextLanguage : 'en';
-    saveLanguage();
+  function applyLanguage(nextLanguage = uiPreferences.language) {
+    const language = uiPreferences.setLanguage(nextLanguage);
     translateDocument();
     listeners.forEach((listener) => listener());
+    return language;
   }
 
   function subscribe(listener) {
@@ -87,7 +54,7 @@ export function createLocalization(defaultLanguage = 'de') {
     createTranslatedError,
     subscribe,
     get language() {
-      return language;
+      return uiPreferences.language;
     }
   };
 }
