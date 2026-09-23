@@ -1,0 +1,7 @@
+*.las
+*.laz
+*.tif
+*.tfw
+*.prj
+dsm.tif
+dtm.tif
