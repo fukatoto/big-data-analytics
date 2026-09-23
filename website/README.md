@@ -1,56 +1,75 @@
-# Berlin TXL 3D map
+# Berlin TXL 3D-Karte
 
-An interactive map of the former Berlin Tegel Airport terminal area and today's Tegeler Stadtheide. This began as a student project with CityLAB Berlin, LiFo Lab and Grün Berlin.
+Eine interaktive Karte des ehemaligen Flughafengeländes Berlin-Tegel und der heutigen Urban Tech Republic. Entstanden ist sie als studentisches Projekt mit dem CityLAB Berlin, dem LiFo Lab und Grün Berlin.
 
-## Run locally
+## Lokal starten
 
-From this directory:
+Aus diesem Verzeichnis:
 
 ```powershell
 pnpm install
 pnpm dev
 ```
 
-Open the local URL printed by Vite (normally `http://127.0.0.1:4175`). Run `pnpm build` to create production files in `dist/`, and `pnpm preview` to check that build locally.
+Die von Vite ausgegebene lokale Adresse öffnen (normalerweise `http://127.0.0.1:4175`). Mit `pnpm build` entstehen die Produktionsdateien in `dist/`, mit `pnpm preview` lässt sich dieser Build lokal prüfen.
 
-The map needs an internet connection for OpenFreeMap vector tiles, the optional Berlin aerial-photo layer, and Google Fonts. MapLibre GL JS is installed and bundled locally through pnpm. Building shapes and heights come from OpenStreetMap via OpenFreeMap. The satellite toggle uses the official Berlin TrueDOP 2025 summer orthophotos from the Senate Department for Urban Development, Building and Housing under the Data licence Germany – Zero – Version 2.0. The place pins are based on OpenStreetMap geocoding, descriptions and the 202-hectare figure come from [Urban Tech Republic](https://urbantechrepublic.de/en/faq/). The 3D view shows mapped existing buildings, not a model of proposed construction. The wider airport view is context, not an official project boundary.
+Die Karte benötigt eine Internetverbindung für die Vektorkacheln von OpenFreeMap, die optionale Berliner Luftbildebene und Google Fonts. MapLibre GL JS wird über pnpm installiert und lokal mitgebündelt. Gebäudeumrisse und -höhen stammen aus OpenStreetMap über OpenFreeMap. Die Satellitenansicht nutzt die amtlichen TrueDOP-Sommerorthophotos 2025 der Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen unter der Datenlizenz Deutschland – Zero – Version 2.0. Die Ortsmarker beruhen auf OpenStreetMap-Geokodierung; die Beschreibungen und die Angabe von 202 Hektar stammen von [Urban Tech Republic](https://urbantechrepublic.de/en/faq/). Die 3D-Ansicht zeigt kartierte Bestandsgebäude, kein Modell geplanter Neubauten. Die weiter gefasste Flughafenansicht dient der Orientierung und ist keine offizielle Projektgrenze.
 
-The interface can be switched between English, German, and French. Translations are maintained in `src/i18n.js`, the selected language is stored locally in the browser.
+Die Oberfläche lässt sich zwischen Englisch, Deutsch und Französisch umschalten. Die Übersetzungen werden in `src/i18n.js` gepflegt; die gewählte Sprache wird lokal im Browser gespeichert.
 
-The three central project areas — Urban Tech Republic, Schumacher Quartier, and Landschaftsraum Tegeler Stadtheide — are stored locally in `public/data/txl-project-areas.geojson` and can be shown or hidden independently with the map controls. The file is a browser-optimised copy of the official Berlin TXL WFS `b_teilraeume` layer, the source value “Landschaftsraum” is presented in the interface with its full project name.
+Die drei zentralen Projektgebiete – Urban Tech Republic, Schumacher Quartier und Landschaftsraum Tegeler Stadtheide – liegen lokal in `public/data/txl-project-areas.geojson` und lassen sich über die Kartensteuerung unabhängig voneinander ein- und ausblenden. Die Datei ist eine für den Browser optimierte Kopie des amtlichen Berlin-TXL-WFS-Layers `b_teilraeume`; der Quellwert „Landschaftsraum“ wird in der Oberfläche mit seinem vollständigen Projektnamen angezeigt.
 
-## Ground-height CSV
+## Bodenhöhen-CSV
 
-The red/green measurement-point analysis reads `public/data/txl-ground-heights.csv`. Replace the dummy rows with real measurements while keeping these columns:
+Die transparente rot-grüne Analyseebene liest `public/data/txl-ground-heights.csv`. Die Beispielzeilen können durch echte Messwerte ersetzt werden, solange diese Spalten erhalten bleiben:
 
 ```csv
-longitude,latitude,ground_height_m,label
-13.2880,52.5530,36.7,Referenz
-13.2881,52.5531,36.9,Messpunkt 1
+longitude,latitude,ground_height_m
+13.2880,52.5530,36.7
 ```
 
-Comma- and semicolon-separated files are supported. Exactly one row must have the label `Referenz`, its `ground_height_m` is the fixed reference height and is not treated as a measurement. When Bäume or Kuhlen are active in the internal view, labels beginning with `Baum` use a tree icon and labels beginning with `Kuhle` use a depression icon, a blue survey-target icon identifies the separate reference point. Measurement labels appear at close zoom levels, and hovering an icon shows its measured height and difference from the reference. There is no grid or interpolation. The height-tolerance panel appears automatically with the active measurement categories. Its slider colors measurement icons red when their absolute difference from the CSV reference is greater than or equal to the selected value; points within tolerance stay green.
+Verwendet werden nur Messwerte innerhalb des amtlichen Landschaftsraums Tegeler Stadtheide. Für jeden dieser Messwerte nutzt die Anwendung den Median der bis zu sechs nächstgelegenen Messwerte als lokale Referenz. Die Werte werden auf ein 20-Meter-Analyseraster interpoliert. Der Schwellwert des Schiebereglers markiert alle ausgewerteten Zellen rot als Hindernis, deren absolute Abweichung von dieser Referenz größer oder gleich dem gewählten Wert ist; Zellen innerhalb der Toleranz bleiben grün.
 
-The sidebar's internal view switch opens independent filters for Waldgesundheit, Bäume, and Kuhlen, plus controls to show or hide all three together. Waldgesundheit controls the tree canopy health polygons and their outlines. Bäume and Kuhlen filter the CSV measurement markers. Whenever either is selected, the reference point and person markers appear too.
+Das Raster wird auf `public/data/txl-project-boundary.geojson` zugeschnitten und bleibt im gesamten Berlin-TXL-Projektgebiet sichtbar. Höhentoleranzen und die rot-grüne Einfärbung werden nur für Rasterzellen berechnet, deren Mittelpunkt innerhalb des Teilraums „Landschaftsraum“ (Tegeler Stadtheide) aus `public/data/txl-project-areas.geojson` liegt; die übrigen TXL-Zellen erscheinen als neutrales Raster ohne berechnete Werte. Beide Grenzdateien stammen aus dem amtlichen Berliner WFS-Datensatz „Berlin TXL“ und wurden für die Darstellung im Browser vereinfacht. Quelle der Grenzen: Tegel Projekt GmbH / Berlin TXL, lizenziert unter CC BY 4.0.
 
-When Waldgesundheit is active, the forest-health panel filters canopy polygons by a minimum GCC green share from 0 to 100 percent. At 0 percent, all trees remain visible. The filter also applies to tree outlines and conspicuous-tree markers.
+## Baumkronen
 
-The project outline comes from `public/data/txl-project-boundary.geojson`, derived from the official Berlin WFS dataset “Berlin TXL” and simplified for browser rendering. Boundary source: Tegel Projekt GmbH / Berlin TXL, licensed under CC BY 4.0.
+Die Kronenebene liest `public/data/baeume.geojson` und zeigt die einzeln erkannten Bäume der Waldfläche im Westen des Landschaftsraums. Die Daten stammen aus einer Drohnenbefliegung vom Juli 2026 mit einem DJI Zenmuse L1 (LiDAR und RGB-Kamera). Aus der Punktwolke wurde ein Kronenhöhenmodell gerechnet, daraus die einzelnen Baumspitzen abgeleitet und die Kronen voneinander abgegrenzt; die Farbwerte stammen aus dem zugehörigen Orthofoto mit 2 cm Auflösung. Die vollständige Auswertung ist im zugehörigen Notebook samt Anleitung dokumentiert.
 
-## Project structure
+Jede Krone trägt diese Eigenschaften:
 
-- `index.html` — Vite's page entry at the project root
-- `src/main.js` — small application bootstrap that connects the modules
-- `src/config.js` — shared map, camera, boundary, and overlay configuration
-- `src/basemap-controller.js` — street/satellite basemap toggle and aerial-photo layer
-- `src/map-controller.js` — map views, markers, 2D/3D controls, and place selection
-- `src/ground-height-analysis.js` — CSV parsing and reference extraction
-- `src/ground-height-overlay.js` — MapLibre layers, slider updates, counts, and popups
-- `src/project-areas-overlay.js` — official WFS project-area layers and visibility toggles
-- `src/localization.js` — language selection and dynamic UI translation
-- `src/i18n.js` — English, German, and French interface translations
-- `src/style.css` — map layout and responsive styles
-- `public/data/txl-ground-heights.csv` — replaceable ground-height input (currently dummy data)
-- `public/data/txl-project-boundary.geojson` — simplified official Berlin TXL project boundary
-- `public/data/txl-project-areas.geojson` — simplified official project-area boundaries
-- `dist/` — generated production build
+
+| Feld         | Bedeutung                                                             |
+| ------------ | --------------------------------------------------------------------- |
+| `id`         | laufende Nummer des Baums                                             |
+| `hoehe_m`    | Baumhöhe über Grund in Metern                                         |
+| `durchm_m`   | Kronendurchmesser in Metern (flächengleicher Kreis)                   |
+| `gcc`        | Grünanteil der Krone, `G / (R + G + B)`                               |
+| `z`          | Abweichung des Grünanteils vom Bestandsmedian in Standardabweichungen |
+| `auffaellig` | wahr, wenn `z < −2`                                                   |
+| `farbe`      | vorberechneter Farbwert (wird von der Karte derzeit nicht genutzt)    |
+
+
+Ein Klick öffnet ein Popup mit den Messwerten des Baums.
+
+Die Markierung als auffällig ist eine relative Aussage: Betroffen sind Kronen, die deutlich weniger grün sind als der übrige Bestand derselben Fläche. Das ist ein Hinweis für eine genauere Betrachtung, keine Diagnose – dunkle Nadelbäume und stark verschattete Kronen können ebenfalls darunterfallen, und die Ursache einer echten Schwächung lässt sich nur vor Ort klären.
+
+## Projektstruktur
+
+- `index.html` – Vites Einstiegsseite im Projektwurzelverzeichnis
+- `src/main.js` – schlanker Anwendungsstart, der die Module verbindet
+- `src/config.js` – gemeinsame Konfiguration für Karte, Kamera, Grenzen und Overlays
+- `src/basemap-controller.js` – Umschaltung zwischen Straßen- und Satellitenkarte sowie Luftbildebene
+- `src/map-controller.js` – Kartenansichten, Marker, 2D/3D-Steuerung, Ortsauswahl und Baumkronenebene
+- `src/ground-height-analysis.js` – CSV-Auswertung, Interpolation und Zuschnitt auf die Projektgrenze
+- `src/ground-height-overlay.js` – MapLibre-Ebenen, Regleraktualisierung, Zählungen und Popups
+- `src/project-areas-overlay.js` – amtliche WFS-Projektgebietsebenen und deren Sichtbarkeit
+- `src/localization.js` – Sprachauswahl und dynamische Übersetzung der Oberfläche
+- `src/i18n.js` – englische, deutsche und französische Oberflächenübersetzungen
+- `src/style.css` – Kartenlayout und responsive Gestaltung
+- `public/data/txl-ground-heights.csv` – austauschbare Bodenhöhen-Eingabedatei (derzeit Beispieldaten)
+- `public/data/txl-project-boundary.geojson` – vereinfachte amtliche Berlin-TXL-Projektgrenze
+- `public/data/txl-project-areas.geojson` – vereinfachte amtliche Projektgebietsgrenzen
+- `public/data/baeume.geojson` – Kronenpolygone der Einzelbaumerkennung mit Höhe, Durchmesser und Grünanteil
+- `dist/` – erzeugter Produktionsbuild
+
