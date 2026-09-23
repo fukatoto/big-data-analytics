@@ -1,0 +1,20 @@
+[
+    {
+      "type": "readers.las",
+      "filename": "D:/Users/julius/projekte/SummerSchool/202606026_GB_Wald/pointcloud/cloud0.las",
+      "spatialreference": "EPSG:4326"
+    },
+    {
+      "type": "filters.reprojection",
+      "in_srs": "EPSG:4326",
+      "out_srs": "EPSG:25833"
+    },
+    {
+      "type": "filters.decimation",
+      "step": 20
+    },
+    {
+      "type": "writers.copc",
+      "filename": "D:/Users/julius/projekte/SummerSchool/202606026_GB_Wald/pointcloud/wald_utm33.copc.laz"
+    }
+  ]

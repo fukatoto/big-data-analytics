@@ -1,0 +1,4 @@
+[
+  {"type":"readers.copc","filename":"D:/Users/julius/projekte/SummerSchool/202606026_GB_Wald/pointcloud/wald_utm33.copc.laz"},
+  {"type":"writers.gdal","filename":"D:/Users/julius/projekte/SummerSchool/202606026_GB_Wald/dsm.tif","resolution":0.25,"output_type":"max","window_size":4}
+]
