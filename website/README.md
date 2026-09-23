@@ -31,7 +31,9 @@ longitude,latitude,ground_height_m,label
 
 Comma- and semicolon-separated files are supported. Exactly one row must have the label `Referenz`, its `ground_height_m` is the fixed reference height and is not treated as a measurement. When Bäume or Kuhlen are active in the internal view, labels beginning with `Baum` use a tree icon and labels beginning with `Kuhle` use a depression icon, a blue survey-target icon identifies the separate reference point. Measurement labels appear at close zoom levels, and hovering an icon shows its measured height and difference from the reference. There is no grid or interpolation. The height-tolerance panel appears automatically with the active measurement categories. Its slider colors measurement icons red when their absolute difference from the CSV reference is greater than or equal to the selected value; points within tolerance stay green.
 
-The sidebar's internal view switch opens independent filters for Wald, Bäume, and Kuhlen, plus controls to show or hide all three together. For now Wald shows a single placeholder forest icon east of the Bunker place; its actual area data can be added later. Bäume and Kuhlen filter the CSV measurement markers. Whenever either is selected, the reference point and person markers appear too.
+The sidebar's internal view switch opens independent filters for Waldgesundheit, Bäume, and Kuhlen, plus controls to show or hide all three together. Waldgesundheit controls the tree canopy health polygons and their outlines. Bäume and Kuhlen filter the CSV measurement markers. Whenever either is selected, the reference point and person markers appear too.
+
+When Waldgesundheit is active, the forest-health panel filters canopy polygons by a minimum GCC green share from 0 to 100 percent. At 0 percent, all trees remain visible. The filter also applies to tree outlines and conspicuous-tree markers.
 
 The project outline comes from `public/data/txl-project-boundary.geojson`, derived from the official Berlin WFS dataset “Berlin TXL” and simplified for browser rendering. Boundary source: Tegel Projekt GmbH / Berlin TXL, licensed under CC BY 4.0.
 

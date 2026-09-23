@@ -130,7 +130,9 @@
               aria-checked="false"
             >
               <span class="terminal-places-label"
-                ><span data-i18n="places">PLACES</span><span>20</span></span
+                ><span class="terminal-places-title"><svg class="places-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 10c0 5-8 11-8 11S4 15 4 10a8 8 0 1 1 16 0Z" /><circle cx="12" cy="10" r="2.5" />
+                </svg><span data-i18n="places">PLACES</span></span><span>20</span></span
               ><i aria-hidden="true"><b></b></i>
             </button>
             <div id="terminal-places" class="terminal-places" hidden>
@@ -434,22 +436,35 @@
               aria-controls="internal-view-options"
             >
               <span class="terminal-places-label"
-                ><span data-i18n="internalView">INTERNAL VIEW</span></span
+                ><svg class="internal-view-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 7.5 12 3l9 4.5-9 4.5L3 7.5Z" />
+                  <path d="m3 12 9 4.5 9-4.5M3 16.5 12 21l9-4.5" />
+                </svg><span data-i18n="internalView">INTERNAL VIEW</span></span
               ><i aria-hidden="true"><b></b></i>
             </button>
             <div id="internal-view-options" class="internal-view-options" hidden>
               <button type="button" class="internal-view-option is-active" data-internal-layer="tree" aria-pressed="true">
-                <span data-i18n="trees">Trees</span><b aria-hidden="true">✓</b>
+                <span class="internal-view-option-label"><svg class="internal-view-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="m12 3 5.5 7H15l4.5 6H4.5L9 10H6.5L12 3Z" /><path d="M12 16v5" />
+                </svg><span data-i18n="trees">Trees</span></span><b aria-hidden="true">✓</b>
               </button>
               <button type="button" class="internal-view-option is-active" data-internal-layer="depression" aria-pressed="true">
-                <span data-i18n="depressions">Depressions</span><b aria-hidden="true">✓</b>
+                <span class="internal-view-option-label"><svg class="internal-view-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 8c3 0 4 9 10 9s7-9 10-9" /><path d="M5 6c2 0 3 7 7 7s5-7 7-7" />
+                </svg><span data-i18n="depressions">Depressions</span></span><b aria-hidden="true">✓</b>
               </button>
-              <button type="button" class="internal-view-option is-active" data-internal-layer="forest" aria-pressed="true">
-                <span data-i18n="forest">Forest</span><b aria-hidden="true">✓</b>
+              <button type="button" class="internal-view-option is-active" data-internal-layer="tree-health" aria-pressed="true">
+                <span class="internal-view-option-label"><svg class="internal-view-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 20c-5-3-8-6.2-8-10a4 4 0 0 1 8-1 4 4 0 0 1 8 1c0 3.8-3 7-8 10Z" /><path d="M6.5 13h3l1.5-2.5 2 5 1.5-2.5h3" />
+                </svg><span data-i18n="forestHealth">Forest health</span></span><b aria-hidden="true">✓</b>
               </button>
               <div class="internal-view-bulk-actions">
-                <button id="show-all-internal-layers" type="button" data-i18n="showAllAreas">Show all</button>
-                <button id="hide-all-internal-layers" type="button" data-i18n="hideAllAreas">Hide all</button>
+                <button id="show-all-internal-layers" type="button"><svg class="bulk-action-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" /><circle cx="12" cy="12" r="2.5" />
+                </svg><span data-i18n="showAllAreas">Show all</span></button>
+                <button id="hide-all-internal-layers" type="button"><svg class="bulk-action-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M3 3 21 21M10.6 6.1A12 12 0 0 1 12 6c6.5 0 10 6 10 6a16 16 0 0 1-3.1 3.5M6.2 6.9C3.5 8.7 2 12 2 12s3.5 6 10 6a11 11 0 0 0 3.2-.5" /><path d="M10 10a2.5 2.5 0 0 0 4 4" />
+                </svg><span data-i18n="hideAllAreas">Hide all</span></button>
               </div>
             </div>
           </div>
@@ -719,16 +734,18 @@
                 <button
                   id="show-all-project-areas"
                   type="button"
-                  data-i18n="showAllAreas"
                 >
-                  Show all
+                  <svg class="bulk-action-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12s3.5-6 10-6 10 6 10 6-3.5 6-10 6S2 12 2 12Z" /><circle cx="12" cy="12" r="2.5" />
+                  </svg><span data-i18n="showAllAreas">Show all</span>
                 </button>
                 <button
                   id="hide-all-project-areas"
                   type="button"
-                  data-i18n="hideAllAreas"
                 >
-                  Hide all
+                  <svg class="bulk-action-icon" viewBox="0 0 24 24" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 3 21 21M10.6 6.1A12 12 0 0 1 12 6c6.5 0 10 6 10 6a16 16 0 0 1-3.1 3.5M6.2 6.9C3.5 8.7 2 12 2 12s3.5 6 10 6a11 11 0 0 0 3.2-.5" /><path d="M10 10a2.5 2.5 0 0 0 4 4" />
+                  </svg><span data-i18n="hideAllAreas">Hide all</span>
                 </button>
               </div>
               <button
@@ -818,6 +835,95 @@
               <p id="height-data-status" data-i18n="loadingHeightData">
                 Loading CSV height data…
               </p>
+            </div>
+          </div>
+        </section>
+        <section
+          class="height-control tree-health-control mobile-map-panel is-desktop-collapsed"
+          aria-labelledby="tree-health-control-title"
+          hidden
+        >
+          <button
+            class="mobile-panel-toggle"
+            type="button"
+            aria-expanded="false"
+            aria-controls="tree-health-panel-body"
+          >
+            <span class="mobile-panel-toggle-icon is-height" aria-hidden="true"></span>
+            <span data-i18n="forestHealth">Forest health</span>
+            <span class="mobile-panel-chevron" aria-hidden="true"></span>
+          </button>
+          <div class="mobile-panel-body" id="tree-health-panel-body">
+            <div class="height-control-heading">
+              <div>
+                <span class="height-control-kicker" data-i18n="forestAnalysis">TREE ANALYSIS</span>
+                <h2 id="tree-health-control-title" data-i18n="forestHealth">Forest health</h2>
+                <p id="tree-visible-count" class="tree-visible-count" aria-live="polite">–</p>
+              </div>
+              <div class="height-control-heading-actions">
+                <output id="tree-height-value" for="tree-height-threshold">– m</output>
+                <output id="tree-crown-value" for="tree-crown-threshold">Ø – m</output>
+                <output id="tree-green-value" for="tree-green-threshold">0 %</output>
+                <div class="tree-health-panel-buttons">
+                  <button
+                    class="desktop-panel-collapse"
+                    type="button"
+                    aria-expanded="false"
+                    aria-controls="tree-health-desktop-content"
+                    data-i18n-aria="togglePanel"
+                  ></button>
+                  <label class="tree-conspicuous-control" for="tree-conspicuous-only" title="Only trees with conspicuous crowns">
+                    <input id="tree-conspicuous-only" type="checkbox" />
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M12 3 22 20H2L12 3Z" />
+                      <path d="M12 9v5m0 3h.01" />
+                    </svg>
+                    <span class="sr-only" data-i18n="onlyConspicuousTrees">Only trees with conspicuous crowns</span>
+                  </label>
+                </div>
+              </div>
+            </div>
+            <div id="tree-health-desktop-content" class="desktop-collapsible-content">
+              <div class="tree-height-control">
+                <div class="tree-filter-heading">
+                  <label for="tree-height-threshold" data-i18n="minimumTreeHeight">Minimum tree height</label>
+                  <button id="tree-height-mode-toggle" class="tree-mode-toggle" type="button" data-i18n-aria="maximumTreeHeight" aria-label="Maximum tree height" title="Maximum tree height" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4" />
+                    </svg>
+                  </button>
+                </div>
+                <input id="tree-height-threshold" type="range" min="0" max="1" step="0.1" value="0" disabled />
+                <div class="tree-green-range" aria-hidden="true">
+                  <span id="tree-height-min">– m</span><span id="tree-height-max">– m</span>
+                </div>
+              </div>
+              <div class="tree-crown-control">
+                <div class="tree-filter-heading">
+                  <label for="tree-crown-threshold" data-i18n="minimumCrownDiameter">Minimum crown diameter</label>
+                  <button id="tree-crown-mode-toggle" class="tree-mode-toggle" type="button" data-i18n-aria="maximumCrownDiameter" aria-label="Maximum crown diameter" title="Maximum crown diameter" disabled>
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4" />
+                    </svg>
+                  </button>
+                </div>
+                <input id="tree-crown-threshold" type="range" min="0" max="1" step="0.1" value="0" disabled />
+                <div class="tree-green-range" aria-hidden="true">
+                  <span id="tree-crown-min">– m</span><span id="tree-crown-max">– m</span>
+                </div>
+              </div>
+              <div class="tree-green-control">
+                <div class="tree-filter-heading">
+                  <label for="tree-green-threshold" data-i18n="minimumGreenShare">Minimum green share (GCC)</label>
+                  <button id="tree-green-mode-toggle" class="tree-mode-toggle" type="button" data-i18n-aria="maximumGreenShare" aria-label="Maximum green share (GCC)" title="Maximum green share (GCC)">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                      <path d="M4 8h16m-4-4 4 4-4 4M20 16H4m4-4-4 4 4 4" />
+                    </svg>
+                  </button>
+                </div>
+                <input id="tree-green-threshold" type="range" min="0" max="100" step="1" value="0" />
+                <div class="tree-green-range" aria-hidden="true"><span>0 %</span><span>100 %</span></div>
+              </div>
             </div>
           </div>
         </section>

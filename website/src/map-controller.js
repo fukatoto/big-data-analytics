@@ -1,5 +1,6 @@
 import * as maplibregl from 'maplibre-gl';
 import { airportBounds, airportViewPadding, places } from './config.js';
+import { formatDecimal } from './number-format.js';
 
 const eventsCalendarUrl =
   'https://www.campus-stadt-natur.de/angebote-aktionen/kalender/?id=524&no_cache=1&tx_events2_events%5Baction%5D=list&tx_events2_events%5Bcontroller%5D=JavaScriptSearch&tx_events2_events%5Bcategories%5D%5B%5D=&tx_events2_events%5Bgroups%5D%5B%5D=&tx_events2_events%5Blocations%5D%5B%5D=50&tx_events2_events%5Bstart%5D=&tx_events2_events%5Bend%5D=&tx_events2_events%5Bsearch%5D=';
@@ -179,8 +180,28 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   };
   const markerElements = new Map();
   let placePopup = null;
+  const treePopups = new Map();
+  let treeHoverPopup = null;
+  let treeHealthVisible = false;
+  let treeFeatures = null;
+  let displayedTreeCount = 0;
+  let treeMinimumHeight = null;
+  let treeMaximumHeight = null;
+  let treeMinimumCrownDiameter = null;
+  let treeMaximumCrownDiameter = null;
+  let treeGreenMode = 'minimum';
+  const treeGreenValues = { minimum: 0, maximum: 100 };
+  let treeHeightMode = 'minimum';
+  const treeHeightValues = { minimum: null, maximum: null };
+  let treeCrownMode = 'minimum';
+  const treeCrownValues = { minimum: null, maximum: null };
   let markerLabelLayoutFrame = null;
   let markerLabelLayoutBound = false;
+
+  function closeTreePopups() {
+    for (const popup of treePopups.values()) popup.remove();
+    treePopups.clear();
+  }
 
   function placeName(place) {
     return place.nameKey ? t(place.nameKey) : place.name;
@@ -942,6 +963,11 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   }
 
   function refreshLanguage() {
+    updateTreeGreenModeUi();
+    updateTreeHeightModeUi();
+    updateTreeCrownModeUi();
+    document.querySelector('.tree-conspicuous-control').title = t('onlyConspicuousTrees');
+    updateTreeVisibleCount();
     updateSelectedPlace();
     updateCaption();
     if (placePopup && places[state.selected]?.coordinates) {
@@ -1199,6 +1225,40 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   }
 
   function bindUi() {
+    document.getElementById('tree-conspicuous-only').addEventListener('change', setTreeFilters);
+    document.getElementById('tree-green-threshold').addEventListener('input', () => {
+      setTreeFilters();
+    });
+    document.getElementById('tree-green-mode-toggle').addEventListener('click', () => {
+      const greenSlider = document.getElementById('tree-green-threshold');
+      treeGreenValues[treeGreenMode] = Number(greenSlider.value);
+      treeGreenMode = treeGreenMode === 'minimum' ? 'maximum' : 'minimum';
+      greenSlider.value = String(treeGreenValues[treeGreenMode]);
+      updateTreeGreenModeUi();
+      setTreeFilters();
+    });
+    document.getElementById('tree-height-threshold').addEventListener('input', () => {
+      setTreeFilters();
+    });
+    document.getElementById('tree-crown-threshold').addEventListener('input', () => {
+      setTreeFilters();
+    });
+    document.getElementById('tree-crown-mode-toggle').addEventListener('click', () => {
+      const crownSlider = document.getElementById('tree-crown-threshold');
+      treeCrownValues[treeCrownMode] = Number(crownSlider.value);
+      treeCrownMode = treeCrownMode === 'minimum' ? 'maximum' : 'minimum';
+      crownSlider.value = String(treeCrownValues[treeCrownMode]);
+      updateTreeCrownModeUi();
+      setTreeFilters();
+    });
+    document.getElementById('tree-height-mode-toggle').addEventListener('click', () => {
+      const heightSlider = document.getElementById('tree-height-threshold');
+      treeHeightValues[treeHeightMode] = Number(heightSlider.value);
+      treeHeightMode = treeHeightMode === 'minimum' ? 'maximum' : 'minimum';
+      heightSlider.value = String(treeHeightValues[treeHeightMode]);
+      updateTreeHeightModeUi();
+      setTreeFilters();
+    });
     document.querySelectorAll('.place-item').forEach((button) => {
       button.addEventListener('click', () =>
         selectPlace(button.dataset.place, true, true),
@@ -1223,6 +1283,324 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       .addEventListener('click', showAirport);
   }
 
+  async function addTrees() {
+    const beforeLayerId = 'txl-3d-buildings';
+    const visibility = treeHealthVisible ? 'visible' : 'none';
+    const response = await fetch('/data/baeume.geojson');
+    if (!response.ok) throw new Error(`Tree data could not be loaded (${response.status}).`);
+    const treeData = await response.json();
+    const heights = treeData.features
+      .map((feature) => feature.properties?.hoehe_m)
+      .filter((height) => typeof height === 'number' && Number.isFinite(height));
+    if (!heights.length) throw new Error('Tree data does not contain valid heights.');
+    const minimumHeight = Math.floor(Math.min(...heights) * 10) / 10;
+    const maximumHeight = Math.ceil(Math.max(...heights) * 10) / 10;
+    treeMinimumHeight = minimumHeight;
+    treeMaximumHeight = maximumHeight;
+    treeHeightValues.minimum = minimumHeight;
+    treeHeightValues.maximum = maximumHeight;
+    const heightSlider = document.getElementById('tree-height-threshold');
+    heightSlider.min = String(minimumHeight);
+    heightSlider.max = String(maximumHeight);
+    heightSlider.value = String(minimumHeight);
+    heightSlider.disabled = minimumHeight === maximumHeight;
+    document.getElementById('tree-height-mode-toggle').disabled = minimumHeight === maximumHeight;
+    document.getElementById('tree-height-min').textContent = `${formatDecimal(minimumHeight, 1)} m`;
+    document.getElementById('tree-height-max').textContent = `${formatDecimal(maximumHeight, 1)} m`;
+    const crownDiameters = treeData.features
+      .map((feature) => feature.properties?.durchm_m)
+      .filter((diameter) => typeof diameter === 'number' && Number.isFinite(diameter));
+    if (!crownDiameters.length) throw new Error('Tree data does not contain valid crown diameters.');
+    const minimumCrownDiameter = Math.floor(Math.min(...crownDiameters) * 10) / 10;
+    const maximumCrownDiameter = Math.ceil(Math.max(...crownDiameters) * 10) / 10;
+    treeMinimumCrownDiameter = minimumCrownDiameter;
+    treeMaximumCrownDiameter = maximumCrownDiameter;
+    treeCrownValues.minimum = minimumCrownDiameter;
+    treeCrownValues.maximum = maximumCrownDiameter;
+    const crownSlider = document.getElementById('tree-crown-threshold');
+    crownSlider.min = String(minimumCrownDiameter);
+    crownSlider.max = String(maximumCrownDiameter);
+    crownSlider.value = String(minimumCrownDiameter);
+    crownSlider.disabled = minimumCrownDiameter === maximumCrownDiameter;
+    document.getElementById('tree-crown-mode-toggle').disabled = minimumCrownDiameter === maximumCrownDiameter;
+    document.getElementById('tree-crown-min').textContent = `${formatDecimal(minimumCrownDiameter, 1)} m`;
+    document.getElementById('tree-crown-max').textContent = `${formatDecimal(maximumCrownDiameter, 1)} m`;
+    treeFeatures = treeData.features;
+    const treeColor = [
+      'case',
+      ['==', ['typeof', ['get', 'z']], 'number'],
+      [
+        'interpolate', ['linear'], ['get', 'z'],
+        -3,   '#a50026',  // deutlich weniger grün: dunkelrot
+        -2,   '#e8603c',  // Grenze "auffällig": orange-rot
+        -1,   '#d4c45a',  // leicht unterdurchschnittlich: gedecktes Gelb
+        -0.5, '#8cc063',
+        0,    '#4a9e4a',  // typischer Baum: grün
+        1.5,  '#1e6b35',  // überdurchschnittlich grün: dunkelgrün
+      ],
+      '#9e9e9e',          // kein Wert messbar: grau
+    ];
+
+    map.addSource('baeume', {
+      type: 'geojson',
+      data: treeData,
+    });
+
+    map.addLayer({
+      id: 'baeume-fill',
+      type: 'fill',
+      source: 'baeume',
+      minzoom: 15,
+      layout: { visibility },
+      paint: {
+        'fill-color': treeColor,
+        'fill-opacity': 0.55,
+      },
+    }, beforeLayerId);
+
+    map.addLayer({
+      id: 'baeume-outline',
+      type: 'line',
+      source: 'baeume',
+      minzoom: 15,
+      layout: { visibility },
+      paint: {
+        'line-color': treeColor,
+        'line-width': 0.8,
+      },
+    }, beforeLayerId);
+
+    map.addLayer({
+      id: 'baeume-auffaellig',
+      type: 'line',
+      source: 'baeume',
+      minzoom: 15,
+      layout: { visibility },
+      filter: ['to-boolean', ['get', 'auffaellig']],
+      paint: {
+        'line-color': '#d00000',
+        'line-width': 2.5,
+      },
+    }, beforeLayerId);
+
+    function treePopupContent(p) {
+      const gcc = Number(p.gcc);
+      const greenShare = p.gcc == null || !Number.isFinite(gcc)
+        ? '–'
+        : `${formatDecimal(gcc * 100, 1)} %`;
+      const lines = [
+        `<strong>${t('treeTitle', { id: p.id })}</strong>`,
+        t('treeHeight', { height: formatDecimal(Number(p.hoehe_m), 1) }),
+        t('treeCrownDiameter', { diameter: formatDecimal(Number(p.durchm_m), 1) }),
+        t('treeGreenness', { value: greenShare }),
+      ];
+      if (p.auffaellig) {
+        lines.push(`<strong style="color:#d00000">${t('treeConspicuous')}</strong>`);
+      }
+      return `<div class="place-popup-body">${lines.join('<br>')}</div>`;
+    }
+
+    treeHoverPopup = new maplibregl.Popup({
+      closeButton: false,
+      closeOnClick: false,
+      className: 'ground-height-map-popup tree-hover-popup',
+      offset: 10,
+    });
+    let hoveredTreeId = null;
+
+    map.on('mousemove', 'baeume-fill', (event) => {
+      const feature = event.features?.[0];
+      if (!feature) return;
+      if (treePopups.has(feature.properties.id)) {
+        treeHoverPopup.remove();
+        hoveredTreeId = null;
+        return;
+      }
+      if (hoveredTreeId !== feature.properties.id || !treeHoverPopup.isOpen()) {
+        treeHoverPopup.setHTML(treePopupContent(feature.properties));
+        hoveredTreeId = feature.properties.id;
+      }
+      treeHoverPopup.setLngLat(event.lngLat);
+      if (!treeHoverPopup.isOpen()) treeHoverPopup.addTo(map);
+    });
+
+    map.on('click', 'baeume-fill', (event) => {
+      const feature = event.features?.[0];
+      if (!feature) return;
+      treeHoverPopup.remove();
+      hoveredTreeId = null;
+      const treeId = feature.properties.id;
+      const existingPopup = treePopups.get(treeId);
+      if (existingPopup) {
+        existingPopup.setLngLat(event.lngLat);
+        return;
+      }
+      const popup = new maplibregl.Popup({
+        className: 'ground-height-map-popup tree-map-popup',
+        closeOnClick: false,
+        offset: 10,
+      })
+        .setLngLat(event.lngLat)
+        .setHTML(treePopupContent(feature.properties))
+        .addTo(map);
+      treePopups.set(treeId, popup);
+      popup.on('close', () => {
+        if (treePopups.get(treeId) === popup) treePopups.delete(treeId);
+      });
+    });
+
+    map.on('mouseenter', 'baeume-fill', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    map.on('mouseleave', 'baeume-fill', () => {
+      map.getCanvas().style.cursor = '';
+      treeHoverPopup.remove();
+      hoveredTreeId = null;
+    });
+    setTreeFilters();
+  }
+
+  function setTreeHealthVisible(visible) {
+    if (treeHealthVisible === visible) return;
+    treeHealthVisible = visible;
+    const panel = document.querySelector('.tree-health-control');
+    panel.hidden = !visible;
+    if (visible) {
+      panel.classList.remove('is-desktop-collapsed');
+      panel.querySelector('.desktop-panel-collapse').setAttribute('aria-expanded', 'true');
+    }
+    ['baeume-fill', 'baeume-outline', 'baeume-auffaellig'].forEach((layerId) => {
+      if (map.getLayer(layerId)) {
+        map.setLayoutProperty(layerId, 'visibility', visible ? 'visible' : 'none');
+      }
+    });
+    if (!visible) {
+      closeTreePopups();
+      treeHoverPopup?.remove();
+      map.getCanvas().style.cursor = '';
+    }
+  }
+
+  function updateTreeGreenModeUi() {
+    const isMaximum = treeGreenMode === 'maximum';
+    const label = document.querySelector('label[for="tree-green-threshold"]');
+    const button = document.getElementById('tree-green-mode-toggle');
+    label.dataset.i18n = isMaximum ? 'maximumGreenShare' : 'minimumGreenShare';
+    label.textContent = t(label.dataset.i18n);
+    button.dataset.i18nAria = isMaximum ? 'minimumGreenShare' : 'maximumGreenShare';
+    button.setAttribute('aria-label', t(button.dataset.i18nAria));
+    button.title = t(button.dataset.i18nAria);
+  }
+
+  function updateTreeHeightModeUi() {
+    const isMaximum = treeHeightMode === 'maximum';
+    const label = document.querySelector('label[for="tree-height-threshold"]');
+    const button = document.getElementById('tree-height-mode-toggle');
+    label.dataset.i18n = isMaximum ? 'maximumTreeHeight' : 'minimumTreeHeight';
+    label.textContent = t(label.dataset.i18n);
+    button.dataset.i18nAria = isMaximum ? 'minimumTreeHeight' : 'maximumTreeHeight';
+    button.setAttribute('aria-label', t(button.dataset.i18nAria));
+    button.title = t(button.dataset.i18nAria);
+  }
+
+  function updateTreeCrownModeUi() {
+    const isMaximum = treeCrownMode === 'maximum';
+    const label = document.querySelector('label[for="tree-crown-threshold"]');
+    const button = document.getElementById('tree-crown-mode-toggle');
+    label.dataset.i18n = isMaximum ? 'maximumCrownDiameter' : 'minimumCrownDiameter';
+    label.textContent = t(label.dataset.i18n);
+    button.dataset.i18nAria = isMaximum ? 'minimumCrownDiameter' : 'maximumCrownDiameter';
+    button.setAttribute('aria-label', t(button.dataset.i18nAria));
+    button.title = t(button.dataset.i18nAria);
+  }
+
+  function updateTreeVisibleCount() {
+    if (!treeFeatures) return;
+    const numberFormat = new Intl.NumberFormat(document.documentElement.lang);
+    const countKey = document.getElementById('tree-conspicuous-only').checked
+      ? 'treeVisibleCountConspicuous'
+      : 'treeVisibleCount';
+    document.getElementById('tree-visible-count').textContent = t(countKey, {
+      count: numberFormat.format(displayedTreeCount),
+      total: numberFormat.format(treeFeatures.length),
+    });
+  }
+
+  function numericTreeValue(value) {
+    if (value == null) return -1;
+    const number = Number(value);
+    return Number.isFinite(number) ? number : -1;
+  }
+
+  function setTreeFilters() {
+    const conspicuousOnly = document.getElementById('tree-conspicuous-only').checked;
+    const percent = Number(document.getElementById('tree-green-threshold').value);
+    const selectedHeight = Number(document.getElementById('tree-height-threshold').value);
+    const selectedCrownDiameter = Number(document.getElementById('tree-crown-threshold').value);
+    document.getElementById('tree-green-value').textContent =
+      `${treeGreenMode === 'maximum' ? '≤' : '≥'} ${percent} %`;
+    document.getElementById('tree-height-value').textContent =
+      treeMinimumHeight === null
+        ? '– m'
+        : `${treeHeightMode === 'maximum' ? '≤' : '≥'} ${formatDecimal(selectedHeight, 1)} m`;
+    document.getElementById('tree-crown-value').textContent =
+      treeMinimumCrownDiameter === null
+        ? 'Ø – m'
+        : `Ø ${treeCrownMode === 'maximum' ? '≤' : '≥'} ${formatDecimal(selectedCrownDiameter, 1)} m`;
+    const filters = [];
+    const matches = [];
+    if (conspicuousOnly) {
+      filters.push(['to-boolean', ['get', 'auffaellig']]);
+      matches.push((properties) => properties.auffaellig === true);
+    }
+    const greenShare = ['to-number', ['get', 'gcc'], -1];
+    if (treeGreenMode === 'minimum' && percent > 0) {
+      filters.push(['>=', greenShare, percent / 100]);
+      matches.push((properties) => numericTreeValue(properties.gcc) >= percent / 100);
+    } else if (treeGreenMode === 'maximum' && percent < 100) {
+      filters.push(['all', ['>=', greenShare, 0], ['<=', greenShare, percent / 100]]);
+      matches.push((properties) => {
+        const value = numericTreeValue(properties.gcc);
+        return value >= 0 && value <= percent / 100;
+      });
+    }
+    if (treeMinimumHeight !== null && treeHeightMode === 'minimum' && selectedHeight > treeMinimumHeight) {
+      filters.push(['>=', ['to-number', ['get', 'hoehe_m'], -1], selectedHeight]);
+      matches.push((properties) => numericTreeValue(properties.hoehe_m) >= selectedHeight);
+    } else if (treeMaximumHeight !== null && treeHeightMode === 'maximum' && selectedHeight < treeMaximumHeight) {
+      filters.push(['<=', ['to-number', ['get', 'hoehe_m'], -1], selectedHeight]);
+      matches.push((properties) => numericTreeValue(properties.hoehe_m) <= selectedHeight);
+    }
+    const crownDiameter = ['to-number', ['get', 'durchm_m'], -1];
+    if (treeMinimumCrownDiameter !== null && treeCrownMode === 'minimum' && selectedCrownDiameter > treeMinimumCrownDiameter) {
+      filters.push(['>=', crownDiameter, selectedCrownDiameter]);
+      matches.push((properties) => numericTreeValue(properties.durchm_m) >= selectedCrownDiameter);
+    } else if (treeMaximumCrownDiameter !== null && treeCrownMode === 'maximum' && selectedCrownDiameter < treeMaximumCrownDiameter) {
+      filters.push(['all', ['>=', crownDiameter, 0], ['<=', crownDiameter, selectedCrownDiameter]]);
+      matches.push((properties) => {
+        const value = numericTreeValue(properties.durchm_m);
+        return value >= 0 && value <= selectedCrownDiameter;
+      });
+    }
+    const filter = filters.length ? ['all', ...filters] : null;
+    ['baeume-fill', 'baeume-outline'].forEach((layerId) => {
+      if (map.getLayer(layerId)) map.setFilter(layerId, filter);
+    });
+    if (map.getLayer('baeume-auffaellig')) {
+      const conspicuousFilter = ['to-boolean', ['get', 'auffaellig']];
+      map.setFilter('baeume-auffaellig', filter
+        ? ['all', conspicuousFilter, filter]
+        : conspicuousFilter);
+    }
+    if (treeFeatures) {
+      displayedTreeCount = treeFeatures.filter((feature) =>
+        matches.every((matchesFilter) => matchesFilter(feature.properties ?? {}))).length;
+      updateTreeVisibleCount();
+    }
+    closeTreePopups();
+    treeHoverPopup?.remove();
+  }
+
   return {
     addBuildingLayer,
     addMarkers,
@@ -1230,5 +1608,7 @@ export function createMapController({ map, t, onSelectProjectArea }) {
     constrainAirportView,
     loadEvents,
     refreshLanguage,
+    addTrees,
+    setTreeHealthVisible,
   };
 }

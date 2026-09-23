@@ -1,8 +1,9 @@
 import * as maplibregl from 'maplibre-gl';
 import { groundHeightConfig } from './config.js';
 import { parseGroundHeightCsv } from './ground-height-analysis.js';
+import { formatDecimal } from './number-format.js';
 
-export function createGroundHeightOverlay({ map, t, createTranslatedError, onPanelVisibilityChange }) {
+export function createGroundHeightOverlay({ map, t, createTranslatedError, onPanelVisibilityChange, onTreeHealthVisibilityChange, onMobilePanelSelectionChange }) {
   const updateDelay = 200;
   let samples = [];
   let reference = null;
@@ -11,8 +12,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
   let loadError = null;
   let analysisInitialized = false;
   let internalViewOpen = false;
-  const activeInternalLayers = new Set(['forest', 'tree', 'depression']);
-  let forestMarker = null;
+  const activeInternalLayers = new Set(['tree-health', 'tree', 'depression']);
   let popup = null;
   let updateTimer = null;
 
@@ -270,9 +270,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
     if (map.getLayer(groundHeightConfig.referenceLayerId)) {
       map.setLayoutProperty(groundHeightConfig.referenceLayerId, 'visibility', visibility);
     }
-    if (forestMarker) {
-      forestMarker.getElement().hidden = !(internalViewOpen && activeInternalLayers.has('forest'));
-    }
+    onTreeHealthVisibilityChange?.(internalViewOpen && activeInternalLayers.has('tree-health'));
     if (!showMeasurements) {
       map.getCanvas().style.cursor = '';
       popup?.remove();
@@ -292,33 +290,14 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
     updateMapVisibility();
   }
 
-  function addForestMarker() {
-    const element = document.createElement('div');
-    element.className = 'internal-forest-marker';
-    element.innerHTML = '<svg viewBox="0 0 48 48" aria-hidden="true"><path d="M24 3 13 20h6L9 34h12v10h6V34h12L29 20h6L24 3Z"/></svg>';
-    forestMarker = new maplibregl.Marker({ element, anchor: 'bottom', offset: [18, 0] })
-      .setLngLat(groundHeightConfig.forestMarkerCoordinates)
-      .addTo(map);
-    refreshForestMarkerLanguage();
-    updateMapVisibility();
-  }
-
-  function refreshForestMarkerLanguage() {
-    if (!forestMarker) return;
-    const element = forestMarker.getElement();
-    element.setAttribute('role', 'img');
-    element.setAttribute('aria-label', t('forest'));
-    element.title = t('forest');
-  }
-
   function focusInternalView() {
     const bounds = new maplibregl.LngLatBounds();
-    bounds.extend(groundHeightConfig.forestMarkerCoordinates);
     groundHeightConfig.annotations
       .filter(({ kind }) => kind !== 'person')
       .forEach(({ coordinates }) => bounds.extend(coordinates));
     samples.forEach(({ longitude, latitude }) => bounds.extend([longitude, latitude]));
     if (reference) bounds.extend([reference.longitude, reference.latitude]);
+    if (bounds.isEmpty()) return;
     map.fitBounds(bounds, {
       padding: window.innerWidth < 700 ? 35 : 70,
       maxZoom: 16,
@@ -419,14 +398,28 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
   }
 
   function bindUi() {
+    const syncMobilePanels = () => {
+      onMobilePanelSelectionChange?.(internalViewOpen ? [...activeInternalLayers] : []);
+    };
     document.getElementById('internal-view-toggle').addEventListener('click', () => {
       internalViewOpen = !internalViewOpen;
       const button = document.getElementById('internal-view-toggle');
       button.classList.toggle('is-active', internalViewOpen);
       button.setAttribute('aria-checked', String(internalViewOpen));
-      document.getElementById('internal-view-options').hidden = !internalViewOpen;
+      const options = document.getElementById('internal-view-options');
+      options.hidden = !internalViewOpen;
       syncInternalView();
-      if (internalViewOpen) focusInternalView();
+      syncMobilePanels();
+      if (internalViewOpen) {
+        focusInternalView();
+        if (window.matchMedia('(max-width: 700px)').matches) {
+          requestAnimationFrame(() => {
+            const sidebar = document.querySelector('.sidebar');
+            const hiddenBottom = options.getBoundingClientRect().bottom - sidebar.getBoundingClientRect().bottom;
+            if (hiddenBottom > 0) sidebar.scrollBy({ top: hiddenBottom + 12, behavior: 'auto' });
+          });
+        }
+      }
     });
     document.querySelectorAll('[data-internal-layer]').forEach((button) => {
       button.addEventListener('click', () => {
@@ -437,6 +430,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
         button.classList.toggle('is-active', active);
         button.setAttribute('aria-pressed', String(active));
         syncInternalView();
+        syncMobilePanels();
       });
     });
     function setAllInternalLayersVisible(visible) {
@@ -447,6 +441,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
         button.setAttribute('aria-pressed', String(visible));
       });
       syncInternalView();
+      syncMobilePanels();
     }
     document.getElementById('show-all-internal-layers').addEventListener('click', () => {
       setAllInternalLayersVisible(true);
@@ -499,6 +494,7 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
     sampleCount = samples.length;
     refreshStatus();
     syncInternalView();
+    if (internalViewOpen && window.matchMedia('(max-width: 700px)').matches) focusInternalView();
   }
 
   function addPopupInteraction() {
@@ -521,8 +517,8 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
       const popupContent = isAnnotation
         ? `<strong>${escapeHtml(label)}</strong>`
         : isReference
-          ? `<strong>${t('referencePoint')}</strong><br>${t('groundHeight', { height: Number(groundHeight).toFixed(2) })}`
-          : `<strong>${escapeHtml(label)}</strong><br>${t('groundHeight', { height: Number(groundHeight).toFixed(2) })}<br>${t('localReference', { height: Number(csvReference).toFixed(2) })}<br>${t('difference', { height: (Number(heightDifference) * 100).toFixed(1) })}`;
+          ? `<strong>${t('referencePoint')}</strong><br>${t('groundHeight', { height: formatDecimal(Number(groundHeight), 2) })}`
+          : `<strong>${escapeHtml(label)}</strong><br>${t('groundHeight', { height: formatDecimal(Number(groundHeight), 2) })}<br>${t('localReference', { height: formatDecimal(Number(csvReference), 2) })}<br>${t('difference', { height: formatDecimal(Number(heightDifference) * 100, 1) })}`;
       map.getCanvas().style.cursor = 'pointer';
       popup
         .setLngLat(event.lngLat)
@@ -540,12 +536,10 @@ export function createGroundHeightOverlay({ map, t, createTranslatedError, onPan
   }
 
   return {
-    addForestMarker,
     bindUi,
     load,
     refreshLanguage() {
       refreshStatus();
-      refreshForestMarkerLanguage();
     },
     scheduleUpdate,
     showError,

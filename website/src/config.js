@@ -419,7 +419,6 @@ export const satelliteBasemapConfig = {
 export const groundHeightConfig = {
   csvUrl: '/data/txl-ground-heights.csv',
   boundaryUrl: '/data/txl-project-boundary.geojson',
-  forestMarkerCoordinates: [13.25835, 52.55416615425812],
   annotations: [
     {
       label: 'Alex',
@@ -431,6 +430,16 @@ export const groundHeightConfig = {
       kind: 'person',
       coordinates: [13.275141666666667, 52.55308055555556],
     },
+    {
+      label: 'Finn',
+      kind: 'person',
+      coordinates: [13.266351973650105, 52.55777387164781], 
+    },
+    {
+      label: 'Julius',
+      kind: 'person',
+      coordinates: [13.262232793634189, 52.55461090738936], 
+    }
   ],
   measurementSourceId: 'txl-ground-height-measurements',
   boundarySourceId: 'txl-project-boundary',

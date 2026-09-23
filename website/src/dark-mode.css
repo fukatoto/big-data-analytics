@@ -92,7 +92,7 @@
   color: #d8e9db;
 }
 :root[data-theme='dark'] .terminal-places-toggle:hover { background: #243b3d; }
-:root[data-theme='dark'] .terminal-places-label > span:last-child { color: #a9c0ad; }
+:root[data-theme='dark'] .terminal-places-label > span + span { color: #a9c0ad; }
 :root[data-theme='dark'] .terminal-places-toggle > i,
 :root[data-theme='dark'] .project-fill-toggle > i { background: #5a7464; }
 :root[data-theme='dark'] .terminal-places-toggle.is-active > i,
@@ -195,6 +195,7 @@
 :root[data-theme='dark'] .height-control-kicker { color: #70cabb; }
 :root[data-theme='dark'] .project-area-control h2,
 :root[data-theme='dark'] .height-control h2 { color: #f0f7ee; }
+:root[data-theme='dark'] .tree-health-control .tree-visible-count { color: #b5d2bd; }
 :root[data-theme='dark'] .desktop-panel-collapse {
   border-color: #466161;
   background: #20383a;
@@ -227,6 +228,25 @@
 :root[data-theme='dark'] .height-legend { color: #a1b9a7; }
 :root[data-theme='dark'] .height-control output { background: #79cbbd; color: #123033; }
 :root[data-theme='dark'] .height-legend b { color: #e3f0e1; }
+:root[data-theme='dark'] .tree-green-range { color: #a1b9a7; }
+:root[data-theme='dark'] .height-control .tree-conspicuous-control {
+  border-color: #568b86;
+  background: #20393b;
+  color: #c0e8dc;
+}
+:root[data-theme='dark'] .height-control .tree-conspicuous-control:hover { background: #2a4b4d; }
+:root[data-theme='dark'] .height-control .tree-conspicuous-control:has(input:checked) {
+  border-color: #e28f72;
+  background: #58382e;
+  color: #ffbea4;
+}
+:root[data-theme='dark'] .tree-mode-toggle {
+  border-color: #568b86;
+  background: #20393b;
+  color: #c0e8dc;
+}
+:root[data-theme='dark'] .tree-mode-toggle:hover,
+:root[data-theme='dark'] .tree-mode-toggle:focus-visible { background: #2a4b4d; }
 :root[data-theme='dark'] .map-actions button { color: #cce0ce; }
 :root[data-theme='dark'] .map-actions button:hover { background: #2a4648; }
 :root[data-theme='dark'] .map-actions button.is-active,
@@ -265,6 +285,7 @@
 :root[data-theme='dark'] .place-popup-body { border-top-color: #62bfb0; }
 :root[data-theme='dark'] .place-popup-body p { color: #c2d9c5; }
 :root[data-theme='dark'] .place-info-map-popup .maplibregl-popup-close-button,
+:root[data-theme='dark'] .tree-map-popup .maplibregl-popup-close-button,
 :root[data-theme='dark'] .tent-events-map-popup .maplibregl-popup-close-button {
   background: #244042;
   color: #e7f2e6;

@@ -343,8 +343,13 @@ h1 em {
   font-weight: 700;
   letter-spacing: 0.14em;
 }
-.terminal-places-label > span:last-child {
+.terminal-places-label > span + span {
   color: #8e9c97;
+}
+.terminal-places-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .terminal-places-toggle > i {
   position: relative;
@@ -378,6 +383,17 @@ h1 em {
 .internal-view-section .terminal-places-toggle {
   margin-top: 0;
 }
+.internal-view-section .terminal-places-label {
+  justify-content: flex-start;
+  gap: 8px;
+}
+.internal-view-icon,
+.places-icon,
+.bulk-action-icon {
+  width: 16px;
+  height: 16px;
+  flex: 0 0 16px;
+}
 .internal-view-options {
   display: grid;
   gap: 5px;
@@ -408,6 +424,12 @@ h1 em {
   background: #213233;
   color: var(--cream);
 }
+.internal-view-option-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-width: 0;
+}
 .internal-view-option b {
   color: transparent;
 }
@@ -421,6 +443,10 @@ h1 em {
   padding-top: 4px;
 }
 .internal-view-bulk-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   flex: 1;
   min-height: 30px;
   padding: 5px 8px;
@@ -440,24 +466,6 @@ h1 em {
 .internal-view-bulk-actions button:focus-visible {
   outline: 2px solid var(--bergreen);
   outline-offset: 2px;
-}
-.internal-forest-marker {
-  display: grid;
-  width: 34px;
-  height: 34px;
-  place-items: center;
-  border: 2px solid #173b32;
-  border-radius: 50%;
-  background: #e3f3de;
-  box-shadow: 0 2px 8px #10231f70;
-}
-.internal-forest-marker[hidden] {
-  display: none;
-}
-.internal-forest-marker svg {
-  width: 25px;
-  height: 25px;
-  fill: #287c47;
 }
 .internal-view-option:focus-visible,
 .internal-view-section .terminal-places-toggle:focus-visible {
@@ -1350,6 +1358,10 @@ h1 em {
   border-top: 1px solid #dce2dc;
 }
 .project-area-bulk-actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 7px;
   min-height: 29px;
   padding: 5px 7px;
   border: 1px solid #cfd8d2;
@@ -1718,6 +1730,9 @@ h1 em {
 .ground-height-map-popup {
   z-index: 7;
 }
+.tree-hover-popup {
+  pointer-events: none;
+}
 .place-info-map-popup .maplibregl-popup-content,
 .ground-height-map-popup .maplibregl-popup-content {
   padding: 0;
@@ -1728,7 +1743,8 @@ h1 em {
   width: min(320px, calc(100vw - 28px));
   border: 1px solid rgba(0, 125, 115, 0.28);
 }
-.place-info-map-popup .maplibregl-popup-close-button {
+.place-info-map-popup .maplibregl-popup-close-button,
+.tree-map-popup .maplibregl-popup-close-button {
   top: 10px;
   right: 10px;
   z-index: 1;
@@ -1748,7 +1764,9 @@ h1 em {
     box-shadow var(--transition-fast);
 }
 .place-info-map-popup .maplibregl-popup-close-button:hover,
-.place-info-map-popup .maplibregl-popup-close-button:focus-visible {
+.place-info-map-popup .maplibregl-popup-close-button:focus-visible,
+.tree-map-popup .maplibregl-popup-close-button:hover,
+.tree-map-popup .maplibregl-popup-close-button:focus-visible {
   background: var(--bergreen);
   color: #fff;
   transform: scale(1.12);
@@ -1840,6 +1858,10 @@ h1 em {
 .place-popup-body {
   padding: 17px 18px 19px;
   border: 4px solid var(--bergreen);
+}
+.tree-map-popup .place-popup-body > strong:first-child {
+  display: inline-block;
+  margin-right: 34px;
 }
 .maplibregl-popup-content .place-popup-body h3 {
   margin: 0 30px 8px 0;

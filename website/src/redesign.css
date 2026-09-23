@@ -202,7 +202,7 @@ h1 em { color: #087d70; }
 }
 .terminal-places-toggle:hover { background: #f2f7ef; }
 .terminal-places-label > span { font-size: 10px; letter-spacing: 0.1em; }
-.terminal-places-label > span:last-child { color: #71897a; }
+.terminal-places-label > span + span { color: #71897a; }
 .terminal-places-toggle > i,
 .project-fill-toggle > i { background: #b7c8bc; }
 .terminal-places-toggle > i > b { background: #fff; }
@@ -352,7 +352,7 @@ h1 em { color: #087d70; }
 .project-fill-toggle > span { font-size: 11px; }
 .project-area-control p,
 .height-control p { font-size: 10px; }
-.height-control { right: 74px; bottom: 54px; width: min(320px, calc(100% - 50px)); }
+.height-control { right: 74px; bottom: 54px; width: min(350px, calc(100% - 50px)); }
 .height-control output { border-radius: 7px; background: #145e54; }
 .height-control label { font-size: 11px; }
 .height-legend { font-size: 11px; }
@@ -417,11 +417,15 @@ h1 em { color: #087d70; }
 
 /* Compact map and bottom sheet */
 @media (max-width: 700px) {
-  .app-shell { --mobile-sheet-height: min(410px, calc(100dvh - 120px)); }
+  .app-shell { --mobile-sheet-height: clamp(300px, 36dvh, 380px); }
   .app-shell.is-tent-selected { --mobile-sheet-height: 60dvh; }
   .sidebar {
     height: var(--mobile-sheet-height);
     padding: 17px 17px 14px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    scrollbar-width: thin;
     border: 1px solid #dce8df;
     border-bottom: 0;
     border-radius: 22px 22px 0 0;
@@ -432,11 +436,17 @@ h1 em { color: #087d70; }
     width: 0px;
     height: 0px;
   }
-  .places-section { margin: 0; padding-right: 0; overflow: hidden; }
+  .places-section {
+    flex: 0 0 auto;
+    margin: 0;
+    padding-right: 0;
+    overflow: visible;
+  }
   .section-heading { margin-bottom: 9px; font-size: 10px; }
-  .place-list { gap: 8px; padding-bottom: 8px; overflow-y: hidden; }
+  .place-list { gap: 8px; padding-bottom: 8px; overflow-x: auto; overflow-y: hidden; }
   .place-item {
     display: flex;
+    grid-row: 2;
     min-width: 146px;
     min-height: 59px;
     margin-bottom: 0;
@@ -460,10 +470,8 @@ h1 em { color: #087d70; }
   .terminal-places-label > span { font-size: 10px; }
   .place-detail {
     margin: 7px 0 0;
-    min-height: 0;
     padding: 13px 14px 14px;
-    overflow-y: auto;
-    overscroll-behavior: contain;
+    overflow: visible;
     border-radius: 12px;
   }
   .detail-kicker { font-size: 9px; }
@@ -557,6 +565,148 @@ h1 em { color: #087d70; }
 }
 @media (max-width: 380px) {
   .map-actions button { padding: 0 7px; font-size: 9px; }
+}
+
+@media (min-width: 701px) {
+  .height-control:not(.tree-health-control) {
+    bottom: var(--analysis-bottom, 54px);
+    right: var(--analysis-right, 74px);
+  }
+}
+.tree-health-control {
+  bottom: var(--tree-health-bottom, 54px);
+  right: var(--tree-health-right, 74px);
+}
+@media (min-width: 701px) {
+  .tree-health-control { width: min(450px, calc(100% - 50px)); }
+}
+.tree-green-range {
+  display: flex;
+  justify-content: space-between;
+  color: #71847a;
+  font-size: 10px;
+}
+.tree-crown-control,
+.tree-green-control { margin-top: 13px; }
+.tree-health-panel-buttons { display: grid; justify-items: center; gap: 6px; }
+.height-control .tree-conspicuous-control {
+  position: relative;
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  margin: 0;
+  border: 1px solid #bcd7c5;
+  border-radius: 7px;
+  background: #f1f8ef;
+  color: #517367;
+  cursor: pointer;
+}
+.tree-conspicuous-control input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+.tree-conspicuous-control svg { width: 18px; height: 18px; pointer-events: none; }
+.height-control .tree-conspicuous-control:hover { background: #dcefe4; }
+.height-control .tree-conspicuous-control:focus-within { outline: 2px solid #087d70; outline-offset: 2px; }
+.height-control .tree-conspicuous-control:has(input:checked) {
+  border-color: #d7785f;
+  background: #fff1ec;
+  color: #b5371e;
+}
+.tree-filter-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 5px 8px;
+  margin-bottom: 6px;
+}
+.tree-filter-heading label { margin-bottom: 0; }
+.tree-mode-toggle {
+  display: grid;
+  width: 28px;
+  height: 28px;
+  flex: 0 0 28px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid #bcd7c5;
+  border-radius: 6px;
+  background: #f1f8ef;
+  color: #145e54;
+  cursor: pointer;
+}
+.tree-mode-toggle svg { width: 18px; height: 18px; }
+.tree-mode-toggle:hover,
+.tree-mode-toggle:focus-visible { background: #dcefe4; }
+.tree-mode-toggle:disabled { cursor: not-allowed; opacity: 0.5; }
+.tree-health-control .height-control-heading {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 16px;
+}
+.tree-health-control .height-control-heading h2 { margin-bottom: 0; }
+.tree-health-control .height-control-heading > div:first-child { min-width: 0; }
+.tree-health-control .tree-visible-count {
+  margin: 4px 0 12px;
+  color: #526f62;
+  font-size: 11px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.tree-health-control.is-desktop-collapsed .tree-visible-count { margin-bottom: 0; }
+.tree-health-control .height-control-heading-actions {
+  align-items: flex-start;
+  gap: 6px;
+}
+.tree-health-control .height-control-heading-actions output {
+  min-width: 51px;
+  padding-right: 5px;
+  padding-left: 5px;
+  white-space: nowrap;
+}
+
+@media (min-width: 701px) {
+  .maplibregl-ctrl-bottom-right .maplibregl-ctrl-group {
+    transform: translateY(-3px);
+  }
+}
+
+@media (max-width: 700px) {
+  .height-control:not(.tree-health-control):not(.is-mobile-open) {
+    top: 63px;
+    left: 12px;
+    right: auto;
+    width: calc((100% - 36px) / 2);
+  }
+  .tree-health-control:not(.is-mobile-open) {
+    top: 63px;
+    bottom: auto;
+    right: 12px;
+    left: auto;
+    width: calc((100% - 36px) / 2);
+  }
+  .height-control.is-mobile-open {
+    top: 63px;
+    bottom: auto;
+    left: 11px;
+    right: 11px;
+    width: auto;
+    max-height: calc(100dvh - var(--mobile-sheet-height) - 75px);
+    overflow-y: auto;
+  }
+  .height-control:not(.is-mobile-open) .mobile-panel-toggle {
+    width: 100%;
+    gap: 5px;
+    padding: 0 8px;
+    font-size: 10px;
+  }
 }
 @media (max-width: 350px) {
   .topbar-actions { gap: 3px; }
