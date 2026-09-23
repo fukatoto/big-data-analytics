@@ -1,4 +1,4 @@
-# Landing im Grünen – Interaktiver Atlas
+# Landing im Grünen - Interaktiver Atlas
 
 Studentisches Projekt mit dem CityLAB Berlin, dem LiFo Lab und Grün Berlin.
 

@@ -227,7 +227,8 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       }))
       .sort((first, second) => {
         const selectedDifference =
-          Number(second.id === state.selected) - Number(first.id === state.selected);
+          Number(second.element.classList.contains('is-selected')) -
+          Number(first.element.classList.contains('is-selected'));
         if (selectedDifference) return selectedDifference;
         return first.point.top - second.point.top || first.point.left - second.point.left;
       });
@@ -666,6 +667,20 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       : (place.description ?? '');
   }
 
+  function createLocationLink(place) {
+    const [longitude, latitude] = place.coordinates;
+    const link = document.createElement('a');
+    link.className = 'place-popup-location';
+    link.href = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${latitude},${longitude}`)}`;
+    link.target = '_blank';
+    link.rel = 'noopener noreferrer';
+    const label = t('openPlaceOnMap', { place: placeName(place) });
+    link.setAttribute('aria-label', label);
+    link.title = label;
+    link.append(document.querySelector('.places-icon').cloneNode(true));
+    return link;
+  }
+
   function createPlacePopupContent(place) {
     const content = document.createElement('article');
     content.className = 'place-popup';
@@ -758,11 +773,14 @@ export function createMapController({ map, t, onSelectProjectArea }) {
 
     const body = document.createElement('div');
     body.className = 'place-popup-body';
+    const heading = document.createElement('div');
+    heading.className = 'place-popup-heading';
     const title = document.createElement('h3');
     title.textContent = placeName(place);
+    heading.append(title, createLocationLink(place));
     const description = document.createElement('p');
     description.textContent = placeDescription(place);
-    body.append(title, description);
+    body.append(heading, description);
     content.append(body);
     return content;
   }
@@ -801,7 +819,13 @@ export function createMapController({ map, t, onSelectProjectArea }) {
       state.eventsStatus === 'ready'
         ? eventCountText()
         : '';
-    heading.append(title, count);
+    const headingTitle = document.createElement('div');
+    headingTitle.className = 'tent-popup-heading-title';
+    headingTitle.append(title, createLocationLink(places.zelt));
+    const headingActions = document.createElement('div');
+    headingActions.className = 'tent-popup-heading-actions';
+    headingActions.append(count);
+    heading.append(headingTitle, headingActions);
     content.append(heading);
 
     if (state.eventsStatus !== 'ready') {
@@ -857,10 +881,10 @@ export function createMapController({ map, t, onSelectProjectArea }) {
   function showPlacePopup(id) {
     const place = places[id];
     if (!place?.coordinates) return;
-    placePopup?.remove();
+    closePlacePopup();
     const showsEvents = id === 'zelt';
     const showsGallery = Boolean(place.images?.length);
-    placePopup = new maplibregl.Popup({
+    const popup = new maplibregl.Popup({
       anchor:
         window.innerWidth <= 700
           ? (showsEvents ? 'bottom' : 'top')
@@ -881,14 +905,19 @@ export function createMapController({ map, t, onSelectProjectArea }) {
         showsEvents ? createTentPopupContent() : createPlacePopupContent(place),
       )
       .addTo(map);
-    placePopup.on('close', () => {
+    placePopup = popup;
+    popup.on('close', () => {
+      if (placePopup !== popup) return;
       placePopup = null;
+      markerElements.get(id)?.classList.remove('is-selected');
+      scheduleMarkerLabelLayout();
     });
   }
 
   function closePlacePopup() {
-    placePopup?.remove();
+    const popup = placePopup;
     placePopup = null;
+    popup?.remove();
   }
 
   function setActiveButtons(selector, activeValue, attribute) {

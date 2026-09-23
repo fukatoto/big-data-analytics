@@ -284,6 +284,9 @@
 :root[data-theme='dark'] .maplibregl-popup-content .place-popup-body h3 { color: #f0f7ee; }
 :root[data-theme='dark'] .place-popup-body { border-top-color: #62bfb0; }
 :root[data-theme='dark'] .place-popup-body p { color: #c2d9c5; }
+:root[data-theme='dark'] .place-popup-location { border-color: #70cabb; color: #70cabb; }
+:root[data-theme='dark'] .place-popup-location:hover,
+:root[data-theme='dark'] .place-popup-location:focus-visible { background: #157f75; color: #fff; }
 :root[data-theme='dark'] .place-info-map-popup .maplibregl-popup-close-button,
 :root[data-theme='dark'] .tree-map-popup .maplibregl-popup-close-button,
 :root[data-theme='dark'] .tent-events-map-popup .maplibregl-popup-close-button {
