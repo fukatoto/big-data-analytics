@@ -68,7 +68,7 @@ export const places = {
       {
         src: terminalBConceptImage,
         labelKey: 'conceptImage',
-        credit: 'Chaix & Morel et Associés',
+        credit: 'Chaix et Morel',
       },
     ],
     descriptionKey: 'terminalBDescription',
@@ -135,7 +135,7 @@ export const places = {
   },
   heideblick: {
     nameKey: 'heideblick',
-    number: '07 / 23',
+    number: '20 / 23',
     coordinates: [13.265539352308727, 52.56025064158781],
     images: [
       {
@@ -155,7 +155,7 @@ export const places = {
   },
   bunker: {
     nameKey: 'recreation',
-    number: '08 / 23',
+    number: '23 / 23',
     coordinates: [13.25783266632616, 52.55416615425812],
     images: [
       {
@@ -175,7 +175,7 @@ export const places = {
   },
   rundbogenantenne: {
     nameKey: 'archedAntenna',
-    number: '09 / 23',
+    number: '10 / 23',
     coordinates: [13.287565760368738, 52.56150630401666],
     images: [
       {
@@ -195,13 +195,13 @@ export const places = {
   },
   zelt: {
     nameKey: 'tent',
-    number: '10 / 23',
+    number: '14 / 23',
     coordinates: [13.27559195542228, 52.55301043217409],
     descriptionKey: 'tentDescription',
   },
   'northern-runway': {
     nameKey: 'northernRunway',
-    number: '11 / 23',
+    number: '17 / 23',
     coordinates: [13.27325037503029, 52.55832749635448], //,
     images: [
       {
@@ -219,7 +219,7 @@ export const places = {
   },
   'southern-runway': {
     nameKey: 'southernRunway',
-    number: '12 / 23',
+    number: '09 / 23',
     coordinates: [13.295831615387536, 52.558694994641904],
     images: [
       {
@@ -232,7 +232,7 @@ export const places = {
   },
   'airfield-lighting': {
     nameKey: 'airfieldLighting',
-    number: '13 / 23',
+    number: '22 / 23',
     coordinates: [13.260998045156224, 52.557178333184616],
     images: [
       {
@@ -245,7 +245,7 @@ export const places = {
   },
   'landscape-park': {
     nameKey: 'landscapePark',
-    number: '14 / 23',
+    number: '08 / 23',
     coordinates: [13.3054988885774, 52.56307055794183],
     images: [
       {
@@ -258,7 +258,7 @@ export const places = {
   },
   'schumacher-quartier-place': {
     nameKey: 'schumacherQuartier',
-    number: '15 / 23',
+    number: '07 / 23',
     coordinates: [13.314237018067079, 52.560911421590774],
     images: [
       {
@@ -271,7 +271,7 @@ export const places = {
   },
   'sunbathing-lawn': {
     nameKey: 'sunbathingLawn',
-    number: '16 / 23',
+    number: '19 / 23',
     coordinates: [13.267099307246742, 52.55834173147002],
     images: [
       {
@@ -284,7 +284,7 @@ export const places = {
   },
   'future-tree-nursery': {
     nameKey: 'futureTreeNursery',
-    number: '17 / 23',
+    number: '16 / 23',
     coordinates: [13.274756493743066, 52.55403370802851],
     images: [
       {
@@ -297,7 +297,7 @@ export const places = {
   },
   'radar-plateau': {
     nameKey: 'radarPlateau',
-    number: '18 / 23',
+    number: '13 / 23',
     coordinates: [13.280517944905284, 52.56344500035554],
     images: [
       {
@@ -310,7 +310,7 @@ export const places = {
   },
   'landscape-maintenance-hub': {
     nameKey: 'landscapeMaintenanceHub',
-    number: '19 / 23',
+    number: '15 / 23',
     coordinates: [13.2753790741931632, 52.55445443953052],
     images: [
       {
@@ -323,7 +323,7 @@ export const places = {
   },
   'grazing-zone': {
     nameKey: 'grazingZone',
-    number: '20 / 23',
+    number: '11 / 23',
     coordinates: [13.28397881028478, 52.56091067585946],
     images: [
       {
@@ -364,7 +364,7 @@ export const places = {
   },
   'heide-tribuene': {
     nameKey: 'heidetribuene',
-    number: '22 / 23',
+    number: '18 / 23',
     coordinates: [13.26765498094581, 52.56043885266264],
     images: [
       {
@@ -377,7 +377,7 @@ export const places = {
   },
   'runway-oase': {
     nameKey: 'runwayOase',
-    number: '23 / 23',
+    number: '12 / 23',
     coordinates: [13.283032631067696, 52.55931600598261],
     images: [
       {

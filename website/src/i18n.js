@@ -177,7 +177,7 @@ export const translations = {
     heideblickDescription:
       'From the elevated Heideblick, the view opens across Tegeler Stadtheide to Berlin’s skyline. A footbridge at the end of the former runway creates a new perspective on the protected heath landscape.',
     recreationDescription:
-      'The former runway will provide space for jogging, cycling, skating, play and sports, combining active recreation with the protected nature of Tegeler Stadtheide.',
+      'The former airport will provide space for jogging, cycling, skating, play and sports, combining active recreation with the protected nature of Tegeler Stadtheide.',
     archedAntennaDescription:
       'The historic arched antenna from the airport era will be preserved as a viewing platform, combining a landscape experience, a place to pause and the history of the site.',
     tentDescription:
@@ -201,7 +201,7 @@ export const translations = {
     grazingZoneDescription:
       'Natural landscape management in action. In these designated areas, sheep, cows, and horses help preserve biodiversity and the open character of the heath through gentle grazing.',
     heideStegDescription:
-      'The Heide Walkway offers visitors a new perspective: the gently elevated path leads through nature and opens up sweeping views across the urban heath.',
+      'The Heide Walkway offers visitors a new perspective. The gently elevated path leads through nature and opens up sweeping views across the urban heath.',
     heidetribueneDescription:
       'The Heide Stands invite you to linger and offer a fresh perspective on the area. From here, you can take in the vast landscape and watch the grazing flock of sheep acting as natural caretakers of the heath.',
     runwayOaseDescription:
@@ -392,7 +392,7 @@ export const translations = {
     heideblickDescription:
       'Vom erhöhten Heideblick öffnet sich die Weite der Tegeler Stadtheide bis zur Berliner Skyline. Ein Steg am Ende der ehemaligen Landebahn macht die geschützte Heidelandschaft aus einer neuen Perspektive erlebbar.',
     recreationDescription:
-      'Auf der ehemaligen Landebahn entstehen Räume zum Joggen, Radfahren, Skaten, Spielen und für weitere Sportarten – aktive Erholung inmitten der geschützten Natur der Tegeler Stadtheide.',
+      'Auf dem ehemaligen Flughagen entstehen Räume zum Joggen, Radfahren, Skaten, Spielen und für weitere Sportarten - aktive Erholung inmitten der geschützten Natur der Tegeler Stadtheide.',
     archedAntennaDescription:
       'Die historische Rundbogenantenne aus der Flughafenzeit wird als Aussichtplattform gesichert. Sie verbindet Landschaftserlebnis, Aufenthalt und die Geschichte des Ortes.',
     tentDescription:
@@ -416,7 +416,7 @@ export const translations = {
     grazingZoneDescription:
       'Natürliche Landschaftspflege in Aktion. In diesen ausgewiesenen Bereichen helfen Schafe, Kühe und Pferde durch schonende Beweidung, die Biodiversität und den offenen Charakter der Heide zu bewahren.',
     heideStegDescription:
-      'Der Heidesteg ermöglicht Besucherinnen und Besuchern einen Perspektivwechsel: Der leicht erhöhte Weg führt durch die Natur und eröffnet weite Blicke über die Stadtheide.',
+      'Der Heidesteg ermöglicht Besucherinnen und Besuchern einen Perspektivwechsel. Der leicht erhöhte Weg führt durch die Natur und eröffnet weite Blicke über die Stadtheide.',
     heidetribueneDescription:
       'Die Heidetribüne lädt zum Verweilen ein und bietet einen völlig neuen Blickwinkel auf das Areal. Von hier aus lässt sich die Weite entspannt genießen und die weidende Schafherde beobachten, die als natürliche Landschaftspfleger der Heide im Einsatz ist.',
     runwayOaseDescription:
@@ -425,7 +425,7 @@ export const translations = {
     treeHeight: 'Höhe: {height} m',
     treeCrownDiameter: 'Kronendurchmesser: {diameter} m',
     treeGreenness: 'Grünanteil (GCC): {value}',
-    treeConspicuous: 'Auffällige Krone',  
+    treeConspicuous: 'Auffällige Krone',
   },
   fr: {
     pageTitle: 'Berlin TXL • Carte 3D',
@@ -611,7 +611,7 @@ export const translations = {
     heideblickDescription:
       'Depuis le Heideblick surélevé, le regard porte sur la Tegeler Stadtheide jusqu’à la silhouette de Berlin. Une passerelle au bout de l’ancienne piste offre une nouvelle perspective sur la lande protégée.',
     recreationDescription:
-      'L’ancienne piste accueillera la course, le vélo, le patinage, les jeux et d’autres sports, associant loisirs actifs et nature protégée de la Tegeler Stadtheide.',
+      'L’ancien aéroport accueillera la course, le vélo, le patinage, les jeux et d’autres sports, associant loisirs actifs et nature protégée de la Tegeler Stadtheide.',
     archedAntennaDescription:
       'L’antenne arquée historique de l’époque aéroportuaire sera conservée comme plateforme panoramique, entre découverte du paysage, halte et mémoire du site.',
     tentDescription:
@@ -635,7 +635,7 @@ export const translations = {
     grazingZoneDescription:
       'L’entretien naturel du paysage en action. Dans ces zones délimitées, moutons, vaches et chevaux contribuent, grâce à un pâturage extensif, à préserver la biodiversité et le caractère ouvert de la lande.',
     heideStegDescription:
-      'La passerelle de la lande offre une nouvelle perspective aux visiteurs : ce chemin légèrement surélevé traverse la nature et ouvre de vastes vues sur la lande urbaine.',
+      'La passerelle de la lande offre une nouvelle perspective aux visiteurs. Ce chemin légèrement surélevé traverse la nature et ouvre de vastes vues sur la lande urbaine.',
     heidetribueneDescription:
       'La tribune de la lande invite à faire une pause et offre un tout nouveau point de vue sur le site. De là, on peut contempler le vaste paysage et observer le troupeau de moutons qui entretient naturellement la lande.',
     runwayOaseDescription:
