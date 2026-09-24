@@ -77,3 +77,44 @@ Die Projektgrenze stammt aus `public/data/txl-project-boundary.geojson`, wurde a
 - `dist/` - erzeugter Produktionsbuild
 
 Vue verwaltet die Seitensteuerung, Beschriftungen und Analysewerte. Die MapLibre-Module verwalten Kartenebenen, Marker und Popups. Sie erhalten die Einstellungen der Nutzer über `src/map-app.js` und schreiben Ergebnisdaten in den gemeinsamen Zustand. `src/analysis-panel-layout.js` übernimmt die Positionierung und das Einklappen der Kartenfenster, da diese Funktionen von den gemessenen Kartenabmessungen abhängen.
+
+## Anwendung allgemein weiterentwickeln
+
+Am einfachsten lässt sich eine kleine Änderung an einer bestehenden Funktion nachvollziehen. Die Dateisuche im Editor hilft dabei, einen sichtbaren Text, einen Dateinamen oder einen vorhandenen Schalter im Code wiederzufinden. In Vue-Dateien enthält `<template>` die sichtbaren Elemente und `<script setup>` deren Verhalten. Die folgenden Stellen sind typische Ausgangspunkte:
+
+| Gewünschte Änderung                      | Zuständige Dateien                                                                                                                                                                                                                                                                                      |
+| ---------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Beschriftung oder Übersetzung ändern     | `src/i18n.js` neue Textschlüssel werden in `en`, `de` und `fr` ergänzt.                                                                                                                                                                                                                                 |
+| Aussehen oder Seitenleisteninhalt ändern | `src/style.css` für Farben, Abstände und Darstellung, `src/components/Sidebar.vue`, `PlacesList.vue` oder `PlaceDetail.vue` für Inhalte, `src/components/MapStage.vue` für Bedienelemente auf der Karte.                                                                                                |
+| Kartenansicht oder Marker ändern         | `src/config.js` für Koordinaten und Startansicht, `src/map-controller.js` für Marker, Popups und Kartenbewegungen, `src/map-app.js` verbindet die Kartenmodule.                                                                                                                                         |
+| Daten oder Analyse ändern                | `public/data/` für die Eingabedateien, `src/ground-height-analysis.js`, `src/ground-height-overlay.js` und `src/tree-health-overlay.js` für deren Auswertung und Anzeige. Die vorhandenen Dateiformate und Spalten müssen erhalten bleiben, sofern der zugehörige Lader nicht ebenfalls angepasst wird. |
+
+Neue Bedienelemente benötigen gegebenenfalls Änderungen an mehreren Stellen: Die Komponente zeigt den Schalter an, `src/App.vue` verarbeitet die Auswahl, und `src/atlas-state.js` enthält den gemeinsamen Zustand. Betrifft die Auswahl die Karte, wird sie über `src/map-app.js` an das passende Kartenmodul weitergegeben. Ein ähnlicher vorhandener Schalter ist dafür eine gute Vorlage.
+
+Während der Entwicklung zeigt `pnpm dev` die Änderungen lokal an. Nach einer Änderung sollten die betroffene Funktion, die Darstellung auf einem schmalen Bildschirm und gegebenenfalls alle drei Sprachen geprüft werden. `pnpm build` prüft anschließend, ob der Produktionsbuild erzeugt werden kann. Dateien in `dist/` und `node_modules/` werden erzeugt beziehungsweise installiert und sind keine Ausgangspunkte für eigene Änderungen.
+
+## Anwendung weiterentwickeln: einen Ort hinzufügen
+
+Für kleine Änderungen reichen ein Texteditor, Node.js und pnpm. Die Anwendung wird wie oben mit `pnpm dev` gestartet, das Terminal bleibt dabei geöffnet. Nach dem Speichern aktualisiert Vite die Seite im Browser. Die wichtigsten Dateien sind `src/config.js` (Ortsdaten), `src/components/PlacesList.vue` (Reihenfolge und Untertitel in der Seitenleiste) und `src/i18n.js` (Texte für Englisch, Deutsch und Französisch). Für einen normalen Ort mit Kartenmarker ist keine Änderung an `src/map-controller.js` nötig.
+
+1. **Ort anlegen:** In `src/config.js` wird im Objekt `places` ein Eintrag ergänzt. Ein vorhandener Ort mit `coordinates`, zum Beispiel `heideblick`, kann als Vorlage dienen. Ein einfacher Eintrag ohne Bild sieht so aus:
+
+   ```js
+   'neuer-ort': {
+     name: 'Neuer Ort',
+     number: '24 / 24',
+     coordinates: [13.2756, 52.5530],
+     description: 'Hier steht eine kurze Beschreibung des Ortes.',
+     source: 'https://example.org/weitere-informationen',
+   },
+   ```
+
+   Die Beispielwerte sind durch echte Angaben zu ersetzen. `neuer-ort` ist eine eindeutige Kennung, die auch in Schritt 2 verwendet wird. Die Koordinaten lassen sich in einer Karten-App ablesen. Bei `coordinates` steht **zuerst der Längengrad, dann der Breitengrad** (`[longitude, latitude]`), manche Karten-Apps zeigen sie andersherum an. `source` ist ein optionaler Link und kann ganz entfallen. `name` und `description` sind feste Texte und erscheinen in allen drei Sprachen gleich. Die zweite Zahl in `number` bezeichnet die bisherige Gesamtzahl von 23 Orten und Projekträumen. Kommt ein 24. Eintrag hinzu, wird auch bei den vorhandenen Einträgen `/ 23` zu `/ 24` geändert.
+
+2. **In der Seitenleiste anzeigen:** In `src/components/PlacesList.vue` wird `'neuer-ort'` im Array `terminalPlaceIds` an der gewünschten Stelle eingefügt. Im Objekt `subtitleKeys` kommt die Zeile `'neuer-ort': 'newPlaceSubtitle',` hinzu. Die Position im Array bestimmt die Reihenfolge der Liste, `number` bestimmt die angezeigte Nummer.
+
+3. **Untertitel übersetzen:** In `src/i18n.js` wird innerhalb **jedes** Sprachblocks (`en`, `de`, `fr`) der Schlüssel `newPlaceSubtitle` ergänzt, zum Beispiel `newPlaceSubtitle: 'New place',` im englischen, `newPlaceSubtitle: 'Neuer Ort',` im deutschen und `newPlaceSubtitle: 'Nouveau lieu',` im französischen Block. Der Schlüssel muss in allen Blöcken gleich geschrieben sein. Für übersetzte Namen und Beschreibungen werden dort weitere Schlüssel angelegt und in `src/config.js` `nameKey` und `descriptionKey` statt `name` und `description` verwendet (siehe vorhandene Orte).
+
+4. **Optional ein Foto hinzufügen:** Eine Bilddatei kann in `src/assets/images/` abgelegt und oben in `src/config.js` importiert werden, etwa mit `import neuerOrtBild from './assets/images/neuer-ort.jpg';`. Im Ort wird dann `images: [{ src: neuerOrtBild, labelKey: 'currentImage', credit: 'Name der Urheberin oder des Urhebers' }],` ergänzt. Für mehrere Bilder werden weitere Objekte in `images` eingefügt. Die Bildquelle wird in [`../README.md`](../README.md) dokumentiert.
+
+5. **Ergebnis prüfen:** Auf der lokalen Seite wird „Orte“ eingeschaltet und der neue Ort in der Liste und auf der Karte ausgewählt. Zu prüfen sind Markerposition, Beschreibung, Link, gegebenenfalls Bild und alle drei Sprachen. Zum Schluss wird im Verzeichnis `website` `pnpm build` ausgeführt. Fehlt der Ort in der Liste, sind die Kennungen in `places` und `terminalPlaceIds` zu vergleichen, bei einer falschen Kartenposition ist die Reihenfolge der Koordinaten zu prüfen.
