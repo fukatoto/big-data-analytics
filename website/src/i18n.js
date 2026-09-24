@@ -183,9 +183,9 @@ export const translations = {
     tentDescription:
       'The tent is the meeting point for Campus Stadt Natur tours and events about nature, planning and the transformation of Tegeler Stadtheide.',
     northernRunwayDescription:
-      'The northern runway opens onto the broad landscape of Tegeler Stadtheide and makes the scale of the former airfield directly tangible.',
+      'The northern runway opens onto the broad landscape of Tegeler Stadtheide and makes the scale of the former airfield directly tangible. It is 3 km long and 60 m wide.',
     southernRunwayDescription:
-      'The southern runway connects the open park landscape with the former airport site and keeps the history of aviation at Berlin-Tegel visible.',
+      'The southern runway connects the open park landscape with the former airport site and keeps the history of aviation at Berlin-Tegel visible. It is 2.4 km long and 60 m wide.',
     airfieldLightingDescription:
       'The former airfield lighting system recalls the precise infrastructure that once guided aircraft safely during take-off, landing and ground operations at Berlin-Tegel.',
     landscapeParkDescription:
@@ -398,9 +398,9 @@ export const translations = {
     tentDescription:
       'Das Zelt ist Treffpunkt für Führungen und Veranstaltungen von Campus Stadt Natur rund um Natur, Planung und Wandel der Tegeler Stadtheide.',
     northernRunwayDescription:
-      'Die nördliche Landebahn öffnet den Blick in die weite Landschaft der Tegeler Stadtheide und macht die Dimension des ehemaligen Flugfelds unmittelbar erlebbar.',
+      'Die nördliche Landebahn öffnet den Blick in die weite Landschaft der Tegeler Stadtheide und macht die Dimension des ehemaligen Flugfelds unmittelbar erlebbar. Sie ist 3 km lang und 60 m breit.',
     southernRunwayDescription:
-      'Die südliche Landebahn verbindet die offene Parklandschaft mit dem ehemaligen Flughafengelände und hält die Luftfahrtgeschichte von Berlin-Tegel sichtbar.',
+      'Die südliche Landebahn verbindet die offene Parklandschaft mit dem ehemaligen Flughafengelände und hält die Luftfahrtgeschichte von Berlin-Tegel sichtbar. Sie ist 2,4 km lang und 60 m breit.',
     airfieldLightingDescription:
       'Die ehemalige Befeuerungsanlage erinnert an die präzise Infrastruktur, die Flugzeuge in Berlin-Tegel bei Start, Landung und Bodenbewegungen sicher leitete.',
     landscapeParkDescription:
@@ -617,9 +617,9 @@ export const translations = {
     tentDescription:
       'La tente est le point de rencontre des visites et événements de Campus Stadt Natur consacrés à la nature, à la planification et à la transformation de la Tegeler Stadtheide.',
     northernRunwayDescription:
-      'La piste nord ouvre le regard sur le vaste paysage de la Tegeler Stadtheide et permet de saisir directement l’échelle de l’ancien aérodrome.',
+      'La piste nord ouvre le regard sur le vaste paysage de la Tegeler Stadtheide et permet de saisir directement l’échelle de l’ancien aérodrome. Elle mesure 3 km de long et 60 m de large.',
     southernRunwayDescription:
-      'La piste sud relie le paysage ouvert du parc à l’ancien site aéroportuaire et maintient visible l’histoire aéronautique de Berlin-Tegel.',
+      'La piste sud relie le paysage ouvert du parc à l’ancien site aéroportuaire et maintient visible l’histoire aéronautique de Berlin-Tegel. Elle mesure 2,4 km de long et 60 m de large.',
     airfieldLightingDescription:
       'L’ancien balisage lumineux rappelle l’infrastructure précise qui guidait les avions en toute sécurité lors des décollages, atterrissages et déplacements au sol à Berlin-Tegel.',
     landscapeParkDescription:
