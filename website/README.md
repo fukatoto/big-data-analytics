@@ -21,7 +21,7 @@ pnpm dev
 
 Die von Vite ausgegebene lokale Adresse öffnen (normalerweise `http://127.0.0.1:5173`). Mit `pnpm build` entstehen die Produktionsdateien in `dist/`, mit `pnpm preview` lässt sich dieser Build lokal prüfen.
 
-Die Karte benötigt eine Internetverbindung für die Vektorkacheln von OpenFreeMap, die optionale Berliner Luftbildebene und Google Fonts. MapLibre GL JS wird über pnpm installiert und lokal mitgebündelt. Gebäudegrundrisse und -höhen stammen aus OpenStreetMap über OpenFreeMap. Die Satellitenansicht nutzt die amtlichen TrueDOP-Sommerorthophotos 2025 der Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen unter der Datenlizenz Deutschland - Zero - Version 2.0. Die Ortsmarker beruhen auf OpenStreetMap-Geokodierung. Ortsbeschreibungen stützen sich auf [Grün Berlin](https://gruen-berlin.de/pressemitteilung/landschaftspark-der-tegeler-stadtheide-kampfmittelraeumung-fruehzeitig-abgeschlossen-mit-grossen-schritten-und-ki-richtung-zukunft) und [Berlin TXL](https://berlintxl.de/). Von diesen Quellen stammen auch die Angaben von 190 beziehungsweise 500 Hektar. Die 3D-Ansicht zeigt kartierte Bestandsgebäude, kein Modell geplanter Neubauten. Die weiter gefasste Flughafenansicht dient der Orientierung und ist keine offizielle Projektgrenze.
+Die Karte benötigt eine Internetverbindung für die Vektorkacheln von OpenFreeMap, die optionale Berliner Luftbildebene und Google Fonts. MapLibre GL JS wird über pnpm installiert und lokal mitgebündelt. Gebäudegrundrisse und -höhen stammen aus OpenStreetMap über OpenFreeMap. Die Satellitenansicht nutzt die amtlichen TrueDOP-Sommerorthophotos 2025 der Senatsverwaltung für Stadtentwicklung, Bauen und Wohnen unter der Datenlizenz Deutschland - Zero - Version 2.0. Die Ortsmarker beruhen auf OpenStreetMap-Geokodierung. Ortsbeschreibungen stützen sich auf [Grün Berlin](https://gruen-berlin.de/pressemitteilung/landschaftspark-der-tegeler-stadtheide-kampfmittelraeumung-fruehzeitig-abgeschlossen-mit-grossen-schritten-und-ki-richtung-zukunft) und [Berlin TXL](https://berlintxl.de/). Von diesen Quellen stammen auch die Angaben von 190 beziehungsweise 500 Hektar. Die 3D-Ansicht zeigt kartierte Bestandsgebäude, kein Modell geplanter Neubauten.
 
 Die Oberfläche lässt sich zwischen Englisch, Deutsch und Französisch umschalten. Die Übersetzungen werden in `src/i18n.js` gepflegt. Sprache, Designmodus und Seitenleisten-Einstellungen werden in `public/ui-preferences.js` verwaltet und lokal im Browser gespeichert.
 
@@ -43,38 +43,43 @@ Der Schalter für die interne Ansicht in der Seitenleiste öffnet unabhängige F
 
 Wenn Waldgesundheit aktiv ist, filtert das zugehörige Fenster die Kronenpolygone nach ihrem GCC-Grünanteil. Standardmäßig reicht der Mindestwert von 0 bis 100 Prozent. Bei 0 Prozent bleiben alle Bäume sichtbar. Dieser Filter lässt sich mit Baumhöhe und Kronendurchmesser kombinieren. Jeder Schwellwert kann zwischen Mindest- und Höchstwert umgeschaltet werden. Außerdem können ausschließlich Bäume mit auffälligen Kronen angezeigt werden. Die Filter gelten auch für Baumumrisse und Marker auffälliger Bäume.
 
-Die Projektgrenze stammt aus `public/data/txl-project-boundary.geojson`, wurde aus dem amtlichen Berliner WFS-Datensatz „Berlin TXL“ abgeleitet und für die Darstellung im Browser vereinfacht. Quelle der Grenze: Tegel Projekt GmbH / Berlin TXL, lizenziert unter CC BY 4.0.
+Die Projektgrenze stammt aus `public/data/txl-project-boundary.geojson`, sie wurde aus dem amtlichen Berliner WFS-Datensatz „Berlin TXL“ abgeleitet und für die Darstellung im Browser vereinfacht. Quelle der Grenze: Tegel Projekt GmbH / Berlin TXL, lizenziert unter CC BY 4.0.
 
 ## Projektstruktur
 
-- `index.html` - Vites minimale Einstiegsseite im Projektverzeichnis
-- `src/main.js` - Einbindung der Vue-Anwendung und Übersetzungsdirektiven
-- `src/App.vue` und `src/atlas-state.js` - Anwendungshülle, gemeinsamer reaktiver Zustand und Lebenszyklus der Karte
-- `src/components/Sidebar.vue` - Seitenleistenlayout und Steuerung der internen Ansicht
-- `src/components/PlacesList.vue` - sortierte Ortsliste mit Namen und Untertiteln
-- `src/components/PlaceDetail.vue` und `src/components/EventsView.vue` - Ansichten für ausgewählte Orte und Veranstaltungen
-- `src/components/MapStage.vue` und `src/components/TreeHealthControls.vue` - Kartenfläche und Analysesteuerung
-- `src/style.css` und `vite.config.js` - Anwendungsstile, Tailwind-Design und Vue-/Tailwind-Vite-Plugins
-- `src/map-app.js` - Initialisierung von MapLibre und Koordination der Kartendienste
-- `src/analysis-panel-layout.js` - responsive Positionierung und Einklappen der Analysefenster auf der Karte
-- `src/config.js` - Ortsdaten und Bilder sowie Konfiguration für Kartenansichten, Grenzen und Overlays
-- `src/basemap-controller.js` - Umschaltung zwischen Straßen- und Satellitenkarte sowie Luftbildebene
-- `src/map-controller.js` - Kartenansichten, Gebäudeebene, Orts- und Veranstaltungs-Popups, Marker und Laden der Veranstaltungsdaten
-- `src/tree-health-overlay.js` - Baumebenen, Popups und Kartenfilter
-- `src/ground-height-analysis.js` - CSV-Auswertung und Ermittlung der Referenz
-- `src/ground-height-overlay.js` - MapLibre-Messpunktebenen, Filter der internen Ansicht und Popups
-- `src/project-areas-overlay.js` - MapLibre-Ebenen und Sichtbarkeitsschalter für die lokale Projektgebiets-GeoJSON-Datei
-- `public/ui-preferences.js` und `src/ui-preferences.js` - frühe Initialisierung des Designmodus und gespeicherte Einstellungen für Sprache, Designmodus und Seitenleiste
-- `src/localization.js` und `src/translate.js` - Anwendung der Spracheinstellung, Beschriftungen der Kartensteuerung und gemeinsame Übersetzungsabfrage
-- `src/event-utils.js` - Veranstaltungsfilter und Kalenderexport
-- `src/number-format.js` - gemeinsame Dezimalformatierung für Analysewerte
-- `src/i18n.js` - englische, deutsche und französische Oberflächenübersetzungen
-- `public/data/txl-ground-heights.csv` - austauschbare Bodenhöhen-Eingabedatei (derzeit eine kleine Teststichprobe mit realen Messwerten)
-- `public/data/txl-project-boundary.geojson` - vereinfachte amtliche Berlin-TXL-Projektgrenze
-- `public/data/txl-project-areas.geojson` - vereinfachte amtliche Projektgebietsgrenzen
-- `public/data/baeume.geojson` - Baumkronenpolygone für die Waldgesundheitsebene
-- `public/data/campus_stadt_natur_tegeler_stadtheide_events.json` - lokale Veranstaltungsliste für das Eventzelt
-- `dist/` - erzeugter Produktionsbuild
+- **`website/`**
+  - `index.html` - Vites minimale Einstiegsseite im Projektverzeichnis
+  - **`src/`**
+    - `src/main.js` - Einbindung der Vue-Anwendung und Übersetzungsdirektiven
+    - `src/App.vue` und `src/atlas-state.js` - Anwendungshülle, gemeinsamer reaktiver Zustand und Lebenszyklus der Karte
+    - **`components/`**
+      - `src/components/Sidebar.vue` - Seitenleistenlayout und Steuerung der internen Ansicht
+      - `src/components/PlacesList.vue` - sortierte Ortsliste mit Namen und Untertiteln
+      - `src/components/PlaceDetail.vue` und `src/components/EventsView.vue` - Ansichten für ausgewählte Orte und Veranstaltungen
+      - `src/components/MapStage.vue` und `src/components/TreeHealthControls.vue` - Kartenfläche und Analysesteuerung
+    - `src/map-app.js` - Initialisierung von MapLibre und Koordination der Kartendienste
+    - `src/analysis-panel-layout.js` - responsive Positionierung und Einklappen der Analysefenster auf der Karte
+    - `src/config.js` - Ortsdaten und Bilder sowie Konfiguration für Kartenansichten, Grenzen und Overlays
+    - `src/basemap-controller.js` - Umschaltung zwischen Straßen- und Satellitenkarte sowie Luftbildebene
+    - `src/map-controller.js` - Kartenansichten, Gebäudeebene, Orts- und Veranstaltungs-Popups, Marker und Laden der Veranstaltungsdaten
+    - `src/tree-health-overlay.js` - Baumebenen, Popups und Kartenfilter
+    - `src/ground-height-analysis.js` - CSV-Auswertung und Ermittlung der Referenz
+    - `src/ground-height-overlay.js` - MapLibre-Messpunktebenen, Filter der internen Ansicht und Popups
+    - `src/project-areas-overlay.js` - MapLibre-Ebenen und Sichtbarkeitsschalter für die lokale Projektgebiets-GeoJSON-Datei
+    - `src/localization.js` und `src/translate.js` - Anwendung der Spracheinstellung, Beschriftungen der Kartensteuerung und gemeinsame Übersetzungsabfrage
+    - `src/event-utils.js` - Veranstaltungsfilter und Kalenderexport
+    - `src/number-format.js` - gemeinsame Dezimalformatierung für Analysewerte
+    - `src/i18n.js` - englische, deutsche und französische Oberflächenübersetzungen
+  - `src/style.css` und `vite.config.js` - Anwendungsstile, Tailwind-Design und Vue-/Tailwind-Vite-Plugins
+  - `public/ui-preferences.js` und `src/ui-preferences.js` - frühe Initialisierung des Designmodus und gespeicherte Einstellungen für Sprache, Designmodus und Seitenleiste
+  - **`public/`**
+    - **`data/`**
+      - `public/data/txl-ground-heights.csv` - austauschbare Bodenhöhen-Eingabedatei (derzeit eine kleine Teststichprobe mit realen Messwerten)
+      - `public/data/txl-project-boundary.geojson` - vereinfachte amtliche Berlin-TXL-Projektgrenze
+      - `public/data/txl-project-areas.geojson` - vereinfachte amtliche Projektgebietsgrenzen
+      - `public/data/baeume.geojson` - Baumkronenpolygone für die Waldgesundheitsebene
+      - `public/data/campus_stadt_natur_tegeler_stadtheide_events.json` - lokale Veranstaltungsliste für das Eventzelt
+  - `dist/` - erzeugter Produktionsbuild
 
 Vue verwaltet die Seitensteuerung, Beschriftungen und Analysewerte. Die MapLibre-Module verwalten Kartenebenen, Marker und Popups. Sie erhalten die Einstellungen der Nutzer über `src/map-app.js` und schreiben Ergebnisdaten in den gemeinsamen Zustand. `src/analysis-panel-layout.js` übernimmt die Positionierung und das Einklappen der Kartenfenster, da diese Funktionen von den gemessenen Kartenabmessungen abhängen.
 

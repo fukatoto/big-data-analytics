@@ -21,7 +21,7 @@ pnpm dev
 
 Open the local URL printed by Vite (normally `http://127.0.0.1:5173`). Run `pnpm build` to create production files in `dist/`, and `pnpm preview` to check that build locally.
 
-The map needs an internet connection for OpenFreeMap vector tiles, the optional Berlin aerial-photo layer, and Google Fonts. MapLibre GL JS is installed and bundled locally through pnpm. Building footprints and heights come from OpenStreetMap via OpenFreeMap. The satellite toggle uses the official Berlin TrueDOP 2025 summer orthophotos from the Senate Department for Urban Development, Building and Housing under the Data licence Germany – Zero – Version 2.0. The place pins are based on OpenStreetMap geocoding. Place descriptions draw on [Grün Berlin](https://gruen-berlin.de/pressemitteilung/landschaftspark-der-tegeler-stadtheide-kampfmittelraeumung-fruehzeitig-abgeschlossen-mit-grossen-schritten-und-ki-richtung-zukunft) and [Berlin TXL](https://berlintxl.de/). These sources also provide the 190-hectare and 500-hectare figures, respectively. The 3D view shows mapped existing buildings, not a model of proposed construction. The wider airport view provides context and is not an official project boundary.
+The map needs an internet connection for OpenFreeMap vector tiles, the optional Berlin aerial-photo layer, and Google Fonts. MapLibre GL JS is installed and bundled locally through pnpm. Building footprints and heights come from OpenStreetMap via OpenFreeMap. The satellite toggle uses the official Berlin TrueDOP 2025 summer orthophotos from the Senate Department for Urban Development, Building and Housing under the Data licence Germany – Zero – Version 2.0. The place pins are based on OpenStreetMap geocoding. Place descriptions draw on [Grün Berlin](https://gruen-berlin.de/pressemitteilung/landschaftspark-der-tegeler-stadtheide-kampfmittelraeumung-fruehzeitig-abgeschlossen-mit-grossen-schritten-und-ki-richtung-zukunft) and [Berlin TXL](https://berlintxl.de/). These sources also provide the 190-hectare and 500-hectare figures, respectively. The 3D view shows mapped existing buildings, not a model of proposed construction.
 
 The interface can be switched between English, German, and French. Translations are maintained in `src/i18n.js`. Language, theme, and sidebar preferences are managed in `public/ui-preferences.js` and stored locally in the browser.
 
@@ -43,38 +43,43 @@ The sidebar's internal view switch opens independent filters for Forest health, 
 
 When Forest health is active, its panel filters canopy polygons by GCC green share. By default, the minimum threshold ranges from 0 to 100 percent. At 0 percent, all trees remain visible. You can combine this filter with tree height and crown diameter, switch each threshold between minimum and maximum, or show only trees with conspicuous crowns. The filters also apply to tree outlines and conspicuous-tree markers.
 
-The project outline comes from `public/data/txl-project-boundary.geojson`, derived from the official Berlin WFS dataset "Berlin TXL" and simplified for browser rendering. Boundary source: Tegel Projekt GmbH / Berlin TXL, licensed under CC BY 4.0.
+The project outline comes from `public/data/txl-project-boundary.geojson`, it has been derived from the official Berlin WFS dataset "Berlin TXL" and simplified for browser rendering. Boundary source: Tegel Projekt GmbH / Berlin TXL, licensed under CC BY 4.0.
 
 ## Project structure
 
-- `index.html` - Vite's minimal page entry at the project root
-- `src/main.js` - Vue application mount and translation directives
-- `src/App.vue` and `src/atlas-state.js` - application shell, shared reactive state, and map lifecycle
-- `src/components/Sidebar.vue` - sidebar layout and internal-view controls
-- `src/components/PlacesList.vue` - ordered place list, names, and subtitles
-- `src/components/PlaceDetail.vue` and `src/components/EventsView.vue` - selected place and event views
-- `src/components/MapStage.vue` and `src/components/TreeHealthControls.vue` - map canvas and analysis controls
-- `src/style.css` and `vite.config.js` - application styles, Tailwind theme, and Vue/Tailwind Vite plugins
-- `src/map-app.js` - MapLibre bootstrap and coordination of map services
-- `src/analysis-panel-layout.js` - responsive positioning and collapse behavior of the map analysis panels
-- `src/config.js` - place data and images, map cameras, boundaries, and overlay configuration
-- `src/basemap-controller.js` - street/satellite basemap toggle and aerial-photo layer
-- `src/map-controller.js` - map views, building layer, place and event popups, markers, and event data loading
-- `src/tree-health-overlay.js` - tree layers, popups, and map filters
-- `src/ground-height-analysis.js` - CSV parsing and reference extraction
-- `src/ground-height-overlay.js` - MapLibre measurement layers, internal-view filters, and popups
-- `src/project-areas-overlay.js` - MapLibre layers and visibility controls for the local project-area GeoJSON
-- `public/ui-preferences.js` and `src/ui-preferences.js` - early theme setup and persisted language, theme, and sidebar preferences
-- `src/localization.js` and `src/translate.js` - language application, map-control labels, and shared translation lookup
-- `src/event-utils.js` - event filtering and calendar export
-- `src/number-format.js` - shared decimal formatting for analysis values
-- `src/i18n.js` - English, German, and French interface translations
-- `public/data/txl-ground-heights.csv` - replaceable ground-height input (currently a small real-world test sample)
-- `public/data/txl-project-boundary.geojson` - simplified official Berlin TXL project boundary
-- `public/data/txl-project-areas.geojson` - simplified official project-area boundaries
-- `public/data/baeume.geojson` - tree canopy polygons used by the Forest health overlay
-- `public/data/campus_stadt_natur_tegeler_stadtheide_events.json` - local event list shown at the Event tent
-- `dist/` - generated production build
+- **`website/`**
+  - `index.html` - Vite's minimal page entry at the project root
+  - **`src/`**
+    - `src/main.js` - Vue application mount and translation directives
+    - `src/App.vue` and `src/atlas-state.js` - application shell, shared reactive state, and map lifecycle
+    - **`components/`**
+      - `src/components/Sidebar.vue` - sidebar layout and internal-view controls
+      - `src/components/PlacesList.vue` - ordered place list, names, and subtitles
+      - `src/components/PlaceDetail.vue` and `src/components/EventsView.vue` - selected place and event views
+      - `src/components/MapStage.vue` and `src/components/TreeHealthControls.vue` - map canvas and analysis controls
+    - `src/map-app.js` - MapLibre bootstrap and coordination of map services
+    - `src/analysis-panel-layout.js` - responsive positioning and collapse behavior of the map analysis panels
+    - `src/config.js` - place data and images, map cameras, boundaries, and overlay configuration
+    - `src/basemap-controller.js` - street/satellite basemap toggle and aerial-photo layer
+    - `src/map-controller.js` - map views, building layer, place and event popups, markers, and event data loading
+    - `src/tree-health-overlay.js` - tree layers, popups, and map filters
+    - `src/ground-height-analysis.js` - CSV parsing and reference extraction
+    - `src/ground-height-overlay.js` - MapLibre measurement layers, internal-view filters, and popups
+    - `src/project-areas-overlay.js` - MapLibre layers and visibility controls for the local project-area GeoJSON
+    - `src/localization.js` and `src/translate.js` - language application, map-control labels, and shared translation lookup
+    - `src/event-utils.js` - event filtering and calendar export
+    - `src/number-format.js` - shared decimal formatting for analysis values
+    - `src/i18n.js` - English, German, and French interface translations
+  - `src/style.css` and `vite.config.js` - application styles, Tailwind theme, and Vue/Tailwind Vite plugins
+  - `public/ui-preferences.js` and `src/ui-preferences.js` - early theme setup and persisted language, theme, and sidebar preferences
+  - **`public/`**
+    - **`data/`**
+      - `public/data/txl-ground-heights.csv` - replaceable ground-height input (currently a small real-world test sample)
+      - `public/data/txl-project-boundary.geojson` - simplified official Berlin TXL project boundary
+      - `public/data/txl-project-areas.geojson` - simplified official project-area boundaries
+      - `public/data/baeume.geojson` - tree canopy polygons used by the Forest health overlay
+      - `public/data/campus_stadt_natur_tegeler_stadtheide_events.json` - local event list shown at the Event tent
+  - `dist/` - generated production build
 
 
 Vue owns the page controls, labels, and analysis values. The MapLibre modules own map layers, markers, and popups. They receive user choices through `src/map-app.js` and write result data to the shared state. `src/analysis-panel-layout.js` handles map panel positioning and collapse behavior because those depend on measured map dimensions.
