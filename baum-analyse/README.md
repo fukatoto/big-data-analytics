@@ -499,6 +499,34 @@ Ein Teil der markierten Bäume kann tatsächlich geschädigt sein (Totholz, verb
 
 Bei gemischten Beständen kann es sinnvoll sein, die Z-Werte getrennt für Nadel- und Laubbäume zu berechnen, damit nicht überproportional viele Nadelbäume als auffällig gelten.
 
+### GeoJSON für die Webkarte exportieren
+
+Das Notebook erstellt zusätzlich eine kleinere Datei für die Webkarte. Sie enthält nur die benötigten Attribute, einen aus dem GCC berechneten Farbwert und den Z-Wert. Die Kronen werden vereinfacht und für die Webkarte nach WGS 84 (EPSG:4326) umprojiziert.
+
+```python
+import matplotlib as mpl
+import pandas as pd
+
+web = gdf[["id", "hoehe_m", "durchm_m", "gcc", "auffaellig", "geometry"]].copy()
+
+# Farbwerte vorab berechnen, um die Darstellung an QGIS anzugleichen
+lo, hi = web["gcc"].quantile([0.02, 0.98])
+norm = mpl.colors.Normalize(lo, hi, clip=True)
+cmap = mpl.colormaps["RdYlGn"]
+web["farbe"] = [mpl.colors.to_hex(cmap(norm(v))) if pd.notna(v) else "#888888" for v in web["gcc"]]
+
+# Treppenkanten der Pixel glätten, Werte runden
+web["geometry"] = web.simplify(0.15)
+web[["hoehe_m", "durchm_m"]] = web[["hoehe_m", "durchm_m"]].round(1)
+web["gcc"] = web["gcc"].round(3)
+
+web["z"] = z.round(2)
+web.to_crs(4326).to_file(base + "baeume.geojson", driver="GeoJSON",
+                          layer_options={"COORDINATE_PRECISION": 7})
+```
+
+Die Farbskala reicht vom 2. bis zum 98. Perzentil des GCC; Kronen ohne Messwert werden grau. `simplify(0.15)` glättet die Pixelkanten und verkleinert die Datei. Für die Webseite wird `baeume.geojson` nach `website/public/data/` kopiert und dort als `/data/baeume.geojson` eingebunden.
+
 ---
 
 ## 13. Ergebnis validieren
@@ -561,3 +589,4 @@ Erst damit wird aus „der Algorithmus hat X Bäume gezählt“ eine Aussage mit
 | `dsm.tif` | Oberflächenmodell, 25 cm |
 | `wald_polygon.gpkg` | Abgrenzung der Waldfläche |
 | `baeume.gpkg` | ein Polygon pro Baum mit Höhe, Fläche, Durchmesser, Farbwerten, GCC und Auffälligkeitsmarkierung |
+| `baeume.geojson` | vereinfachte Kronen mit Farbwerten und Z-Wert für die Webkarte |
