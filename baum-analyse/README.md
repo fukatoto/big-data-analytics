@@ -1,19 +1,19 @@
 # Einzelbaumerkennung und Vitalitätsscreening aus Drohnen-LiDAR und Orthofoto
 
-Diese Anleitung beschreibt Schritt für Schritt, wie wir aus einer LiDAR-Punktwolke und einem Orthofoto die Bäume einer Waldfläche automatisch erkannt, gezählt, vermessen und auf auffällige Kronen hin untersucht haben. Zu jedem Schritt steht dabei, *warum* wir ihn so gemacht haben, damit ihr die Entscheidungen nachvollziehen und bei anderen Daten anpassen könnt.
+Diese Anleitung beschreibt Schritt für Schritt, wie sich die Bäume einer Waldfläche anhand einer LiDAR-Punktwolke und eines Orthofotos automatisch erkennen, zählen, vermessen und auf auffällige Kronen hin untersuchen lassen. Zu jedem Schritt wird die Vorgehensweise begründet, damit die Entscheidungen nachvollziehbar und auf andere Daten übertragbar sind.
 
 ---
 
 ## Inhalt
 
 1. [Ziel und Grundidee](#1-ziel-und-grundidee)
-2. [Die Ausgangsdaten und ihre Formate](#2-die-ausgangsdaten-und-ihre-formate)
+2. [Ausgangsdaten und ihre Formate](#2-ausgangsdaten-und-ihre-formate)
 3. [Software einrichten](#3-software-einrichten)
 4. [Daten inspizieren](#4-daten-inspizieren)
 5. [Punktwolke umprojizieren und ausdünnen](#5-punktwolke-umprojizieren-und-ausdünnen)
 6. [Orthofoto umprojizieren](#6-orthofoto-umprojizieren)
 7. [Bodenklassifikation prüfen](#7-bodenklassifikation-prüfen)
-8. [Gelände- und Oberflächenmodell rechnen](#8-gelände--und-oberflächenmodell-rechnen)
+8. [Gelände- und Oberflächenmodell berechnen](#8-gelände--und-oberflächenmodell-berechnen)
 9. [Waldfläche abgrenzen](#9-waldfläche-abgrenzen)
 10. [Baumerkennung im Jupyter-Notebook](#10-baumerkennung-im-jupyter-notebook)
 11. [Kronen als Polygone exportieren](#11-kronen-als-polygone-exportieren)
@@ -26,19 +26,19 @@ Diese Anleitung beschreibt Schritt für Schritt, wie wir aus einer LiDAR-Punktwo
 
 ## 1. Ziel und Grundidee
 
-Wir wollen drei Fragen beantworten:
+Drei Fragen stehen im Mittelpunkt:
 
 - **Wie viele Bäume stehen auf der Fläche?**
 - **Wie hoch und wie groß sind sie?**
 - **Welche Bäume fallen durch ihre Kronenfarbe als möglicherweise geschwächt auf?**
 
-Die Grundidee: Aus der Punktwolke berechnen wir ein **Kronenhöhenmodell** (Canopy Height Model, CHM), also für jeden Punkt der Fläche die Höhe der Vegetation über dem Boden. In diesem Höhenbild ist jede Baumspitze ein lokaler Gipfel. Diese Gipfel finden wir automatisch, und von ihnen ausgehend grenzen wir die Kronen ab. Anschließend legen wir die Kronenumrisse über das Orthofoto und messen pro Krone die Farbe.
+Die Grundidee: Aus der Punktwolke wird ein **Kronenhöhenmodell** (Canopy Height Model, CHM) berechnet, das für jeden Punkt der Fläche die Höhe der Vegetation über dem Boden angibt. In diesem Höhenbild ist jede Baumspitze ein lokaler Gipfel. Diese Gipfel werden automatisch erkannt und dienen als Ausgangspunkte für die Abgrenzung der Kronen. Anschließend werden die Kronenumrisse über das Orthofoto gelegt und die Farbwerte pro Krone gemessen.
 
-**Warum Höhe statt nur Bild?** Benachbarte Kronen haben im Foto oft fast dieselbe Farbe und verschmelzen optisch. In der Höhe sind sie dagegen durch eine Senke getrennt. Das Höhenmodell trennt Bäume deshalb deutlich zuverlässiger. Das Foto brauchen wir erst für die Farbauswertung.
+**Warum Höhe statt nur Bild?** Benachbarte Kronen haben im Foto oft fast dieselbe Farbe und verschmelzen optisch. In der Höhe sind sie dagegen durch eine Senke getrennt. Das Höhenmodell trennt Bäume deshalb deutlich zuverlässiger. Das Foto wird erst für die Farbauswertung benötigt.
 
 ---
 
-## 2. Die Ausgangsdaten und ihre Formate
+## 2. Ausgangsdaten und ihre Formate
 
 ```
 202606026_GB_Wald/
@@ -53,16 +53,16 @@ Die Grundidee: Aus der Punktwolke berechnen wir ein **Kronenhöhenmodell** (Cano
 
 ### `.las` – die Punktwolke
 
-Ein standardisiertes Binärformat für 3D-Punktwolken. Jeder Punkt hat X, Y, Z sowie Zusatzinformationen: Intensität des Laserechos, Echonummer, Klassifikation (Boden, Vegetation usw.), Zeitstempel und in unserem Fall auch eine RGB-Farbe. `.laz` ist die komprimierte Variante, `.copc.laz` eine komprimierte Variante mit eingebautem räumlichem Index, die sich besonders schnell anzeigen und auslesen lässt.
+Ein standardisiertes Binärformat für 3D-Punktwolken. Jeder Punkt hat X, Y, Z sowie Zusatzinformationen: Intensität des Laserechos, Echonummer, Klassifikation (Boden, Vegetation usw.), Zeitstempel und in den hier verwendeten Daten auch eine RGB-Farbe. `.laz` ist die komprimierte Variante, `.copc.laz` eine komprimierte Variante mit eingebautem räumlichem Index, die sich besonders schnell anzeigen und auslesen lässt.
 
 ### `.tif` – das Rasterbild
 
-Ein GeoTIFF: ein Pixelbild mit Ortsbezug. Achtung, der Name `dom` ist irreführend. Man könnte „Digitales Oberflächenmodell" vermuten, tatsächlich steht es in der DJI-Software für **Digital Orthophoto Map**, also ein entzerrtes Luftbild. Erkennbar ist das an den vier Kanälen im 8-Bit-Format (Rot, Grün, Blau und ein Transparenzkanal). Ein Höhenmodell hätte einen einzigen Kanal mit Kommazahlen.
+Ein GeoTIFF: ein Pixelbild mit Ortsbezug. Achtung, der Name `dom` ist irreführend. Man könnte „Digitales Oberflächenmodell“ vermuten, tatsächlich steht es in der DJI-Software für **Digital Orthophoto Map**, also ein entzerrtes Luftbild. Erkennbar ist das an den vier Kanälen im 8-Bit-Format (Rot, Grün, Blau und ein Transparenzkanal). Ein Höhenmodell hätte einen einzigen Kanal mit Kommazahlen.
 
 ### `.prj` und `.tfw` – Beiwerk zum Bild
 
 - **`.prj`** enthält das Koordinatensystem als lesbaren Text (lässt sich im Editor öffnen).
-- **`.tfw`** („World File") enthält sechs Zahlen: Pixelgröße, Rotation und die Koordinate der linken oberen Ecke.
+- **`.tfw`** („World File“) enthält sechs Zahlen: Pixelgröße, Rotation und die Koordinate der linken oberen Ecke.
 
 Beide müssen im selben Ordner und mit demselben Dateinamen wie die `.tif` liegen bleiben. Ein echtes GeoTIFF trägt diese Informationen zwar meist auch intern, aber wer die Dateien trennt, riskiert, dass das Bild seinen Ortsbezug verliert.
 
@@ -70,13 +70,13 @@ Beide müssen im selben Ordner und mit demselben Dateinamen wie die `.tif` liege
 
 ## 3. Software einrichten
 
-Wir arbeiten unter Windows 10 mit folgenden Werkzeugen:
+Für die hier beschriebene Verarbeitung unter Windows 10 werden folgende Werkzeuge verwendet:
 
-| Werkzeug | Wofür | Bezug |
+| Werkzeug | Einsatzzweck | Bezug |
 |---|---|---|
-| **QGIS** | Daten anschauen, Polygon zeichnen, Ergebnisse darstellen | qgis.org |
+| **QGIS** | Daten betrachten, Polygon zeichnen, Ergebnisse darstellen | qgis.org |
 | **OSGeo4W Shell** | Kommandozeile mit PDAL und GDAL | wird mit QGIS installiert, liegt im Startmenü |
-| **CloudCompare** | Punktwolke in 3D anschauen, Querschnitte | cloudcompare.org |
+| **CloudCompare** | Punktwolke in 3D betrachten, Querschnitte | cloudcompare.org |
 | **Python + VS Code** | Baumerkennung im Notebook | python.org, code.visualstudio.com |
 
 ### Warum die OSGeo4W Shell?
@@ -85,7 +85,7 @@ PDAL (für Punktwolken) und GDAL (für Raster) sind in QGIS bereits enthalten, a
 
 ### Python-Umgebung
 
-Wir legen eine eigene virtuelle Umgebung an, damit die Pakete sauber getrennt von der Python-Installation von QGIS bleiben:
+Eine eigene virtuelle Umgebung hält die benötigten Pakete von der Python-Installation von QGIS getrennt:
 
 ```
 python -m venv <PROJEKT>\venv
@@ -93,23 +93,23 @@ python -m venv <PROJEKT>\venv
 pip install rasterio scipy scikit-image geopandas matplotlib ipykernel
 ```
 
-`<PROJEKT>` ist in dieser gesamten Anleitung der Platzhalter für euren Projektordner, z. B. `D:\Users\name\projekte\SummerSchool\202606026_GB_Wald`. Bitte überall durch euren eigenen Pfad ersetzen.
+`<PROJEKT>` ist in dieser gesamten Anleitung der Platzhalter für den jeweiligen Projektordner, z. B. `D:\Users\name\projekte\SummerSchool\202606026_GB_Wald`. Der Platzhalter ist in allen Befehlen durch den tatsächlichen Pfad zu ersetzen.
 
 In VS Code die Jupyter-Erweiterung installieren und beim Notebook oben rechts diese `venv` als Kernel auswählen.
 
-**Wichtig: nicht `pip install gdal` ausführen.** Das Python-Paket `gdal` ist nur eine Hülle um eine C++-Bibliothek und versucht, sich beim Installieren selbst zu kompilieren. Unter Windows scheitert das fast immer mit `Failed building wheel for gdal`. Wir brauchen es auch nicht: `rasterio` bringt GDAL bereits fertig kompiliert mit, und die Kommandozeilenwerkzeuge nutzen wir aus der OSGeo4W Shell.
+**Wichtig: nicht `pip install gdal` ausführen.** Das Python-Paket `gdal` ist nur eine Hülle um eine C++-Bibliothek und versucht, sich beim Installieren selbst zu kompilieren. Unter Windows scheitert das fast immer mit `Failed building wheel for gdal`. Das Paket ist hier nicht erforderlich: `rasterio` bringt GDAL bereits fertig kompiliert mit und die Kommandozeilenwerkzeuge werden aus der OSGeo4W Shell verwendet.
 
 ---
 
 ## 4. Daten inspizieren
 
-Bevor man irgendetwas rechnet, muss man wissen, was in den Dateien steckt. Viele spätere Entscheidungen hängen davon ab.
+Vor der Verarbeitung sollten Inhalt und Eigenschaften der Dateien geprüft werden. Viele spätere Entscheidungen hängen davon ab.
 
 ### Orthofoto
 
 In QGIS die `dom.tif` in die Karte ziehen, Rechtsklick → Eigenschaften → Information.
 
-Was wir dort gefunden haben:
+Für das vorliegende Orthofoto ergaben sich folgende Angaben:
 
 | Angabe | Wert | Bedeutung |
 |---|---|---|
@@ -136,7 +136,7 @@ Ergebnis:
 | Punktdichte | ca. 1.240 Punkte/m² | weit mehr als nötig |
 | Dimensionen | u. a. Classification, ReturnNumber, RGB | Farbe und Echoinformation vorhanden |
 | KBS | WGS 84 + EGM96 height | horizontal in Grad, Höhe in Metern |
-| System-ID | Base64, entschlüsselt „DJI-L1" | aufgenommen mit DJI Zenmuse L1, echtes LiDAR |
+| System-ID | Base64, entschlüsselt „DJI-L1“ | aufgenommen mit DJI Zenmuse L1, echtes LiDAR |
 
 Dann die Klassifikation und die Echos:
 
@@ -144,18 +144,18 @@ Dann die Klassifikation und die Echos:
 pdal info --stats --dimensions "Classification,NumberOfReturns,ReturnNumber" <PROJEKT>\pointcloud\cloud0.las
 ```
 
-Das liest die gesamte Datei und dauert einige Minuten. Ergebnis:
+Dies liest die gesamte Datei und dauert einige Minuten. Ergebnis:
 
-- **NumberOfReturns** im Mittel 1,5, maximal 7: Der Laser dringt durch Lücken im Kronendach bis zum Boden. Damit haben wir auch unter den Bäumen Bodenpunkte.
+- **NumberOfReturns** im Mittel 1,5, maximal 7: Der Laser dringt durch Lücken im Kronendach bis zum Boden. Damit liegen auch unter den Bäumen Bodenpunkte vor.
 - **Classification** nur Werte 1 und 2: Die DJI-Software hat bereits Bodenpunkte (Klasse 2) markiert. Knapp 50 % aller Punkte sind Boden.
 
 ### Warum diese Befunde wichtig sind
 
-**Die Koordinaten sind in Grad.** Fast alle Verfahren zur Baumerkennung rechnen mit Abständen in Metern (z. B. „Suchfenster 2 m"). In Grad ist ein Schritt nach Osten ein anderer Abstand als ein Schritt nach Norden, und beides passt nicht zur Höhe in Metern. Deshalb müssen wir alles in ein metrisches System umrechnen (Schritt 5 und 6).
+**Die Koordinaten sind in Grad angegeben.** Fast alle Verfahren zur Baumerkennung rechnen mit Abständen in Metern (z. B. „Suchfenster 2 m“). In Grad ist ein Schritt nach Osten ein anderer Abstand als ein Schritt nach Norden und beides passt nicht zur Höhe in Metern. Deshalb ist eine Umrechnung in ein metrisches System erforderlich (Schritt 5 und 6).
 
-**Die Dichte ist viel zu hoch.** Für ein Höhenmodell mit 25 cm Rasterweite reichen 20 bis 50 Punkte pro Quadratmeter. Mit über 1.000 wird jede Berechnung unnötig langsam oder läuft gar nicht erst, weil der Arbeitsspeicher nicht reicht.
+**Die Dichte ist viel zu hoch.** Für ein Höhenmodell mit 25 cm Rasterweite reichen 20 bis 50 Punkte pro Quadratmeter. Bei über 1.000 Punkten pro Quadratmeter werden Berechnungen unnötig langsam oder können wegen unzureichenden Arbeitsspeichers nicht ausgeführt werden.
 
-**50 % Bodenpunkte sind für einen Sommerwald ungewöhnlich viel.** Normal wären 5 bis 20 %. Bei uns erklärt es sich dadurch, dass die Fläche an einen Flugplatz grenzt und Rollfeld, Taxiways und eine Straße mit erfasst sind. Dort trifft praktisch jeder Laserimpuls den Boden. Trotzdem sollte man so eine Auffälligkeit immer prüfen, statt sie hinzunehmen (Schritt 7).
+**50 % Bodenpunkte sind für einen Sommerwald ungewöhnlich viel.** Normal wären 5 bis 20 %. Bei den vorliegenden Daten erklärt sich der hohe Anteil dadurch, dass die Fläche an einen Flugplatz grenzt und Rollfeld, Taxiways und eine Straße mit erfasst sind. Dort trifft praktisch jeder Laserimpuls den Boden. Trotzdem sollte eine solche Auffälligkeit geprüft werden (Schritt 7).
 
 **Kein Nahinfrarot.** Klassische Vegetationsindizes wie NDVI sind damit nicht möglich. Die Vitalitätsbeurteilung bleibt auf sichtbare Farbveränderungen beschränkt.
 
@@ -163,7 +163,7 @@ Das liest die gesamte Datei und dauert einige Minuten. Ergebnis:
 
 ## 5. Punktwolke umprojizieren und ausdünnen
 
-Wir erledigen zwei Dinge in einem Durchgang: Umrechnung nach **EPSG:25833** (ETRS89 / UTM Zone 33N, das amtliche metrische System für Berlin und Ostdeutschland) und Reduktion auf jeden 20. Punkt.
+In einem Durchgang erfolgen die Umrechnung nach **EPSG:25833** (ETRS89 / UTM Zone 33N, das amtliche metrische System für Berlin und Ostdeutschland) und die Reduktion auf jeden 20. Punkt.
 
 Datei `prep.json` im Projektordner anlegen (oder bei der bei GitHub bereitgestellten Datei den Dateipfad anpassen und in den Projektordner verschieben):
 
@@ -191,8 +191,8 @@ Datei `prep.json` im Projektordner anlegen (oder bei der bei GitHub bereitgestel
 ```
 
 Hinweise:
-- In JSON-Dateien die Pfade mit normalen Schrägstrichen `/` schreiben, nicht mit `\`, und immer als vollständigen Pfad.
-- Beim Speichern mit dem Windows-Editor darauf achten, dass nicht `prep.json.txt` entsteht (Dateityp „Alle Dateien" wählen). Besser VS Code nehmen.
+- In JSON-Dateien die Pfade mit normalen Schrägstrichen `/` schreiben, nicht mit `\` und immer als vollständigen Pfad.
+- Beim Speichern mit dem Windows-Editor darauf achten, dass nicht `prep.json.txt` entsteht (Dateityp „Alle Dateien“ wählen). Alternativ empfiehlt sich die Verwendung von VS Code.
 
 Ausführen in der OSGeo4W Shell:
 
@@ -201,13 +201,13 @@ cd /d <PROJEKT>
 pdal pipeline prep.json
 ```
 
-Das `/d` ist nötig, weil `cd` unter Windows sonst nicht das Laufwerk wechselt. Die Berechnung dauert 10 bis 30 Minuten und zeigt keinen Fortschritt an. Das ist normal. Ob es läuft, sieht man daran, dass die Zieldatei im Explorer wächst.
+Das `/d` ist nötig, weil `cd` unter Windows sonst nicht das Laufwerk wechselt. Die Berechnung dauert 10 bis 30 Minuten. Währenddessen wird kein Fortschritt angezeigt. Den Fortgang erkennt man an der wachsenden Zieldatei im Explorer.
 
-### Warum machen wir das so?
+### Begründung der Vorgehensweise
 
-**`spatialreference` und `in_srs` auf EPSG:4326 statt auf das Originalsystem:** Die Datei nennt ein zusammengesetztes System aus WGS 84 und dem Höhenbezug EGM96. Würden wir das übernehmen, würde PROJ versuchen, ein Geoidmodell herunterzuladen und die Höhen umzurechnen. Das brauchen wir nicht, denn wir rechnen später ohnehin die Höhe *über dem Boden* aus, und dabei fällt der Höhenbezug heraus. So vermeiden wir eine unnötige Fehlerquelle.
+**`spatialreference` und `in_srs` auf EPSG:4326 statt auf das Originalsystem:** Die Datei nennt ein zusammengesetztes System aus WGS 84 und dem Höhenbezug EGM96. Bei Übernahme dieses Systems würde PROJ versuchen, ein Geoidmodell herunterzuladen und die Höhen umzurechnen. Das ist nicht erforderlich, da später die Höhe *über dem Boden* berechnet wird und der absolute Höhenbezug dabei entfällt. So wird eine unnötige Fehlerquelle vermieden.
 
-**`filters.decimation` statt `filters.sample`:** `filters.sample` würde gleichmäßiger ausdünnen, baut dafür aber einen Suchbaum über alle 256 Mio. Punkte auf und braucht dafür mehr Arbeitsspeicher, als ein normaler Rechner hat. `decimation` nimmt einfach jeden 20. Punkt. Da die Punkte in Aufnahmereihenfolge gespeichert sind, verteilt sich das räumlich gleichmäßig genug. Übrig bleiben rund 12,8 Mio. Punkte, etwa 60 pro Quadratmeter.
+**`filters.decimation` statt `filters.sample`:** `filters.sample` würde gleichmäßiger ausdünnen, baut dafür aber einen Suchbaum über alle 256 Mio. Punkte auf und benötigt mehr Arbeitsspeicher, als auf einem typischen Desktop-Rechner verfügbar ist. `decimation` behält jeden 20. Punkt bei. Da die Punkte in Aufnahmereihenfolge gespeichert sind, verteilen sich die verbleibenden Punkte räumlich ausreichend gleichmäßig. Übrig bleiben rund 12,8 Mio. Punkte, etwa 60 pro Quadratmeter.
 
 **COPC als Ausgabeformat:** komprimiert (aus 8,7 GB werden ca. 200 MB) und mit räumlichem Index, sodass QGIS die Wolke flüssig darstellen kann.
 
@@ -223,7 +223,7 @@ Die Grenzen (`bounds`) müssen jetzt sechs- bzw. siebenstellige Meterwerte zeige
 
 ## 6. Orthofoto umprojizieren
 
-Damit Kronenumrisse und Foto später deckungsgleich übereinanderliegen, muss auch das Bild ins selbe System. In der OSGeo4W Shell im Projektordner (als **eine** Zeile):
+Damit Kronenumrisse und Foto später deckungsgleich übereinanderliegen, muss auch das Bild in dasselbe System. In der OSGeo4W Shell im Projektordner (als **eine** Zeile):
 
 ```
 gdalwarp -t_srs EPSG:25833 -tr 0.02 0.02 -r bilinear -co COMPRESS=DEFLATE -co TILED=YES -co BIGTIFF=YES geotiff\geotiff\dom.tif geotiff\geotiff\dom_utm33.tif
@@ -240,28 +240,28 @@ Bedeutung der Optionen:
 | `TILED=YES` | Datei in Kacheln organisiert, damit Ausschnitte schnell gelesen werden können |
 | `BIGTIFF=YES` | nötig, weil die Datei größer als 4 GB werden kann |
 
-Zusätzlich lohnt es sich, in QGIS für das neue Bild Pyramiden anzulegen (Eigenschaften → Pyramiden). Dann bleibt das Zoomen flüssig.
+Zusätzlich empfiehlt es sich, in QGIS für das neue Bild Pyramiden anzulegen (Eigenschaften → Pyramiden). Dadurch bleibt das Zoomen flüssig.
 
 ---
 
 ## 7. Bodenklassifikation prüfen
 
-Da die Bodenpunkte von der DJI-Software automatisch klassifiziert wurden, prüfen wir, ob wir uns darauf verlassen können.
+Die von der DJI-Software automatisch erzeugte Bodenklassifikation muss auf ihre Verlässlichkeit geprüft werden.
 
 1. `wald_utm33.copc.laz` in **CloudCompare** öffnen.
 2. Als Einfärbung das Skalarfeld **Classification** wählen.
 3. Mit dem **Cross Section**-Werkzeug einen etwa 5 m breiten Streifen quer durch den Wald ausschneiden.
 4. In der Seitenansicht prüfen: Liegen die Bodenpunkte als dünne Schicht unten? Oder ziehen sie sich bis in die Kronen?
 
-Bei uns lag der Boden sauber unten, und der hohe Bodenanteil erklärt sich durch das Flugfeld. Wir übernehmen die Klassifikation also.
+In den vorliegenden Daten liegen die Bodenpunkte wie erwartet in der unteren Schicht, der hohe Bodenanteil erklärt sich durch das Flugfeld. Die Klassifikation wird daher übernommen.
 
-**Warum dieser Schritt wichtig ist:** Wenn fälschlich Bodenvegetation oder tiefe Kronenteile als Boden markiert sind, liegt das Geländemodell zu hoch. Dann werden *alle* Bäume systematisch zu niedrig berechnet, ohne dass man es am Ergebnis sieht. Wäre die Klassifikation schlecht gewesen, hätten wir sie verworfen und den Boden selbst berechnet (z. B. mit PDALs `filters.smrf` oder `filters.csf`).
+**Warum dieser Schritt wichtig ist:** Wenn fälschlich Bodenvegetation oder tiefe Kronenteile als Boden markiert sind, liegt das Geländemodell zu hoch. Dann werden *alle* Bäume systematisch zu niedrig berechnet, ohne dass dies am Ergebnis erkennbar ist. Bei schlechter Klassifikation müsste diese verworfen und der Boden neu berechnet werden (z. B. mit PDALs `filters.smrf` oder `filters.csf`).
 
 ---
 
-## 8. Gelände- und Oberflächenmodell rechnen
+## 8. Gelände- und Oberflächenmodell berechnen
 
-Wir erzeugen zwei Raster mit 25 cm Auflösung:
+Es werden zwei Raster mit 25 cm Auflösung erzeugt:
 
 - **DTM** (Digital Terrain Model): Höhe des Bodens, nur aus Bodenpunkten
 - **DSM** (Digital Surface Model): Höhe der obersten Oberfläche, aus allen Punkten
@@ -296,41 +296,41 @@ pdal pipeline dtm.json
 pdal pipeline dsm.json
 ```
 
-### Warum machen wir das so?
+### Begründung der Vorgehensweise
 
 **`output_type: idw` beim DTM:** Unter dichten Kronen gibt es nur wenige Bodenpunkte. Die inverse Distanzgewichtung mittelt die vorhandenen Punkte sinnvoll, statt einzelne Ausreißer zu übernehmen.
 
-**`output_type: max` beim DSM:** Uns interessiert die oberste Oberfläche, also die Baumkrone und nicht Äste darunter.
+**`output_type: max` beim DSM:** Relevant ist die oberste Oberfläche, also die Baumkrone und nicht Äste darunter.
 
 **`window_size`:** Füllt Pixel ohne Punkte durch Interpolation aus der Nachbarschaft. Beim DTM größer, weil unter Bäumen größere Lücken auftreten.
 
-**Warum PDAL statt Python?** PDAL verarbeitet Punktwolken sehr effizient. Wenn wir die Rasterung dort erledigen, brauchen wir in Python keine Punktwolkenbibliothek, sondern arbeiten nur noch mit Bildern. Weil beide Pipelines dieselbe Punktwolke lesen, liegen DTM und DSM automatisch exakt auf demselben Raster und können direkt voneinander abgezogen werden.
+**Warum PDAL statt Python?** PDAL verarbeitet Punktwolken sehr effizient. Durch die Rasterung in PDAL ist in Python keine Punktwolkenbibliothek erforderlich, dort werden nur noch Bilder verarbeitet. Weil beide Pipelines dieselbe Punktwolke lesen, liegen DTM und DSM automatisch exakt auf demselben Raster und können direkt voneinander abgezogen werden.
 
 ---
 
 ## 9. Waldfläche abgrenzen
 
-Da Rollfeld und Straße mit erfasst sind, grenzen wir den eigentlichen Wald per Hand ab.
+Da Rollfeld und Straße mit erfasst sind, wird der eigentliche Wald manuell abgegrenzt.
 
 1. In QGIS: Layer → Layer erstellen → **Neuer GeoPackage-Layer**.
 2. Im Feld **Datenbank (bzw. Dateiname)** über die drei Punkte rechts den Speicherort wählen: `<PROJEKT>\wald_polygon.gpkg`.
-   Achtung: Das Feld „Tabellenname" ist nur der Layername *innerhalb* der Datei. Wer nur das ausfüllt, speichert oft in einem unerwarteten Ordner.
+   Achtung: Das Feld „Tabellenname“ ist nur der Layername *innerhalb* der Datei. Wer nur das ausfüllt, speichert oft in einem unerwarteten Ordner.
 3. Geometrietyp **Polygon**, KBS **EPSG:25833**.
 4. Bearbeitungsmodus einschalten (Stiftsymbol), mit dem Orthofoto (`dom_utm33.tif`) im Hintergrund ein Polygon um den Wald zeichnen, mit Rechtsklick abschließen, Bearbeitung speichern.
 
 **Warum großzügig zeichnen?** Das Polygon sollte ein paar Meter über den Waldrand hinausgehen. Sonst werden Randbäume angeschnitten oder fallen heraus.
 
-**Warum überhaupt?** Einerseits für die Angabe „Bäume pro Hektar", für die man die echte Waldfläche braucht. Andererseits, um Büsche und Einzelbäume am Rand des Flugfelds (Nachbargrundstück) auszuschließen.
+**Warum überhaupt?** Einerseits für die Angabe „Bäume pro Hektar“, für die man die echte Waldfläche braucht. Andererseits, um Büsche und Einzelbäume am Rand des Flugfelds (Nachbargrundstück) auszuschließen.
 
 ---
 
 ## 10. Baumerkennung im Jupyter-Notebook
 
-Die Notebook datei ist auf GitHub unter dem Namen `baum_erkennung+gesundheit.ipynb` zu finden. Du kannst dir aber auch mit den folgenden Beschreibungen dein eigenes aufbauen.
+Die Notebook-Datei ist auf GitHub unter dem Namen `baum_erkennung+gesundheit.ipynb` zu finden. Die folgenden Beschreibungen ermöglichen auch die Erstellung eines eigenen Notebooks.
 
 ### Warum ein Notebook?
 
-In dieser Phase probiert man Parameter aus und schaut sich das Ergebnis an. Im Notebook lädt man die Daten einmal und führt danach nur die Zelle mit der Baumerkennung erneut aus. Die Kontrollbilder erscheinen direkt darunter. Wenn die Parameter feststehen, könnte man den Ablauf in ein `.py`-Skript überführen.
+In dieser Phase werden Parameter variiert und die Ergebnisse geprüft. Im Notebook lädt man die Daten einmal und führt danach nur die Zelle mit der Baumerkennung erneut aus. Die Kontrollbilder erscheinen direkt darunter. Wenn die Parameter feststehen, könnte man den Ablauf in ein `.py`-Skript überführen.
 
 ### Zelle 1: Imports und Pfade
 
@@ -360,12 +360,12 @@ chm = ndimage.median_filter(chm, size=5)  # glätten
 Warum:
 - **Alles unter 2 m entfernen:** Gras, Sträucher, Rollbahn und Unterwuchs sollen nicht als Bäume erkannt werden.
 - **Alles über 45 m entfernen:** Die höchsten Punkte der Wolke liegen knapp 29 m über dem tiefsten. Werte darüber sind Messrauschen (z. B. Vögel, Fehlechos).
-- **Medianfilter:** Eine Baumkrone ist im Höhenmodell nicht glatt, sondern hat viele kleine Spitzen durch einzelne Äste. Ohne Glättung würde jede davon als eigener Baum erkannt.
+- **Medianfilter:** Eine Baumkrone ist im Höhenmodell nicht glatt, sondern hat viele kleine Spitzen durch einzelne Äste. Ohne Glättung würde jede davon als eigener Baum erkannt werden.
 
 ### Zelle 3: Baumspitzen und Kronen (diese Zelle wiederholt man beim Einstellen)
 
 ```python
-win = 7   # Fenstergröße in Pixeln; 7 × 25 cm ≈ 1,75 m
+win = 7   # Fenstergröße in Pixeln, 7 × 25 cm ≈ 1,75 m
 
 mx = ndimage.maximum_filter(chm, size=win)
 tops = (chm == mx) & (chm > 5)
@@ -375,16 +375,16 @@ print(f"{n} Bäume gefunden")
 crowns = watershed(-chm, markers=labels, mask=chm > 2)
 ```
 
-Was hier passiert:
+Funktionsweise:
 - **Lokale Maxima:** Ein Pixel gilt als Baumspitze, wenn es in seinem Fenster der höchste Punkt ist und über 5 m liegt (damit Büsche nicht mitgezählt werden).
-- **Watershed (Wasserscheide):** Man stellt sich das umgedrehte Höhenmodell als Landschaft vor, die von den Baumspitzen aus „geflutet" wird. Wo sich die Wasser zweier Spitzen treffen, verläuft die Kronengrenze.
+- **Watershed (Wasserscheide):** Man stellt sich das umgedrehte Höhenmodell als Landschaft vor, die von den Baumspitzen aus „geflutet“ wird. Wo sich das Wasser zweier Spitzen trifft, verläuft die Kronengrenze.
 
-**Der Parameter `win` ist der wichtigste Stellhebel.** Er legt fest, wie weit zwei Spitzen mindestens auseinanderliegen müssen, um als zwei Bäume zu gelten.
+**Der Parameter `win` ist die wichtigste Stellgröße.** Er legt fest, wie weit zwei Spitzen mindestens auseinanderliegen müssen, um als zwei Bäume zu gelten.
 
-- Zu klein: Eine große Krone zerfällt in mehrere „Bäume".
+- Zu klein: Eine große Krone zerfällt in mehrere „Bäume“.
 - Zu groß: Nachbarbäume verschmelzen zu einem.
 
-Bei unserem Bestand hat **`win = 7`** das beste Ergebnis geliefert. Bei anderen Beständen (z. B. schmale Kiefern vs. breite Buchen) kann ein anderer Wert besser passen.
+Für den vorliegenden Bestand hat **`win = 7`** das beste Ergebnis geliefert. Bei anderen Beständen (z. B. schmale Kiefern vs. breite Buchen) kann ein anderer Wert besser passen.
 
 ### Zelle 4: Kontrollbild
 
@@ -399,13 +399,13 @@ ax.set_title(f"win={win}, {n} Bäume gesamt")
 plt.show()
 ```
 
-Die Ausschnittskoordinaten so verschieben, dass man im Wald und nicht auf dem Flugfeld landet. **Sitzt jeder rote Punkt auf genau einer Krone, passt `win`.** Am besten mehrere Ausschnitte an unterschiedlichen Stellen des Bestands anschauen.
+Die Ausschnittskoordinaten so anpassen, dass der gewählte Bereich innerhalb des Waldes liegt. **Ist jeder rote Punkt genau einer Krone zugeordnet, ist der gewählte Wert für `win` geeignet.** Zur Kontrolle mehrere Ausschnitte aus verschiedenen Bereichen des Bestands prüfen.
 
 ---
 
 ## 11. Kronen als Polygone exportieren
 
-Bisher sind die Kronen nur ein Bild mit Nummern. Für die weitere Auswertung und für QGIS wandeln wir sie in Polygone mit Attributen um.
+Bisher liegen die Kronen nur als Bild mit Nummern vor. Für die weitere Auswertung und für QGIS werden sie in Polygone mit Attributen umgewandelt.
 
 ```python
 from rasterio.features import shapes
@@ -429,7 +429,7 @@ gdf.head()
 Warum:
 - **`dissolve`:** Hängt eine Krone nur über ein einzelnes Pixel zusammen, erzeugt die Vektorisierung zwei Teilflächen. `dissolve` fasst alles mit derselben Nummer wieder zu einem Baum zusammen.
 - **Höhe** = höchster Wert im Kronenhöhenmodell innerhalb der Krone.
-- **Durchmesser** = Durchmesser eines Kreises mit gleicher Fläche. Eine Näherung, aber für Vergleiche gut brauchbar.
+- **Durchmesser** = Durchmesser eines Kreises mit gleicher Fläche. Dieser Näherungswert eignet sich für Vergleiche.
 
 ### Auf den Wald zuschneiden
 
@@ -439,13 +439,13 @@ gdf = gdf[gdf.centroid.within(wald.union_all())].copy()
 print(f"{len(gdf)} Bäume im Wald, {len(gdf) / (wald.area.sum() / 10000):.0f} pro ha")
 ```
 
-**Warum über den Mittelpunkt?** Würde man die Polygone am Waldrand abschneiden, entstünden halbe Kronen mit falscher Fläche. Über den Mittelpunkt bleibt jeder Baum entweder ganz drin oder ganz draußen.
+**Warum über den Mittelpunkt?** Würde man die Polygone am Waldrand abschneiden, entstünden halbe Kronen mit falscher Fläche. Bei der Zuordnung über den Mittelpunkt wird jeder Baum vollständig in die Auswertung einbezogen oder ausgeschlossen.
 
 ---
 
 ## 12. Farbwerte pro Krone und auffällige Bäume
 
-Jetzt legen wir die Kronen über das Orthofoto und messen pro Baum die Farbe.
+Für die Farbauswertung werden die Kronen über das Orthofoto gelegt und die Farbwerte pro Baum gemessen.
 
 ```python
 from rasterio.mask import mask as rmask
@@ -469,9 +469,9 @@ gdf[["R", "G", "B", "gcc"]] = rows
 ```
 
 Warum:
-- **Kronenweise lesen:** Das Orthofoto ist mehrere GB groß. Wir lesen immer nur den kleinen Ausschnitt einer Krone, so bleibt der Speicherbedarf gering.
-- **Negativer Puffer von 30 cm:** Am Rand einer Krone mischen sich Nachbarkrone und Waldboden ins Bild. Wir messen nur im Inneren.
-- **Transparenz und Schatten ausschließen:** Pixel mit Alpha 0 liegen außerhalb des Bildes. Sehr dunkle Pixel (Helligkeitssumme unter 90) sind Schatten und würden gesunde Bäume dunkel und damit „krank" erscheinen lassen.
+- **Kronenweise lesen:** Das Orthofoto ist mehrere GB groß. Es wird jeweils nur der kleine Ausschnitt einer Krone gelesen, so bleibt der Speicherbedarf gering.
+- **Negativer Puffer von 30 cm:** Am Rand einer Krone mischen sich Nachbarkrone und Waldboden ins Bild. Die Messung erfolgt deshalb nur im Inneren.
+- **Transparenz und Schatten ausschließen:** Pixel mit Alpha 0 liegen außerhalb des Bildes. Sehr dunkle Pixel (Helligkeitssumme unter 90) sind Schatten und würden gesunde Bäume dunkel und damit „krank“ erscheinen lassen.
 - **Median statt Mittelwert beim GCC:** robuster gegen einzelne Ausreißerpixel.
 
 ### Was ist der GCC?
@@ -488,13 +488,13 @@ gdf.to_file(base + "baeume.gpkg", driver="GPKG")
 print(gdf["auffaellig"].sum(), "auffällige Kronen")
 ```
 
-**Warum relativ statt mit festem Grenzwert?** Verschiedene Baumarten haben von Natur aus unterschiedliche Farben, und wir kennen die Arten nicht. Deshalb vergleichen wir jeden Baum mit dem Bestand: Als auffällig gilt, wer mehr als zwei Standardabweichungen weniger grün ist als der typische Baum der Fläche.
+**Warum relativ statt mit festem Grenzwert?** Verschiedene Baumarten haben von Natur aus unterschiedliche Farben, die Arten wurden hier nicht bestimmt. Deshalb erfolgt der Vergleich mit dem Bestand: Als auffällig gilt ein Baum, dessen Grünanteil mehr als zwei Standardabweichungen unter dem typischen Wert der Fläche liegt.
 
-### Ergebnis anschauen
+### Ergebnis prüfen
 
-`baeume.gpkg` in QGIS über `dom_utm33.tif` laden, Symbolisierung auf **Abgestuft** nach `gcc`. Die markierten Bäume einzeln im Orthofoto begutachten.
+`baeume.gpkg` in QGIS über `dom_utm33.tif` laden, Symbolisierung auf **Abgestuft** nach `gcc`. Die markierten Bäume im Orthofoto einzeln prüfen.
 
-Ein Teil davon werden echte Schäden sein (Totholz, verbräunte Kronen), ein Teil Fehlalarme, z. B. Nadelbäume, die generell dunkler sind, oder stark verschattete Kronen. Die Auswertung ist ein Filter, der aus Tausenden Bäumen die wenigen heraussucht, die man sich genauer ansehen sollte, keine fertige Diagnose.
+Ein Teil der markierten Bäume kann tatsächlich geschädigt sein (Totholz, verbräunte Kronen), bei anderen kann es sich um Fehlalarme handeln, z. B. um generell dunklere Nadelbäume oder stark verschattete Kronen. Die Auswertung dient der Vorauswahl von Bäumen für eine genauere Begutachtung, sie stellt keine Diagnose dar.
 
 Bei gemischten Beständen kann es sinnvoll sein, die Z-Werte getrennt für Nadel- und Laubbäume zu berechnen, damit nicht überproportional viele Nadelbäume als auffällig gelten.
 
@@ -502,10 +502,10 @@ Bei gemischten Beständen kann es sinnvoll sein, die Z-Werte getrennt für Nadel
 
 ## 13. Ergebnis validieren
 
-Dass `win = 7` „am besten aussieht", ist ein guter Anfang, aber noch keine belastbare Aussage. Dafür zählen wir in einer Stichprobe von Hand nach.
+Dass `win = 7` „am besten aussieht“, ist ein erster Hinweis, aber noch keine belastbare Aussage. Dafür ist eine manuelle Zählung in einer Stichprobe erforderlich.
 
 1. Zwei bis drei Ausschnitte von je etwa einem halben Hektar wählen, möglichst in unterschiedlichen Bestandsteilen (dicht, locker, Waldrand).
-2. Im Orthofoto (evtl. mit dem CHM als Hilfe) jeden Baum per Hand als Punkt markieren.
+2. Im Orthofoto (evtl. mit dem CHM als Hilfe) jeden Baum manuell als Punkt markieren.
 3. Mit den automatisch erkannten Baumspitzen vergleichen und zählen:
    - **TP** (richtig erkannt): Baum vorhanden und gefunden
    - **FN** (übersehen): Baum vorhanden, aber nicht gefunden
@@ -517,17 +517,17 @@ Daraus:
 - **Recall** = TP / (TP + FN): Wie viele der echten Bäume wurden gefunden?
 - **F1** = 2 · Precision · Recall / (Precision + Recall): Gesamtmaß
 
-Erst damit wird aus „der Algorithmus hat X Bäume gezählt" eine Aussage mit bekannter Fehlerquote.
+Erst damit wird aus „der Algorithmus hat X Bäume gezählt“ eine Aussage mit bekannter Fehlerquote.
 
 ---
 
 ## 14. Grenzen der Methode
 
-- **Unterstand ist unsichtbar.** Kleinere Bäume unter dem Kronendach erfasst weder das Foto noch (zuverlässig) der Laser. Die Zählung bezieht sich auf die Bäume der oberen Kronenschicht.
+- **Unterstand ist unsichtbar:** Kleinere Bäume unter dem Kronendach erfasst weder das Foto noch (zuverlässig) der Laser. Die Zählung bezieht sich auf die Bäume der oberen Kronenschicht.
 - **Dichte Laubbestände** mit ineinander verwachsenen Kronen werden schlechter getrennt als lockere Bestände oder Nadelwald.
 - **Kein Nahinfrarot:** Mit reinen RGB-Daten erkennt man vor allem sichtbare, also eher fortgeschrittene Schäden. Beginnender Trockenstress ist so kaum zu erkennen. Dafür bräuchte man Multispektral- oder Thermalaufnahmen.
-- **Nur ein Aufnahmezeitpunkt** (Juli 2026): Wir können Bäume nur untereinander vergleichen, nicht mit ihrem eigenen früheren Zustand. Eine Wiederholungsbefliegung würde die Aussagekraft deutlich erhöhen.
-- **Farbe ist unspezifisch:** Trockenheit, Schädlinge, Pilze oder Wurzelschäden sehen aus der Luft ähnlich aus. Die Ursache muss vor Ort geklärt werden.
+- **Nur ein Aufnahmezeitpunkt** (Juli 2026): Die Bäume lassen sich nur untereinander vergleichen, nicht mit ihrem eigenen früheren Zustand. Eine Wiederholungsbefliegung würde die Aussagekraft deutlich erhöhen.
+- **Farbe ist unspezifisch:** Trockenheit, Schädlinge, Pilze oder Wurzelschäden sehen aus der Luft ähnlich aus. Die Ursache muss vor Ort identifiziert werden.
 - **Keine Artbestimmung:** Dafür bräuchte es zusätzliche Spektralinformation und im Gelände bestimmte Referenzbäume als Trainingsdaten.
 
 ---
@@ -538,13 +538,13 @@ Erst damit wird aus „der Algorithmus hat X Bäume gezählt" eine Aussage mit b
 |---|---|---|
 | `Failed building wheel for gdal` | `pip install gdal` versucht, C++-Code zu kompilieren | nicht nötig: `rasterio` verwenden, GDAL-Befehle in der OSGeo4W Shell |
 | `pdal` oder `gdalwarp` nicht gefunden | normale Eingabeaufforderung statt OSGeo4W Shell | OSGeo4W Shell aus dem Startmenü öffnen |
-| „Das System kann den angegebenen Pfad nicht finden" bei `cd` | Laufwerkswechsel ohne `/d`, oder zwei Befehle beim Kopieren zu einer Zeile verschmolzen | `cd /d ...` verwenden; Befehle einzeln eingeben |
-| PDAL scheint zu hängen | PDAL zeigt keinen Fortschritt | Zieldatei im Explorer beobachten, sie wächst |
-| Pipeline findet `prep.json` nicht | Datei heißt in Wahrheit `prep.json.txt` | im Explorer Dateiendungen einblenden, umbenennen |
+| „Das System kann den angegebenen Pfad nicht finden“ bei `cd` | Laufwerkswechsel ohne `/d`, oder zwei Befehle beim Kopieren zu einer Zeile verschmolzen | `cd /d ...` verwenden, Befehle einzeln eingeben |
+| PDAL zeigt keinen sichtbaren Fortschritt | PDAL zeigt keinen Fortschritt an | Zieldatei im Explorer beobachten, sie wächst |
+| Pipeline findet `prep.json` nicht | Datei wurde als `prep.json.txt` gespeichert | im Explorer Dateiendungen einblenden, umbenennen |
 | QGIS zeigt bei Punktwolkenstatistik überall `nan` | QGIS berechnet die Statistik für große LAS-Dateien nicht | stattdessen `pdal info --stats` verwenden |
 | Nach der Umprojektion noch Werte wie 13,25 in den Bounds | Umprojektion hat nicht gegriffen | `in_srs`/`out_srs` in der Pipeline prüfen |
 | `ModuleNotFoundError: rasterio` im Notebook | falscher Python-Kernel ausgewählt | in VS Code oben rechts die `venv` als Kernel wählen |
-| `DataSourceError: ... wald_polygon.gpkg: No such file or directory` | GeoPackage wurde woanders oder unter anderem Namen gespeichert | in QGIS Rechtsklick auf Layer → Eigenschaften → Information → Pfad nachsehen; oder `glob.glob(base + "**/*.gpkg", recursive=True)` |
+| `DataSourceError: ... wald_polygon.gpkg: No such file or directory` | GeoPackage wurde an einem anderen Speicherort oder unter anderem Namen gespeichert | in QGIS Rechtsklick auf Layer → Eigenschaften → Information → Pfad nachsehen oder `glob.glob(base + "**/*.gpkg", recursive=True)` |
 | Eine Krone wird als mehrere Bäume erkannt | `win` zu klein | `win` erhöhen (9, 11) |
 | Nachbarbäume verschmelzen | `win` zu groß | `win` verringern (5) |
 
@@ -559,4 +559,4 @@ Erst damit wird aus „der Algorithmus hat X Bäume gezählt" eine Aussage mit b
 | `dtm.tif` | Geländemodell, 25 cm |
 | `dsm.tif` | Oberflächenmodell, 25 cm |
 | `wald_polygon.gpkg` | Abgrenzung der Waldfläche |
-| `baeume.gpkg` | ein Polygon pro Baum mit Höhe, Fläche, Durchmesser, Farbwerten, GCC und Auffälligkeits-Markierung |
+| `baeume.gpkg` | ein Polygon pro Baum mit Höhe, Fläche, Durchmesser, Farbwerten, GCC und Auffälligkeitsmarkierung |
