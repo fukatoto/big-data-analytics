@@ -457,7 +457,8 @@ with rasterio.open(base + "geotiff/geotiff/dom_utm33.tif") as src:
         if inner.is_empty:
             rows.append((np.nan,) * 4); continue
         arr, _ = rmask(src, [inner], crop=True, filled=False)
-        r, g, b, a = [x.compressed().astype("float32") for x in arr]
+        m = np.ma.getmaskarray(arr).any(axis=0)          # gemeinsame Maske über alle Kanäle
+        r, g, b, a = [band.data[~m].astype("float32") for band in arr]
         ok = (a > 0) & ((r + g + b) > 90)
         if ok.sum() < 50:
             rows.append((np.nan,) * 4); continue
